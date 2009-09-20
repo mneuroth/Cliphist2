@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>CliphistWindow</class>
+ <widget class="QMainWindow" name="CliphistWindow">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>600</width>
+    <height>400</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Clipboard History 2</string>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <layout class="QGridLayout" name="gridLayout">
+    <property name="margin">
+     <number>2</number>
+    </property>
+    <property name="spacing">
+     <number>2</number>
+    </property>
+    <item row="0" column="0">
+     <widget class="QListWidget" name="listWidgetLineNumbers">
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>50</width>
+        <height>16777215</height>
+       </size>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QListWidget" name="listWidget">
+      <property name="editTriggers">
+       <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed</set>
+      </property>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>600</width>
+     <height>19</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuFile">
+    <property name="title">
+     <string>&amp;File</string>
+    </property>
+    <addaction name="actionOpen"/>
+    <addaction name="actionSave"/>
+    <addaction name="actionSave_as"/>
+    <addaction name="separator"/>
+    <addaction name="actionExit"/>
+   </widget>
+   <widget class="QMenu" name="menu_Edit">
+    <property name="title">
+     <string>&amp;Edit</string>
+    </property>
+    <addaction name="actionDelete_all_entries"/>
+    <addaction name="actionDelete_marked_entry"/>
+    <addaction name="separator"/>
+    <addaction name="action_Find_text"/>
+    <addaction name="actionFind_next"/>
+    <addaction name="separator"/>
+    <addaction name="action_Edit_entry"/>
+   </widget>
+   <widget class="QMenu" name="menuHelp">
+    <property name="title">
+     <string>&amp;Help</string>
+    </property>
+    <addaction name="actionHelp"/>
+    <addaction name="separator"/>
+    <addaction name="actionAbout"/>
+    <addaction name="actionAbout_Qt"/>
+   </widget>
+   <widget class="QMenu" name="menu_Options">
+    <property name="title">
+     <string>&amp;Options</string>
+    </property>
+    <addaction name="action_Activate_cliphist"/>
+    <addaction name="actionErase_clipboard_contents"/>
+    <addaction name="separator"/>
+    <addaction name="action_Lines_per_entry"/>
+    <addaction name="actionSelect_font"/>
+    <addaction name="separator"/>
+    <addaction name="action_Double_click_to_select"/>
+    <addaction name="actionAutoload_data"/>
+    <addaction name="actionAutoload_window_position_and_size"/>
+    <addaction name="actionAllways_on_top"/>
+   </widget>
+   <addaction name="menuFile"/>
+   <addaction name="menu_Edit"/>
+   <addaction name="menu_Options"/>
+   <addaction name="menuHelp"/>
+  </widget>
+  <action name="actionOpen">
+   <property name="text">
+    <string>&amp;Load Data...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>&amp;Save Data</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="actionSave_as">
+   <property name="text">
+    <string>Save Data &amp;as...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+A</string>
+   </property>
+  </action>
+  <action name="actionExit">
+   <property name="text">
+    <string>E&amp;xit</string>
+   </property>
+  </action>
+  <action name="actionHelp">
+   <property name="text">
+    <string>&amp;Help...</string>
+   </property>
+   <property name="shortcut">
+    <string>F1</string>
+   </property>
+  </action>
+  <action name="actionAbout">
+   <property name="text">
+    <string>&amp;About...</string>
+   </property>
+  </action>
+  <action name="actionDelete_all_entries">
+   <property name="text">
+    <string>Delete &amp;all entries...</string>
+   </property>
+  </action>
+  <action name="actionDelete_marked_entry">
+   <property name="text">
+    <string>&amp;Delete marked entry</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="action_Find_text">
+   <property name="text">
+    <string>&amp;Find text...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+F</string>
+   </property>
+  </action>
+  <action name="actionFind_next">
+   <property name="text">
+    <string>Find &amp;next...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+N</string>
+   </property>
+  </action>
+  <action name="action_Edit_entry">
+   <property name="text">
+    <string>&amp;Edit entry...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+E</string>
+   </property>
+  </action>
+  <action name="action_Activate_cliphist">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Activate cliphist</string>
+   </property>
+  </action>
+  <action name="actionErase_clipboard_contents">
+   <property name="text">
+    <string>&amp;Erase clipboard contents</string>
+   </property>
+  </action>
+  <action name="action_Lines_per_entry">
+   <property name="text">
+    <string>&amp;Lines per entry...</string>
+   </property>
+  </action>
+  <action name="actionSelect_font">
+   <property name="text">
+    <string>Select &amp;font...</string>
+   </property>
+  </action>
+  <action name="action_Double_click_to_select">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Double click to select</string>
+   </property>
+  </action>
+  <action name="actionAutoload_data">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;Autoload data</string>
+   </property>
+  </action>
+  <action name="actionAutoload_window_position_and_size">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Autoload &amp;window position and size</string>
+   </property>
+  </action>
+  <action name="actionAbout_Qt">
+   <property name="text">
+    <string>About Qt...</string>
+   </property>
+  </action>
+  <action name="actionAllways_on_top">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Allways on top</string>
+   </property>
+  </action>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <resources/>
+ <connections/>
+</ui>
