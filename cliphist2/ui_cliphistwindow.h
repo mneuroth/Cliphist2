@@ -1,8 +1,8 @@
 /********************************************************************************
 ** Form generated from reading ui file 'cliphistwindow.ui'
 **
-** Created: Fri 18. Sep 21:42:31 2009
-**      by: Qt User Interface Compiler version 4.5.1
+** Created: Tue Oct 13 20:46:32 2009
+**      by: Qt User Interface Compiler version 4.5.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
 ********************************************************************************/
@@ -111,7 +111,7 @@ public:
         actionAllways_on_top = new QAction(CliphistWindow);
         actionAllways_on_top->setObjectName(QString::fromUtf8("actionAllways_on_top"));
         actionAllways_on_top->setCheckable(true);
-        actionAllways_on_top->setChecked(true);
+        actionAllways_on_top->setChecked(false);
         centralWidget = new QWidget(CliphistWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -125,20 +125,27 @@ public:
         sizePolicy.setVerticalStretch(0);
         sizePolicy.setHeightForWidth(listWidgetLineNumbers->sizePolicy().hasHeightForWidth());
         listWidgetLineNumbers->setSizePolicy(sizePolicy);
-        listWidgetLineNumbers->setMaximumSize(QSize(50, 16777215));
+        listWidgetLineNumbers->setMaximumSize(QSize(40, 16777215));
+        listWidgetLineNumbers->setFocusPolicy(Qt::NoFocus);
+        listWidgetLineNumbers->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+        listWidgetLineNumbers->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        listWidgetLineNumbers->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        listWidgetLineNumbers->setSelectionMode(QAbstractItemView::NoSelection);
 
         gridLayout->addWidget(listWidgetLineNumbers, 0, 0, 1, 1);
 
         listWidget = new QListWidget(centralWidget);
         listWidget->setObjectName(QString::fromUtf8("listWidget"));
-        listWidget->setEditTriggers(QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed);
+        listWidget->setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        listWidget->setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+        listWidget->setEditTriggers(QAbstractItemView::EditKeyPressed);
 
         gridLayout->addWidget(listWidget, 0, 1, 1, 1);
 
         CliphistWindow->setCentralWidget(centralWidget);
         menuBar = new QMenuBar(CliphistWindow);
         menuBar->setObjectName(QString::fromUtf8("menuBar"));
-        menuBar->setGeometry(QRect(0, 0, 600, 19));
+        menuBar->setGeometry(QRect(0, 0, 600, 21));
         menuFile = new QMenu(menuBar);
         menuFile->setObjectName(QString::fromUtf8("menuFile"));
         menu_Edit = new QMenu(menuBar);
@@ -203,7 +210,7 @@ public:
         actionDelete_marked_entry->setShortcut(QApplication::translate("CliphistWindow", "Ctrl+D", 0, QApplication::UnicodeUTF8));
         action_Find_text->setText(QApplication::translate("CliphistWindow", "&Find text...", 0, QApplication::UnicodeUTF8));
         action_Find_text->setShortcut(QApplication::translate("CliphistWindow", "Ctrl+F", 0, QApplication::UnicodeUTF8));
-        actionFind_next->setText(QApplication::translate("CliphistWindow", "Find &next...", 0, QApplication::UnicodeUTF8));
+        actionFind_next->setText(QApplication::translate("CliphistWindow", "Find &next", 0, QApplication::UnicodeUTF8));
         actionFind_next->setShortcut(QApplication::translate("CliphistWindow", "Ctrl+N", 0, QApplication::UnicodeUTF8));
         action_Edit_entry->setText(QApplication::translate("CliphistWindow", "&Edit entry...", 0, QApplication::UnicodeUTF8));
         action_Edit_entry->setShortcut(QApplication::translate("CliphistWindow", "Ctrl+E", 0, QApplication::UnicodeUTF8));

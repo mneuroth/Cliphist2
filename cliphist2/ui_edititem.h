@@ -1,8 +1,8 @@
 /********************************************************************************
 ** Form generated from reading ui file 'edititem.ui'
 **
-** Created: Fri 18. Sep 21:33:41 2009
-**      by: Qt User Interface Compiler version 4.5.2
+** Created: Tue Oct 13 20:46:32 2009
+**      by: Qt User Interface Compiler version 4.5.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
 ********************************************************************************/

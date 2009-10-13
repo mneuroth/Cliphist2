@@ -23,10 +23,6 @@ public:
     CliphistWindow(QWidget *parent = 0);
     ~CliphistWindow();
 
-private:
-    Ui::CliphistWindow *ui;
-    QClipboard * m_pClipboard;
-
 private slots:
     void OnLoadData();
     void OnSaveData();
@@ -46,7 +42,8 @@ private slots:
 
     void OnToggleAllwaysOnTop(bool bChecked);
 
-    void OnCurrentItemChanged(QListWidgetItem * current, QListWidgetItem * previous);
+    void OnItemDoublecClicked(QListWidgetItem * current);
+    void OnItemActivated(QListWidgetItem * current);
 
 private:
     bool SaveSettings();
@@ -56,13 +53,25 @@ private:
     bool SyncListWithUi();
     QListWidgetItem * CreateNewItem(const QString & s);
     QString FilterForDisplay(const QString & s) const;
-    void ActivateEntry(int iIndex);
+    QString FilterNumber(const QString & s, const QString & sNumber) const;
+    void ActivateEntry(int iIndex);   
+    void ActivateEntry(QListWidgetItem * current);
+    void UpdateColorOfLastSelectedItem();
+    void UpdateLastSelectedItemData(QListWidgetItem * current);
+    void SetFont(const QFont & aFont);
+    void InsertNewData(const QString & sText, int iNumber);
 
+private:   /*data*/
+    Ui::CliphistWindow *        ui;
+
+    QClipboard *                m_pClipboard;
     bool    	                m_bMyCopy;              // temp
     bool                        m_bColorToggle;         // temp
     QList<QListWidgetItem *>    m_aFindList;            // temp
     int                         m_iFindIndex;           // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
+    int                         m_iActSelectedIndex;    // temp
+    QBrush                      m_aLastColor;           // temp
     int                         m_iMaxLinesPerEntry;    
     QString                     m_sFileName;
     QString                     m_sLastSearchText;

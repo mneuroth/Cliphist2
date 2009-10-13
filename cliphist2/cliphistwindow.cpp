@@ -1,5 +1,7 @@
 /*
-    Started porting to Qt: 12.9.2009    
+    Initial Version for OS/2:         1993
+    Ported to Windows XP:             2001
+    Started porting to Qt:       12.9.2009    (Mac, Linux, Windows)
 */
 
 #include "cliphistwindow.h"
@@ -15,6 +17,9 @@
 #include <QInputDialog>
 #include <QMessageBox>
 #include <QSettings>
+#include <QScrollBar>
+#include <QFont>
+#include <QFontMetrics>
 
 #define FILE_VERSION                1
 #define DEFAULT_FILE_NAME           "cliphist2.dat"
@@ -22,16 +27,21 @@
 
 // TODO --> globalen Key definieren und auf diese Anwendung umleiten moeglich ?
 // TODO: Beschraenkung auf 100 Eintraege (oder n Eintraege, konfigurierbar)
-// TODO: Eintrags-Nr anzeigen
-// TODO: aktuellen Eintrag andersfarbig hervorheben (rot)
-// TODO: ggf. Option allways on top
-// TODO: selektion des Eintrags (rot) nur durch doppelclick (oder auswählbar machen)
+// TODO: ggf. mehr Einstellungen der Anwendung speichern und restaurieren (z.B. allways on top)
+// TODO: ggf. in der Spalte für Nummern durch ... signalisieren das mehr Zeilen als sichtbar sind als Eintrag vorhanden sind
+// TODO: Icon erstellen
+// TODO: Internationalisierung durchfuehren
+// TODO: Installer fuer die einzelnen Platformen erstellen: Mac, Windows, Linux
+// (TODO: Eintrags-Nr anzeigen
+// (TODO: aktuellen Eintrag andersfarbig hervorheben (rot)
+// (TODO: ggf. Option allways on top
+// (TODO: selektion des Eintrags (rot) nur durch doppelclick (oder auswählbar machen)
 
 CliphistWindow::CliphistWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::CliphistWindow)
 {
     ui->setupUi(this);
-//    setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
+    //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     
     QCoreApplication::setOrganizationName("MNeuroth");
     QCoreApplication::setOrganizationDomain("mneuroth.de");
@@ -41,15 +51,22 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     m_iFindIndex        = -1;
     m_bMyCopy           = false;
     m_bColorToggle      = false;    
+    m_iActSelectedIndex = -1;
     m_iMaxLinesPerEntry = DEFAULT_LINES_PER_ENTRY;
     m_sFileName         = DEFAULT_FILE_NAME;
     
+    //OnToggleAllwaysOnTop(true);     // default value
     LoadSettings();
     Load();
     SyncListWithUi();
-   
+        
     connect(m_pClipboard, SIGNAL(dataChanged()), this, SLOT(OnClipboardDataChanged()));
-    connect(ui->listWidget, SIGNAL(currentItemChanged(QListWidgetItem *,QListWidgetItem *)), this, SLOT(OnCurrentItemChanged(QListWidgetItem *,QListWidgetItem *)));
+    connect(ui->listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(OnItemDoublecClicked(QListWidgetItem *)));
+    connect(ui->listWidget, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(OnItemActivated(QListWidgetItem*)));
+
+    // synchronize the two vertical scrollbars of the two list widgets:
+    connect(ui->listWidget->verticalScrollBar(), SIGNAL(valueChanged(int)), ui->listWidgetLineNumbers->verticalScrollBar(), SLOT(setValue(int)) );
+
     connect(ui->actionExit, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(OnLoadData()));
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(OnSaveData()));
@@ -77,7 +94,7 @@ CliphistWindow::~CliphistWindow()
 
 void CliphistWindow::OnHelp()
 {
-    QMessageBox::about(this,tr("Clipboard history"),tr("Sorry, no help available yet !"));
+    QMessageBox::about(this,tr("Help"),tr("Sorry, no help available yet !"));
 }
 
 void CliphistWindow::OnToggleAllwaysOnTop(bool bChecked)
@@ -95,12 +112,12 @@ void CliphistWindow::OnToggleAllwaysOnTop(bool bChecked)
 
 void CliphistWindow::OnAbout()
 {
-    QMessageBox::about(this,tr("Clipboard history"),tr("Clipboard history 2, (c) by Michael Neuroth"));
+    QMessageBox::about(this,tr("About Application"),tr("Clipboard History 2\n\n(c) 1993-2009 by Michael Neuroth"));
 }
 
 void CliphistWindow::OnAboutQt()
 {
-    QMessageBox::aboutQt(this,tr("Clipboard history"));
+    QMessageBox::aboutQt(this,tr("Clipboard History 2"));
 }
 
 void CliphistWindow::OnDeleteAllItems()
@@ -181,19 +198,22 @@ void CliphistWindow::OnClipboardDataChanged()
 {
     if( !m_bMyCopy && !(m_pClipboard->text().isEmpty() || m_pClipboard->text().isNull()) )
     {
-        m_aTxtHistory.insert(0,m_pClipboard->text());
-        ui->listWidget->insertItem(0,CreateNewItem(m_pClipboard->text()));
+        UpdateColorOfLastSelectedItem();
+        m_aTxtHistory.insert(0,m_pClipboard->text());        
+        InsertNewData(m_pClipboard->text(),1);        
+        SyncListWithUi();        
+        UpdateLastSelectedItemData(ui->listWidget->item(0));        // update of clipboard data allways into index 0 !
     }
 }
 
-void CliphistWindow::OnCurrentItemChanged(QListWidgetItem * current, QListWidgetItem * previous)
+void CliphistWindow::OnItemDoublecClicked(QListWidgetItem * current)
 {
-    m_bMyCopy = true;
-    if( current )
-    {
-        m_pClipboard->setText(current->text());
-    }
-    m_bMyCopy = false;
+    ActivateEntry(current);
+}
+
+void CliphistWindow::OnItemActivated(QListWidgetItem* current)
+{
+    ActivateEntry(current);
 }
 
 void CliphistWindow::OnLoadData()
@@ -236,7 +256,7 @@ void CliphistWindow::OnSelectFont()
     QFont aFont = QFontDialog::getFont(&ok, ui->listWidget->font(), this);
     if( ok )
     {
-        ui->listWidget->setFont(aFont);
+        SetFont(aFont);
     }
 }
 
@@ -268,23 +288,43 @@ QString CliphistWindow::FilterForDisplay(const QString & s) const
     int iMax = qMin(m_iMaxLinesPerEntry,aList.size());
     for( int i=0; i<iMax; i++ )
     {
-        sRet += aList[i];
-        if( i<iMax-1 )
-        {
-            sRet += '\n';
-        }
+        sRet += aList[i]+'\n';
     }
-    return sRet;
+    return sRet.mid(0,sRet.size()-1);   // remove last \n from return string;
+}
+
+QString CliphistWindow::FilterNumber(const QString & s, const QString & sNumber ) const
+{
+    QString sRet;
+    QStringList aList = s.split("\n");
+    for( int i=0; i<aList.size(); i++ )
+    {
+        sRet += i==0 ? sNumber+"\n" : "\n";
+    }
+    return sRet.mid(0,sRet.size()-1);   // remove last \n from return string
 }
 
 bool CliphistWindow::SyncListWithUi()
 {
     ui->listWidget->clear();
+    ui->listWidgetLineNumbers->clear();
     for( int i=m_aTxtHistory.size()-1; i>=0; i-- )
     {
-        ui->listWidget->insertItem(0,CreateNewItem(m_aTxtHistory[i]));
+        InsertNewData(m_aTxtHistory[i],i+1);
     }
     return true;
+}
+
+void CliphistWindow::InsertNewData(const QString & sText, int iNumber)
+{
+    QListWidgetItem * pNewItem = CreateNewItem(sText);
+    ui->listWidget->insertItem(0,pNewItem);
+    QListWidgetItem * pNewNumberItem = pNewItem->clone();
+    QString s = pNewNumberItem->text();
+    pNewNumberItem->setText(FilterNumber(s,QString::number(iNumber)));
+    pNewNumberItem->setToolTip("");
+    pNewNumberItem->setTextAlignment(Qt::AlignRight);
+    ui->listWidgetLineNumbers->insertItem(0,pNewNumberItem);
 }
 
 bool CliphistWindow::SaveSettings()
@@ -296,8 +336,7 @@ bool CliphistWindow::SaveSettings()
     aSettings.setValue("App/MaxLinesPerEntry",m_iMaxLinesPerEntry);    
     aSettings.setValue("App/WindowState",saveState());
     aSettings.setValue("App/WindowGeometry",saveGeometry());
-    aSettings.setValue("App/Font",ui->listWidget->font().toString());
-    
+    aSettings.setValue("App/Font",ui->listWidget->font().toString());    
     return true;
 }
 
@@ -312,8 +351,7 @@ bool CliphistWindow::LoadSettings()
     restoreState(aSettings.value("App/WindowState").toByteArray());
     restoreGeometry(aSettings.value("App/WindowGeometry").toByteArray());
     aFont.fromString(aSettings.value("App/Font",QString("Courier")).toString());
-    ui->listWidget->setFont(aFont);
-
+    SetFont(aFont);
     return true;
 }
 
@@ -342,5 +380,45 @@ bool CliphistWindow::Load()
 void CliphistWindow::ActivateEntry(int iIndex)
 {
     ui->listWidget->setCurrentItem(m_aFindList[iIndex]);
+    ActivateEntry(ui->listWidget->currentItem());
 }
 
+void CliphistWindow::ActivateEntry(QListWidgetItem * current)
+{
+    if( current )
+    {
+        UpdateColorOfLastSelectedItem();
+        m_bMyCopy = true;
+        UpdateLastSelectedItemData(current);
+        m_pClipboard->setText(current->text());
+        m_bMyCopy = false;
+    }
+}
+
+void CliphistWindow::UpdateColorOfLastSelectedItem()
+{
+    if( m_iActSelectedIndex>=0 )
+    {
+        ui->listWidget->item(m_iActSelectedIndex)->setForeground(m_aLastColor);
+        ui->listWidgetLineNumbers->item(m_iActSelectedIndex)->setForeground(m_aLastColor);
+    }
+}
+
+void CliphistWindow::UpdateLastSelectedItemData(QListWidgetItem * current)
+{
+    m_iActSelectedIndex = ui->listWidget->row(current);
+    m_aLastColor = current->foreground();
+    current->setForeground(QBrush("red"));
+    // create also a number entry
+    QListWidgetItem * pNumber = ui->listWidgetLineNumbers->item(m_iActSelectedIndex);
+    pNumber->setForeground(QBrush("red"));
+}
+
+void CliphistWindow::SetFont(const QFont & aFont)
+{
+    ui->listWidget->setFont(aFont);
+    ui->listWidgetLineNumbers->setFont(aFont);
+    // update width of the number list widget
+    QFontMetrics aMetrics(aFont);
+    ui->listWidgetLineNumbers->setMaximumWidth(aMetrics.width("999"));
+}
