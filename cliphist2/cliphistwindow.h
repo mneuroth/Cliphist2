@@ -6,6 +6,7 @@
 #include <QStringList>
 #include <QList>
 #include <QByteArray>
+#include <QPair>
 
 class QClipboard;
 class QListWidgetItem;
@@ -23,6 +24,9 @@ public:
     CliphistWindow(QWidget *parent = 0);
     ~CliphistWindow();
 
+signals:
+    void SelectionChanged(bool bAnySelected);
+
 private slots:
     void OnLoadData();
     void OnSaveData();
@@ -35,15 +39,19 @@ private slots:
     void OnClipboardDataChanged();
     void OnEraseClipboard();
     void OnSelectFont();
+    void OnMaxEntries();
     void OnLinesPerEntry();
     void OnHelp();
     void OnAbout();
     void OnAboutQt();
 
-    void OnToggleAllwaysOnTop(bool bChecked);
+    void OnToggleAlwaysOnTop(bool bChecked);
 
-    void OnItemDoublecClicked(QListWidgetItem * current);
+    void OnItemClicked(QListWidgetItem * current);
+    void OnItemDoubleClicked(QListWidgetItem * current);
     void OnItemActivated(QListWidgetItem * current);
+    
+    void OnSelectionChanged();
 
 private:
     bool SaveSettings();
@@ -52,19 +60,21 @@ private:
     bool Load();
     bool SyncListWithUi();
     QListWidgetItem * CreateNewItem(const QString & s);
-    QString FilterForDisplay(const QString & s) const;
-    QString FilterNumber(const QString & s, const QString & sNumber) const;
+    QPair<QString,bool> FilterForDisplay(const QString & s) const;
+    QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
     void ActivateEntry(int iIndex);   
     void ActivateEntry(QListWidgetItem * current);
     void UpdateColorOfLastSelectedItem();
     void UpdateLastSelectedItemData(QListWidgetItem * current);
     void SetFont(const QFont & aFont);
     void InsertNewData(const QString & sText, int iNumber);
+    void SetDataChanged(bool bValue);
 
 private:   /*data*/
     Ui::CliphistWindow *        ui;
 
     QClipboard *                m_pClipboard;
+    bool                        m_bChangedData;         // temp
     bool    	                m_bMyCopy;              // temp
     bool                        m_bColorToggle;         // temp
     QList<QListWidgetItem *>    m_aFindList;            // temp
@@ -72,6 +82,7 @@ private:   /*data*/
     QByteArray                  m_aEditDialogGeometry;  // temp
     int                         m_iActSelectedIndex;    // temp
     QBrush                      m_aLastColor;           // temp
+    int                         m_iMaxEntries;
     int                         m_iMaxLinesPerEntry;    
     QString                     m_sFileName;
     QString                     m_sLastSearchText;
