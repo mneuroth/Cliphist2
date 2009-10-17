@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading ui file 'cliphistwindow.ui'
 **
-** Created: Tue Oct 13 20:46:32 2009
+** Created: Wed Oct 14 23:43:38 2009
 **      by: Qt User Interface Compiler version 4.5.3
 **
 ** WARNING! All changes made in this file will be lost when recompiling ui file!
@@ -30,7 +30,7 @@ public:
     QAction *actionOpen;
     QAction *actionSave;
     QAction *actionSave_as;
-    QAction *actionExit;
+    QAction *action_Quit;
     QAction *actionHelp;
     QAction *actionAbout;
     QAction *actionDelete_all_entries;
@@ -46,7 +46,8 @@ public:
     QAction *actionAutoload_data;
     QAction *actionAutoload_window_position_and_size;
     QAction *actionAbout_Qt;
-    QAction *actionAllways_on_top;
+    QAction *actionAlways_on_top;
+    QAction *actionMaximal_number_of_entries;
     QWidget *centralWidget;
     QGridLayout *gridLayout;
     QListWidget *listWidgetLineNumbers;
@@ -68,8 +69,8 @@ public:
         actionSave->setObjectName(QString::fromUtf8("actionSave"));
         actionSave_as = new QAction(CliphistWindow);
         actionSave_as->setObjectName(QString::fromUtf8("actionSave_as"));
-        actionExit = new QAction(CliphistWindow);
-        actionExit->setObjectName(QString::fromUtf8("actionExit"));
+        action_Quit = new QAction(CliphistWindow);
+        action_Quit->setObjectName(QString::fromUtf8("action_Quit"));
         actionHelp = new QAction(CliphistWindow);
         actionHelp->setObjectName(QString::fromUtf8("actionHelp"));
         actionAbout = new QAction(CliphistWindow);
@@ -108,10 +109,12 @@ public:
         actionAutoload_window_position_and_size->setChecked(true);
         actionAbout_Qt = new QAction(CliphistWindow);
         actionAbout_Qt->setObjectName(QString::fromUtf8("actionAbout_Qt"));
-        actionAllways_on_top = new QAction(CliphistWindow);
-        actionAllways_on_top->setObjectName(QString::fromUtf8("actionAllways_on_top"));
-        actionAllways_on_top->setCheckable(true);
-        actionAllways_on_top->setChecked(false);
+        actionAlways_on_top = new QAction(CliphistWindow);
+        actionAlways_on_top->setObjectName(QString::fromUtf8("actionAlways_on_top"));
+        actionAlways_on_top->setCheckable(true);
+        actionAlways_on_top->setChecked(false);
+        actionMaximal_number_of_entries = new QAction(CliphistWindow);
+        actionMaximal_number_of_entries->setObjectName(QString::fromUtf8("actionMaximal_number_of_entries"));
         centralWidget = new QWidget(CliphistWindow);
         centralWidget->setObjectName(QString::fromUtf8("centralWidget"));
         gridLayout = new QGridLayout(centralWidget);
@@ -164,7 +167,7 @@ public:
         menuFile->addAction(actionSave);
         menuFile->addAction(actionSave_as);
         menuFile->addSeparator();
-        menuFile->addAction(actionExit);
+        menuFile->addAction(action_Quit);
         menu_Edit->addAction(actionDelete_all_entries);
         menu_Edit->addAction(actionDelete_marked_entry);
         menu_Edit->addSeparator();
@@ -179,13 +182,14 @@ public:
         menu_Options->addAction(action_Activate_cliphist);
         menu_Options->addAction(actionErase_clipboard_contents);
         menu_Options->addSeparator();
+        menu_Options->addAction(actionMaximal_number_of_entries);
         menu_Options->addAction(action_Lines_per_entry);
         menu_Options->addAction(actionSelect_font);
         menu_Options->addSeparator();
         menu_Options->addAction(action_Double_click_to_select);
         menu_Options->addAction(actionAutoload_data);
         menu_Options->addAction(actionAutoload_window_position_and_size);
-        menu_Options->addAction(actionAllways_on_top);
+        menu_Options->addAction(actionAlways_on_top);
 
         retranslateUi(CliphistWindow);
 
@@ -201,7 +205,8 @@ public:
         actionSave->setShortcut(QApplication::translate("CliphistWindow", "Ctrl+S", 0, QApplication::UnicodeUTF8));
         actionSave_as->setText(QApplication::translate("CliphistWindow", "Save Data &as...", 0, QApplication::UnicodeUTF8));
         actionSave_as->setShortcut(QApplication::translate("CliphistWindow", "Ctrl+A", 0, QApplication::UnicodeUTF8));
-        actionExit->setText(QApplication::translate("CliphistWindow", "E&xit", 0, QApplication::UnicodeUTF8));
+        action_Quit->setText(QApplication::translate("CliphistWindow", "&Quit", 0, QApplication::UnicodeUTF8));
+        action_Quit->setShortcut(QApplication::translate("CliphistWindow", "Ctrl+Q", 0, QApplication::UnicodeUTF8));
         actionHelp->setText(QApplication::translate("CliphistWindow", "&Help...", 0, QApplication::UnicodeUTF8));
         actionHelp->setShortcut(QApplication::translate("CliphistWindow", "F1", 0, QApplication::UnicodeUTF8));
         actionAbout->setText(QApplication::translate("CliphistWindow", "&About...", 0, QApplication::UnicodeUTF8));
@@ -221,8 +226,9 @@ public:
         action_Double_click_to_select->setText(QApplication::translate("CliphistWindow", "&Double click to select", 0, QApplication::UnicodeUTF8));
         actionAutoload_data->setText(QApplication::translate("CliphistWindow", "&Autoload data", 0, QApplication::UnicodeUTF8));
         actionAutoload_window_position_and_size->setText(QApplication::translate("CliphistWindow", "Autoload &window position and size", 0, QApplication::UnicodeUTF8));
-        actionAbout_Qt->setText(QApplication::translate("CliphistWindow", "About Qt...", 0, QApplication::UnicodeUTF8));
-        actionAllways_on_top->setText(QApplication::translate("CliphistWindow", "Allways on top", 0, QApplication::UnicodeUTF8));
+        actionAbout_Qt->setText(QApplication::translate("CliphistWindow", "About &Qt...", 0, QApplication::UnicodeUTF8));
+        actionAlways_on_top->setText(QApplication::translate("CliphistWindow", "Always on &top", 0, QApplication::UnicodeUTF8));
+        actionMaximal_number_of_entries->setText(QApplication::translate("CliphistWindow", "Ma&ximal number of entries...", 0, QApplication::UnicodeUTF8));
         menuFile->setTitle(QApplication::translate("CliphistWindow", "&File", 0, QApplication::UnicodeUTF8));
         menu_Edit->setTitle(QApplication::translate("CliphistWindow", "&Edit", 0, QApplication::UnicodeUTF8));
         menuHelp->setTitle(QApplication::translate("CliphistWindow", "&Help", 0, QApplication::UnicodeUTF8));

@@ -84,7 +84,7 @@
     <addaction name="actionSave"/>
     <addaction name="actionSave_as"/>
     <addaction name="separator"/>
-    <addaction name="actionExit"/>
+    <addaction name="action_Quit"/>
    </widget>
    <widget class="QMenu" name="menu_Edit">
     <property name="title">
@@ -114,13 +114,14 @@
     <addaction name="action_Activate_cliphist"/>
     <addaction name="actionErase_clipboard_contents"/>
     <addaction name="separator"/>
+    <addaction name="actionMaximal_number_of_entries"/>
     <addaction name="action_Lines_per_entry"/>
     <addaction name="actionSelect_font"/>
     <addaction name="separator"/>
     <addaction name="action_Double_click_to_select"/>
     <addaction name="actionAutoload_data"/>
     <addaction name="actionAutoload_window_position_and_size"/>
-    <addaction name="actionAllways_on_top"/>
+    <addaction name="actionAlways_on_top"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Edit"/>
@@ -151,9 +152,12 @@
     <string>Ctrl+A</string>
    </property>
   </action>
-  <action name="actionExit">
+  <action name="action_Quit">
    <property name="text">
-    <string>E&amp;xit</string>
+    <string>&amp;Quit</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Q</string>
    </property>
   </action>
   <action name="actionHelp">
@@ -267,10 +271,10 @@
   </action>
   <action name="actionAbout_Qt">
    <property name="text">
-    <string>About Qt...</string>
+    <string>About &amp;Qt...</string>
    </property>
   </action>
-  <action name="actionAllways_on_top">
+  <action name="actionAlways_on_top">
    <property name="checkable">
     <bool>true</bool>
    </property>
@@ -278,7 +282,12 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Allways on top</string>
+    <string>Always on &amp;top</string>
+   </property>
+  </action>
+  <action name="actionMaximal_number_of_entries">
+   <property name="text">
+    <string>Ma&amp;ximal number of entries...</string>
    </property>
   </action>
  </widget>
