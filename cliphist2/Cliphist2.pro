@@ -12,3 +12,6 @@ HEADERS += cliphistwindow.h \
     edititem.h
 FORMS += cliphistwindow.ui \
     edititem.ui
+
+TRANSLATIONS = cliphist_de.ts \
+               cliphist_nl.ts
