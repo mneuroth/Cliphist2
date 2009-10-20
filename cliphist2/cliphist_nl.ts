@@ -4,100 +4,100 @@
 <context>
     <name>CliphistWindow</name>
     <message>
-        <location filename="cliphistwindow.cpp" line="115"/>
+        <location filename="cliphistwindow.cpp" line="121"/>
         <source>Help</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="115"/>
+        <location filename="cliphistwindow.cpp" line="121"/>
         <source>Sorry, no help available yet !</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="133"/>
+        <location filename="cliphistwindow.cpp" line="139"/>
         <source>About Application</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="133"/>
+        <location filename="cliphistwindow.cpp" line="139"/>
         <source>Clipboard History 2
 
 (c) 1993-2009 by Michael Neuroth</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="138"/>
+        <location filename="cliphistwindow.cpp" line="144"/>
         <location filename="cliphistwindow.ui" line="14"/>
         <source>Clipboard History 2</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="143"/>
-        <location filename="cliphistwindow.cpp" line="261"/>
+        <location filename="cliphistwindow.cpp" line="149"/>
+        <location filename="cliphistwindow.cpp" line="271"/>
         <source>Question</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="143"/>
+        <location filename="cliphistwindow.cpp" line="149"/>
         <source>Really delete all items in the list ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="166"/>
-        <location filename="cliphistwindow.cpp" line="311"/>
+        <location filename="cliphistwindow.cpp" line="172"/>
         <location filename="cliphistwindow.cpp" line="321"/>
+        <location filename="cliphistwindow.cpp" line="331"/>
         <source>Input</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="166"/>
+        <location filename="cliphistwindow.cpp" line="172"/>
         <source>Find text:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="180"/>
-        <location filename="cliphistwindow.cpp" line="193"/>
+        <location filename="cliphistwindow.cpp" line="186"/>
+        <location filename="cliphistwindow.cpp" line="199"/>
         <source>Warning</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="180"/>
+        <location filename="cliphistwindow.cpp" line="186"/>
         <source>Search text not found !</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="193"/>
+        <location filename="cliphistwindow.cpp" line="199"/>
         <source>No more occurrences of the search text found !</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="261"/>
+        <location filename="cliphistwindow.cpp" line="271"/>
         <source>Actual data not saved, really load new data ?</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="267"/>
+        <location filename="cliphistwindow.cpp" line="277"/>
         <source>Open Data</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="267"/>
-        <location filename="cliphistwindow.cpp" line="283"/>
+        <location filename="cliphistwindow.cpp" line="277"/>
+        <location filename="cliphistwindow.cpp" line="293"/>
         <source>Data Files (*.dat)</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="283"/>
+        <location filename="cliphistwindow.cpp" line="293"/>
         <source>Save Data as</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="311"/>
+        <location filename="cliphistwindow.cpp" line="321"/>
         <source>Maximal number of entries:</source>
         <translation type="unfinished"></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="321"/>
+        <location filename="cliphistwindow.cpp" line="331"/>
         <source>Lines per entry:</source>
         <translation type="unfinished"></translation>
     </message>
@@ -224,17 +224,20 @@
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="221"/>
-        <source>&amp;Activate cliphist</source>
+        <source>&amp;Activate Clipboart History</source>
+        <oldsource>&amp;Activate cliphist</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="226"/>
-        <source>&amp;Erase clipboard contents</source>
+        <source>&amp;Erase actual clipboard contents</source>
+        <oldsource>&amp;Erase clipboard contents</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="231"/>
-        <source>&amp;Lines per entry...</source>
+        <source>Show &amp;lines per entry...</source>
+        <oldsource>&amp;Lines per entry...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
