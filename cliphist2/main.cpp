@@ -2,6 +2,7 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
+#include <QDir>
 #include "cliphistwindow.h"
 
 int main(int argc, char *argv[])
@@ -13,7 +14,13 @@ int main(int argc, char *argv[])
     a.installTranslator(&qtTranslator);
 
     QTranslator myappTranslator;
-    myappTranslator.load("cliphist_" + QLocale::system().name());
+    bool bOk = myappTranslator.load("cliphist_" + QLocale::system().name());
+#if defined(Q_OS_MAC)
+    if( !bOk )
+    {
+        bOk = myappTranslator.load(QDir::currentPath()+QString("/Cliphist2.app/Contents/Resources/cliphist_")+QLocale::system().name());
+    }
+#endif
     a.installTranslator(&myappTranslator);
     
     CliphistWindow w;
