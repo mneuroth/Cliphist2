@@ -4,13 +4,14 @@
 #include "ui_edititem.h"
 
 #include <QString>
+#include <QFont>
 
 class EditItem : public QDialog
 {
     Q_OBJECT
 
 public:
-    EditItem(QWidget *parent = 0, const QString & sText = "");
+    EditItem(QWidget *parent = 0, const QFont & aFont = QFont(), const QString & sText = "");
  
     QString text() const;
 

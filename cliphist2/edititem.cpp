@@ -2,11 +2,12 @@
 
 #include <QtGui/QTextEdit>
 
-EditItem::EditItem(QWidget *parent, const QString & sText)
+EditItem::EditItem(QWidget *parent, const QFont & aFont, const QString & sText)
 : QDialog(parent)
 {
     ui.setupUi(this);
     ui.textEdit->setText(sText);
+    ui.textEdit->setFont(aFont);
 }
 
 QString EditItem::text() const
