@@ -1,5 +1,5 @@
 /*
-    Initial Version for OS/2:         1993
+    Initial Version for OS/2:         1994
     Ported to Windows XP:             2001
     Started porting to Qt:       12.9.2009    (Mac, Linux, Windows)
     
@@ -9,6 +9,13 @@
        lrelease Cliphist2.pro   *.ts  --> *.qm
        
     *.pro file must contain something like: TRANSLATIONS = cliphist_de.ts
+
+    qmake -spec macx-g++ Cliphist2.pro [CONFIG+=release]
+    make
+    cp *.qm Cliphist2.app/Contents/Resources/
+    macdeployqt Cliphist2.app -dmg
+
+TODO: wo müssen die Daten landen --> user directory ?
 */
 
 #include "cliphistwindow.h"
@@ -205,12 +212,11 @@ void CliphistWindow::OnEditItem()
     QList<QListWidgetItem *> aList = ui->listWidget->selectedItems();
     if( aList.size()==1 )
     {
-        EditItem aDlg(this,aList[0]->text());
+        EditItem aDlg(this,ui->listWidget->font(),m_aTxtHistory[ui->listWidget->row(aList[0])]);
         if( m_aEditDialogGeometry.count()>0 )
         {
             aDlg.restoreGeometry(m_aEditDialogGeometry);
         }
-        aDlg.setFont(ui->listWidget->font());
         if( aDlg.exec()==QDialog::Accepted )
         {
             m_aEditDialogGeometry = aDlg.saveGeometry();
@@ -223,7 +229,10 @@ void CliphistWindow::OnEditItem()
 
 void CliphistWindow::OnClipboardDataChanged()
 {
-    if( !m_bMyCopy && !(m_pClipboard->text().isEmpty() || m_pClipboard->text().isNull()) && ui->action_Activate_cliphist->isChecked() )
+    if( !m_bMyCopy &&
+        !(m_pClipboard->text().isEmpty() || m_pClipboard->text().isNull()) &&
+        (m_aTxtHistory.size()==0 || m_pClipboard->text()!=m_aTxtHistory[0]) &&   // skip this entry if it is the same as the last entry !
+        ui->action_Activate_cliphist->isChecked() )
     {
         UpdateColorOfLastSelectedItem();
         m_aTxtHistory.insert(0,m_pClipboard->text());
@@ -350,32 +359,32 @@ QListWidgetItem * CliphistWindow::CreateNewItem(const QString & s)
 QPair<QString,bool> CliphistWindow::FilterForDisplay(const QString & s) const
 {
     QString sRet;
-    QStringList aList = s.split("\n");
+    QStringList aList = s.split(GetNewLine());
     int iMax = qMin(m_iMaxLinesPerEntry,aList.size());
     bool bMoreLines = m_iMaxLinesPerEntry<aList.size();
     for( int i=0; i<iMax; i++ )
     {
-        sRet += aList[i]+'\n';
+        sRet += aList[i]+GetNewLine();
     }
-    return QPair<QString,bool>(sRet.mid(0,sRet.size()-1),bMoreLines);   // remove last \n from return string;
+    return QPair<QString,bool>(sRet.mid(0,sRet.size()-GetNewLine().size()),bMoreLines);   // remove last \n from return string;
 }
 
 QString CliphistWindow::FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines ) const
 {
     QString sRet;
-    QStringList aList = s.split("\n");
+    QStringList aList = s.split(GetNewLine());
     for( int i=0; i<aList.size(); i++ )
     {
         if( bMoreLines && i==aList.size()-1 )
         {
-            sRet += "...\n";
+            sRet += QString("...")+GetNewLine();
         }
         else
         {
-            sRet += i==0 ? sNumber+"\n" : "\n";
+            sRet += i==0 ? sNumber+GetNewLine() : GetNewLine();
         }
     }
-    return sRet.mid(0,sRet.size()-1);   // remove last \n from return string
+    return sRet.mid(0,sRet.size()-GetNewLine().size());   // remove last \n from return string
 }
 
 bool CliphistWindow::SyncListWithUi()
@@ -509,10 +518,23 @@ void CliphistWindow::SetFont(const QFont & aFont)
     ui->listWidgetLineNumbers->setFont(aFont);
     // update width of the number list widget
     QFontMetrics aMetrics(aFont);
-    ui->listWidgetLineNumbers->setMaximumWidth(aMetrics.boundingRect(QString("XXXX")).width());
+    ui->listWidgetLineNumbers->setMaximumWidth(aMetrics.boundingRect(QString("XXXXX")).width());
 }
 
 void CliphistWindow::SetDataChanged(bool bValue)
 {
     m_bChangedData = bValue;
+}
+
+QString CliphistWindow::GetNewLine() const
+{
+#if defined(Q_OS_LINUX)
+    return "\n";
+#elif defined(Q_OS_MAC)
+    return "\n";
+#elif defined(Q_OS_WIN32)
+    return "\n";
+#else
+#error platform not supported
+#endif
 }

@@ -69,6 +69,7 @@ private:
     void SetFont(const QFont & aFont);
     void InsertNewData(const QString & sText, int iNumber);
     void SetDataChanged(bool bValue);
+    QString GetNewLine() const;
 
 private:   /*data*/
     Ui::CliphistWindow *        ui;

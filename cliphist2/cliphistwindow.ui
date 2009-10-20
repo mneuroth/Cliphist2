@@ -73,7 +73,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>21</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -218,17 +218,17 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Activate cliphist</string>
+    <string>&amp;Activate Clipboart History</string>
    </property>
   </action>
   <action name="actionErase_clipboard_contents">
    <property name="text">
-    <string>&amp;Erase clipboard contents</string>
+    <string>&amp;Erase actual clipboard contents</string>
    </property>
   </action>
   <action name="action_Lines_per_entry">
    <property name="text">
-    <string>&amp;Lines per entry...</string>
+    <string>Show &amp;lines per entry...</string>
    </property>
   </action>
   <action name="actionSelect_font">
