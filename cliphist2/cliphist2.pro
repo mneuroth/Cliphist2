@@ -1,7 +1,7 @@
 # -------------------------------------------------
 # Project created by QtCreator 2009-09-12T14:27:03
 # -------------------------------------------------
-TARGET = Cliphist2
+TARGET = cliphist2
 TEMPLATE = app
 
 # CONFIG = qt warn_on debug thread static
