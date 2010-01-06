@@ -1,3 +1,27 @@
+/**************************************************************************
+ *
+ *	project				 : cliphist2
+ *
+ *	copyright            : (C) 2009-2010 by Michael Neuroth
+ *
+ * ------------------------------------------------------------------------
+ *
+ *  $Source: E:/home/cvsroot/visiscript/visiscript.cpp,v $
+ *
+ */
+/*********************************************************************************
+ *																				 *
+ * This file is part of the Cliphist2 package (a clipboard history application)  *
+ *																				 *
+ * Copyright (C) 2009-2010 by Michael Neuroth.								     *
+ *                                                                               *
+ * This program is free software; you can redistribute it and/or modify			 *
+ * it under the terms of the GNU General Public License as published by    		 *
+ * the Free Software Foundation; either version 2 of the License, or             *
+ * (at your option) any later version.                                           *
+ *                                                                               *
+ ********************************************************************************/
+
 #ifndef CLIPHISTWINDOW_H
 #define CLIPHISTWINDOW_H
 
@@ -7,8 +31,10 @@
 #include <QList>
 #include <QByteArray>
 #include <QPair>
+#include <QClipboard>
 
 class QClipboard;
+class QTimer;
 class QListWidgetItem;
     
 namespace Ui
@@ -37,6 +63,10 @@ private slots:
     void OnFindNextItem();
     void OnEditItem();
     void OnClipboardDataChanged();
+    void OnClipboardChanged(QClipboard::Mode);
+#if defined(Q_OS_MAC)
+    void OnTimerUpdate();
+#endif
     void OnEraseClipboard();
     void OnSelectFont();
     void OnMaxEntries();
@@ -59,9 +89,6 @@ private:
     bool Save();
     bool Load();
     bool SyncListWithUi();
-    QListWidgetItem * CreateNewItem(const QString & s);
-    QPair<QString,bool> FilterForDisplay(const QString & s) const;
-    QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
     void ActivateEntry(int iIndex);   
     void ActivateEntry(QListWidgetItem * current);
     void UpdateColorOfLastSelectedItem();
@@ -70,11 +97,15 @@ private:
     void InsertNewData(const QString & sText, int iNumber);
     void SetDataChanged(bool bValue);
     QString GetNewLine() const;
+    QListWidgetItem * CreateNewItem(const QString & s);
+    QPair<QString,bool> FilterForDisplay(const QString & s) const;
+    QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
 
 private:   /*data*/
     Ui::CliphistWindow *        ui;
 
     QClipboard *                m_pClipboard;
+    QTimer *                    m_pTimer;
     bool                        m_bChangedData;         // temp
     bool    	                m_bMyCopy;              // temp
     bool                        m_bColorToggle;         // temp
