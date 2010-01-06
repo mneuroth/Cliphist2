@@ -89,6 +89,8 @@ private:
     bool IsActClipboardEntrySameAsActSelectedItem() const;
     bool IsActClipboardEntryEmpty() const;
     bool IsAnyItemSelected() const;
+    void LoadAndCheck();
+    void SaveAndCheck();
     void ActivateEntry(int iIndex);   
     void ActivateEntry(QListWidgetItem * current);
     void UpdateColorOfLastSelectedItem();
@@ -96,7 +98,11 @@ private:
     void SetFont(const QFont & aFont);
     void InsertNewData(const QString & sText, int iNumber);
     void SetDataChanged(bool bValue);
-    QListWidgetItem * CreateNewItem(const QString & s);
+    void UpdateSelection(int iCurrentRow);
+    QBrush GetColorOfNeighbour(int iMyIndex) const;
+    QBrush GetNextColor(const QBrush & aActColor) const;
+    QBrush GetColorForIndex(int iIndex) const;
+    QListWidgetItem * CreateNewItem(const QString & s, const QBrush & aBrush);
     QPair<QString,bool> FilterForDisplay(const QString & s) const;
     QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
     QString GetNewLine() const;
@@ -108,12 +114,10 @@ private:   /*data*/
     QTimer *                    m_pTimer;               // temp
     QList<QListWidgetItem *>    m_aFindList;            // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
-    QBrush                      m_aLastColor;           // temp
     bool                        m_bChangedData;         // temp
     bool    	                m_bMyCopy;              // temp
-    bool                        m_bColorToggle;         // temp
     int                         m_iFindIndex;           // temp
-    int                         m_iActSelectedIndex;    // temp
+    int                         m_iActSelectedIndex;    // temp --> TODO: maybe use ui->listWidget->currentItem() ?
     int                         m_iMaxEntries;
     int                         m_iMaxLinesPerEntry;    
     QString                     m_sFileName;

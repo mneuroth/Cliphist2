@@ -68,6 +68,9 @@
 #define DEFAULT_FILE_NAME           "cliphist2.dat"
 #define DEFAULT_LINES_PER_ENTRY     3
 #define DEFAULT_MAX_ENTRIES         100
+#define BLUE                        "#0000ff"   //"blue"
+#define GREEN                       "#008000"   //"green"
+#define RED                         "#ff0000"   //"red"
 
 // ************************************************************************
 
@@ -85,7 +88,6 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     m_iFindIndex        = -1;
     m_bChangedData      = false;
     m_bMyCopy           = false;
-    m_bColorToggle      = false;    
     m_iActSelectedIndex = -1;
     m_iMaxEntries       = DEFAULT_MAX_ENTRIES;
     m_iMaxLinesPerEntry = DEFAULT_LINES_PER_ENTRY;
@@ -94,11 +96,12 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     LoadSettings();
     if( ui->actionAutoload_data->isChecked() )
     {
-        Load();
+        LoadAndCheck();
     }
+    SyncListWithUi();
+
     OnToggleAlwaysOnTop(ui->actionAlways_on_top->isChecked());
-    SyncListWithUi();    
-        
+
     connect(m_pClipboard, SIGNAL(changed(QClipboard::Mode)), this, SLOT(OnClipboardChanged(QClipboard::Mode)));
     connect(m_pClipboard, SIGNAL(dataChanged()), this, SLOT(OnClipboardDataChanged()));
 // TODO findBufferChanged signal ?
@@ -147,7 +150,7 @@ CliphistWindow::~CliphistWindow()
 {
     if( ui->actionAutoload_data->isChecked() )
     {
-        Save();
+        SaveAndCheck();
     }
     SaveSettings();
     delete m_pTimer;
@@ -195,10 +198,9 @@ void CliphistWindow::OnDeleteAllItems()
 
 void CliphistWindow::OnDeleteItem()
 {
-    QList<QListWidgetItem *> aList = ui->listWidget->selectedItems();
-    if( aList.size()>0 )
+    if( ui->listWidget->currentItem() )
     {
-        int iIndexOfSelectedItem = ui->listWidget->row(aList[0]);
+        int iIndexOfSelectedItem = ui->listWidget->currentRow();
         m_aTxtHistory.removeAt(iIndexOfSelectedItem);
         // WARNING:
         // side effect --> if actual selected item is the contents of the clipboard,
@@ -209,6 +211,7 @@ void CliphistWindow::OnDeleteItem()
         }
         SetDataChanged(true);
         SyncListWithUi();
+        UpdateSelection(iIndexOfSelectedItem);
     }
 }
 
@@ -248,10 +251,10 @@ void CliphistWindow::OnFindNextItem()
 
 void CliphistWindow::OnEditItem()
 {
-    QList<QListWidgetItem *> aList = ui->listWidget->selectedItems();
-    if( aList.size()==1 )
+    if( ui->listWidget->currentItem() )
     {
-        EditItem aDlg(this,ui->listWidget->font(),m_aTxtHistory[ui->listWidget->row(aList[0])]);
+        int iCurrentRow = ui->listWidget->currentRow();
+        EditItem aDlg(this,ui->listWidget->font(),m_aTxtHistory[iCurrentRow]);
         if( m_aEditDialogGeometry.count()>0 )
         {
             aDlg.restoreGeometry(m_aEditDialogGeometry);
@@ -259,11 +262,25 @@ void CliphistWindow::OnEditItem()
         if( aDlg.exec()==QDialog::Accepted )
         {
             m_aEditDialogGeometry = aDlg.saveGeometry();
-            m_aTxtHistory[ui->listWidget->row(aList[0])] = aDlg.text();
+            m_aTxtHistory[ui->listWidget->currentRow()] = aDlg.text();
             SetDataChanged(true);
             SyncListWithUi();
+            UpdateSelection(iCurrentRow);
         }
     }        
+}
+
+void CliphistWindow::UpdateSelection(int iCurrentRow)
+{
+    // update selection after modifying list
+    if( iCurrentRow<ui->listWidget->count() )
+    {
+        ui->listWidget->setCurrentRow(iCurrentRow);
+    }
+    else
+    {
+        ui->listWidget->setCurrentRow(ui->listWidget->count()-1);
+    }
 }
 
 bool CliphistWindow::IsActClipboardEntrySameAsActSelectedItem() const
@@ -303,7 +320,6 @@ void CliphistWindow::OnClipboardDataChanged()
             m_aTxtHistory.removeLast();
         }
         SetDataChanged(true);
-        //InsertNewData(m_pClipboard->text(),1);        
         SyncListWithUi();        
         UpdateLastSelectedItemData(ui->listWidget->item(0));        // update of clipboard data always into index 0 !
     }
@@ -318,7 +334,7 @@ void CliphistWindow::OnClipboardDataChanged()
     }
 }
 
-void CliphistWindow::OnClipboardChanged(QClipboard::Mode aMode)
+void CliphistWindow::OnClipboardChanged(QClipboard::Mode /*aMode*/)
 {
 }
 
@@ -352,7 +368,23 @@ void CliphistWindow::OnItemActivated(QListWidgetItem* current)
 
 void CliphistWindow::OnSelectionChanged()
 {
-    emit SelectionChanged(ui->listWidget->selectedItems().size()>0);
+    emit SelectionChanged(ui->listWidget->currentItem()!=0);
+}
+
+void CliphistWindow::LoadAndCheck()
+{
+    if( !Load() )
+    {
+        QMessageBox::warning(this,tr("Warning"),QString(tr("Can not read data file %1")).arg(m_sFileName),QMessageBox::Ok);
+    }
+}
+
+void CliphistWindow::SaveAndCheck()
+{
+    if( !Save() )
+    {
+        QMessageBox::warning(this,tr("Warning"),QString(tr("Can not save data file %1")).arg(m_sFileName),QMessageBox::Ok);
+    }
 }
 
 void CliphistWindow::OnLoadData()
@@ -369,14 +401,14 @@ void CliphistWindow::OnLoadData()
     if( !sFileName.isEmpty() )
     {
         m_sFileName = sFileName;
-        Load();
+        LoadAndCheck();
         SyncListWithUi();
     }
 }
 
 void CliphistWindow::OnSaveData()
 {
-    Save();
+    SaveAndCheck();
 }
 
 void CliphistWindow::OnSaveDataAs()
@@ -385,7 +417,7 @@ void CliphistWindow::OnSaveDataAs()
     if( !sFileName.isEmpty() )
     {
         m_sFileName = sFileName;
-        Save();
+        SaveAndCheck();
     }
 }
 
@@ -427,14 +459,13 @@ void CliphistWindow::OnLinesPerEntry()
     }
 }    
 
-QListWidgetItem * CliphistWindow::CreateNewItem(const QString & s)
+QListWidgetItem * CliphistWindow::CreateNewItem(const QString & s, const QBrush & aBrush)
 {
     QPair<QString,bool> aResult = FilterForDisplay(s);
     QListWidgetItem * pItem = new QListWidgetItem(aResult.first,/*parent*/0,aResult.second ? 1 : 0);
-    pItem->setForeground( m_bColorToggle ? QBrush("blue") : QBrush("green") );
+    pItem->setForeground(aBrush);
     //pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEditable|Qt::ItemIsEnabled);
     pItem->setToolTip(s);
-    m_bColorToggle = !m_bColorToggle;
     return pItem;
 }
 
@@ -500,13 +531,12 @@ bool CliphistWindow::SyncListWithUi()
     {
         UpdateLastSelectedItemData(ui->listWidget->item(m_iActSelectedIndex));
     }
-// TODO: beim sync den aktuellen Eintrag behandeln ! --> m_iActSelectedIndex
     return true;
 }
 
 void CliphistWindow::InsertNewData(const QString & sText, int iNumber)
 {
-    QListWidgetItem * pNewItem = CreateNewItem(sText);
+    QListWidgetItem * pNewItem = CreateNewItem(sText,GetColorForIndex(iNumber));
     ui->listWidget->insertItem(0,pNewItem);
     QListWidgetItem * pNewNumberItem = pNewItem->clone();
     QString s = pNewNumberItem->text();
@@ -521,7 +551,6 @@ bool CliphistWindow::SaveSettings()
     QSettings aSettings;
     
     aSettings.setValue("App/DataFileName",m_sFileName);
-// TODO: hier pruefen ob der Dateiname auch existiert !!!
     aSettings.setValue("App/LastSearchText",m_sLastSearchText);
     aSettings.setValue("App/MaxLinesPerEntry",m_iMaxLinesPerEntry);    
     aSettings.setValue("App/MaxEntries",m_iMaxEntries);    
@@ -561,25 +590,34 @@ bool CliphistWindow::LoadSettings()
 bool CliphistWindow::Save()
 {
     QFile aFile(m_sFileName);
-    aFile.open(QIODevice::WriteOnly);
-    QDataStream out(&aFile);
-    out << "CLIPHIST2";
-    out << "VERSION" << FILE_VERSION;
-    out << m_aTxtHistory;
-    SetDataChanged(false);
-    return out.status()==QDataStream::Ok;
+    if( aFile.open(QIODevice::WriteOnly) )
+    {
+        QDataStream out(&aFile);
+        out << "CLIPHIST2";
+        out << "VERSION" << FILE_VERSION;
+        out << m_aTxtHistory;
+        SetDataChanged(false);
+        return out.status()==QDataStream::Ok;
+    }
+    return false;
 }
 
 bool CliphistWindow::Load()
 {
-    QFile aFile(m_sFileName);
-    aFile.open(QIODevice::ReadOnly);
-    QDataStream in(&aFile);
-    qint32 iVersion;
-    QString s1,s2;
-    in >> s1 >> s2 >> iVersion >> m_aTxtHistory;
-    SetDataChanged(false);
-    return in.status()==QDataStream::Ok;
+    if( QFile::exists(m_sFileName) )
+    {
+        QFile aFile(m_sFileName);
+        if( aFile.open(QIODevice::ReadOnly) )
+        {
+            QDataStream in(&aFile);
+            qint32 iVersion;
+            QString s1,s2;
+            in >> s1 >> s2 >> iVersion >> m_aTxtHistory;
+            SetDataChanged(false);
+            return in.status()==QDataStream::Ok;
+        }
+    }
+    return false;
 }
 
 void CliphistWindow::ActivateEntry(int iIndex)
@@ -600,23 +638,51 @@ void CliphistWindow::ActivateEntry(QListWidgetItem * current)
     }
 }
 
+QBrush CliphistWindow::GetNextColor(const QBrush & aActColor) const
+{
+    return aActColor.color().name()==GREEN ? QBrush(BLUE) : QBrush(GREEN);
+}
+
+QBrush CliphistWindow::GetColorForIndex(int iIndex) const
+{
+    return (iIndex % 2)==1 ? QBrush(BLUE) : QBrush(GREEN);
+}
+
+QBrush CliphistWindow::GetColorOfNeighbour(int iMyIndex) const
+{
+    int iNeighbourIndex = -1;
+    if( iMyIndex>0 )
+    {
+        iNeighbourIndex = iMyIndex-1;
+    }
+    else if( iMyIndex-1<ui->listWidget->count() )
+    {
+        iNeighbourIndex = iMyIndex+1;
+    }
+    if( iNeighbourIndex!=-1 )
+    {
+        return GetNextColor(ui->listWidget->item( iNeighbourIndex )->foreground());
+    }
+    return QBrush(BLUE);
+}
+
 void CliphistWindow::UpdateColorOfLastSelectedItem()
 {
     if( m_iActSelectedIndex>=0 )
     {
-        ui->listWidget->item(m_iActSelectedIndex)->setForeground(m_aLastColor);
-        ui->listWidgetLineNumbers->item(m_iActSelectedIndex)->setForeground(m_aLastColor);
+        QBrush aColor = GetColorOfNeighbour(m_iActSelectedIndex);
+        ui->listWidget->item(m_iActSelectedIndex)->setForeground(aColor);
+        ui->listWidgetLineNumbers->item(m_iActSelectedIndex)->setForeground(aColor);
     }
 }
 
 void CliphistWindow::UpdateLastSelectedItemData(QListWidgetItem * current)
 {
     m_iActSelectedIndex = ui->listWidget->row(current);
-    m_aLastColor = current->foreground();
-    current->setForeground(QBrush("red"));
+    current->setForeground(QBrush(RED));
     // create also a number entry
     QListWidgetItem * pNumber = ui->listWidgetLineNumbers->item(m_iActSelectedIndex);
-    pNumber->setForeground(QBrush("red"));
+    pNumber->setForeground(QBrush(RED));
 }
 
 void CliphistWindow::SetFont(const QFont & aFont)
@@ -635,13 +701,5 @@ void CliphistWindow::SetDataChanged(bool bValue)
 
 QString CliphistWindow::GetNewLine() const
 {
-#if defined(Q_OS_LINUX)
     return "\n";
-#elif defined(Q_OS_MAC)
-    return "\n";
-#elif defined(Q_OS_WIN32)
-    return "\n";
-#else
-#error platform not supported
-#endif
 }
