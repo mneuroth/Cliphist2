@@ -18,12 +18,13 @@
  *                                                                               *
  ********************************************************************************/
 
+#include "cliphistwindow.h"
+
 #include <QtGui/QApplication>
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
 #include <QDir>
-#include "cliphistwindow.h"
 
 int main(int argc, char *argv[])
 {
