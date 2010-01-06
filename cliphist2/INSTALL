@@ -1,0 +1,20 @@
+Basic Installation
+==================
+
+Here are the instructions to build the cliphist2 application
+for all supported platforms.
+
+  a) Mac OS X (for Qt 4.x), tested: Mac OS X 10.6
+  b) Linux Desktop (for Qt 4.x), tested: Ubuntu 9.04 and SuSE 11.1
+  c) Windows Desktop (for Qt 4.x, mingw), tested: Windows XP Home
+
+This release supports only Qt4 (tested with 4.5.3 and 4.6.0).
+
+Build with qmake:
+-----------------
+Unpack the source code into a directory, enter this directory and run:
+
+  qmake -r cliphist2.pro
+  make                      # for linux and Mac
+ or:
+  mingw32-make              # for windows 
