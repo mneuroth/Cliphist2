@@ -40,6 +40,8 @@ int main(int argc, char *argv[])
     {
         bOk = myappTranslator.load(QDir::currentPath()+QString("/Cliphist2.app/Contents/Resources/cliphist_")+QLocale::system().name());
     }
+#else
+    bOk = bOk;      // disable compiler warning for other platforms than Mac
 #endif
     a.installTranslator(&myappTranslator);
     
