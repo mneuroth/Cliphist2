@@ -1,0 +1,1 @@
+zip -r cliphist2_src.zip *.h *.cpp *.ui *.ts *.qm *.pro AUTHORS BUGS COPYING HISTORY INSTALL README *.txt *.sh *.png *.icns *.ico *.xcf *.rc
