@@ -74,13 +74,10 @@ private slots:
     void OnHelp();
     void OnAbout();
     void OnAboutQt();
-
     void OnToggleAlwaysOnTop(bool bChecked);
-
     void OnItemClicked(QListWidgetItem * current);
     void OnItemDoubleClicked(QListWidgetItem * current);
-    void OnItemActivated(QListWidgetItem * current);
-    
+    void OnItemActivated(QListWidgetItem * current);    
     void OnSelectionChanged();
 
 private:
@@ -89,6 +86,9 @@ private:
     bool Save();
     bool Load();
     bool SyncListWithUi();
+    bool IsActClipboardEntrySameAsActSelectedItem() const;
+    bool IsActClipboardEntryEmpty() const;
+    bool IsAnyItemSelected() const;
     void ActivateEntry(int iIndex);   
     void ActivateEntry(QListWidgetItem * current);
     void UpdateColorOfLastSelectedItem();
@@ -96,24 +96,24 @@ private:
     void SetFont(const QFont & aFont);
     void InsertNewData(const QString & sText, int iNumber);
     void SetDataChanged(bool bValue);
-    QString GetNewLine() const;
     QListWidgetItem * CreateNewItem(const QString & s);
     QPair<QString,bool> FilterForDisplay(const QString & s) const;
     QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
+    QString GetNewLine() const;
 
 private:   /*data*/
     Ui::CliphistWindow *        ui;
 
-    QClipboard *                m_pClipboard;
-    QTimer *                    m_pTimer;
+    QClipboard *                m_pClipboard;           // temp
+    QTimer *                    m_pTimer;               // temp
+    QList<QListWidgetItem *>    m_aFindList;            // temp
+    QByteArray                  m_aEditDialogGeometry;  // temp
+    QBrush                      m_aLastColor;           // temp
     bool                        m_bChangedData;         // temp
     bool    	                m_bMyCopy;              // temp
     bool                        m_bColorToggle;         // temp
-    QList<QListWidgetItem *>    m_aFindList;            // temp
     int                         m_iFindIndex;           // temp
-    QByteArray                  m_aEditDialogGeometry;  // temp
     int                         m_iActSelectedIndex;    // temp
-    QBrush                      m_aLastColor;           // temp
     int                         m_iMaxEntries;
     int                         m_iMaxLinesPerEntry;    
     QString                     m_sFileName;
