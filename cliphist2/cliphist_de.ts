@@ -4,100 +4,118 @@
 <context>
     <name>CliphistWindow</name>
     <message>
-        <location filename="cliphistwindow.cpp" line="121"/>
+        <location filename="cliphistwindow.cpp" line="174"/>
         <source>Help</source>
         <translation>Hilfe</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="121"/>
+        <location filename="cliphistwindow.cpp" line="174"/>
         <source>Sorry, no help available yet !</source>
         <translation>Bisher ist leider keine Hilfe verfübar !</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="139"/>
+        <location filename="cliphistwindow.cpp" line="192"/>
         <source>About Application</source>
         <translation>Über die Anwendung</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="139"/>
-        <source>Clipboard History 2
-
-(c) 1993-2009 by Michael Neuroth</source>
-        <translation></translation>
-    </message>
-    <message>
-        <location filename="cliphistwindow.cpp" line="144"/>
         <location filename="cliphistwindow.ui" line="14"/>
+        <location filename="cliphistwindow.cpp" line="197"/>
         <source>Clipboard History 2</source>
         <translation></translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="149"/>
-        <location filename="cliphistwindow.cpp" line="271"/>
+        <location filename="cliphistwindow.cpp" line="192"/>
+        <source>Clipboard History 2
+
+Version %1 from %2
+
+(c) 2010 by Michael Neuroth</source>
+        <translation>Clipboard History 2
+
+Version %1 vom %2
+
+(c) 2010 von Michael Neuroth</translation>
+    </message>
+    <message>
+        <location filename="cliphistwindow.cpp" line="202"/>
+        <location filename="cliphistwindow.cpp" line="406"/>
         <source>Question</source>
         <translation>Frage</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="149"/>
+        <location filename="cliphistwindow.cpp" line="202"/>
         <source>Really delete all items in the list ?</source>
         <translation>Wirklich alle Einträge der Liste löschen ?</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="172"/>
-        <location filename="cliphistwindow.cpp" line="321"/>
-        <location filename="cliphistwindow.cpp" line="331"/>
+        <location filename="cliphistwindow.cpp" line="233"/>
+        <location filename="cliphistwindow.cpp" line="456"/>
+        <location filename="cliphistwindow.cpp" line="466"/>
         <source>Input</source>
         <translation>Eingabe</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="172"/>
+        <location filename="cliphistwindow.cpp" line="233"/>
         <source>Find text:</source>
         <translation>Finde Text:</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="186"/>
-        <location filename="cliphistwindow.cpp" line="199"/>
+        <location filename="cliphistwindow.cpp" line="247"/>
+        <location filename="cliphistwindow.cpp" line="260"/>
+        <location filename="cliphistwindow.cpp" line="390"/>
+        <location filename="cliphistwindow.cpp" line="398"/>
         <source>Warning</source>
         <translation>Warnung</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="186"/>
+        <location filename="cliphistwindow.cpp" line="247"/>
         <source>Search text not found !</source>
         <translation>Suchtext nicht gefunden !</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="199"/>
+        <location filename="cliphistwindow.cpp" line="260"/>
         <source>No more occurrences of the search text found !</source>
         <translation>Keine weiteren Vorkommen des Suchtext gefunden !</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="271"/>
+        <location filename="cliphistwindow.cpp" line="390"/>
+        <source>Can not read data file %1</source>
+        <translation>Datei %1 kann nicht gelesen werden</translation>
+    </message>
+    <message>
+        <location filename="cliphistwindow.cpp" line="398"/>
+        <source>Can not save data file %1</source>
+        <translation>Datei %1 kann nicht gespeichert werden</translation>
+    </message>
+    <message>
+        <location filename="cliphistwindow.cpp" line="406"/>
         <source>Actual data not saved, really load new data ?</source>
         <translation>Aktuelle Daten sind nicht gespeichert, wirklich neue Daten einlesen ?</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="277"/>
+        <location filename="cliphistwindow.cpp" line="412"/>
         <source>Open Data</source>
         <translation>Öffne Daten</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="277"/>
-        <location filename="cliphistwindow.cpp" line="293"/>
+        <location filename="cliphistwindow.cpp" line="412"/>
+        <location filename="cliphistwindow.cpp" line="428"/>
         <source>Data Files (*.dat)</source>
         <translation>Daten Dateien (*.dat)</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="293"/>
+        <location filename="cliphistwindow.cpp" line="428"/>
         <source>Save Data as</source>
         <translation>Speichere Daten unter</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="321"/>
+        <location filename="cliphistwindow.cpp" line="456"/>
         <source>Maximal number of entries:</source>
         <translation>Maximale Anzahl von Einträgen:</translation>
     </message>
     <message>
-        <location filename="cliphistwindow.cpp" line="331"/>
+        <location filename="cliphistwindow.cpp" line="466"/>
         <source>Lines per entry:</source>
         <translation>Zeilen pro Eintrag:</translation>
     </message>
@@ -174,8 +192,9 @@
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="173"/>
-        <source>&amp;About...</source>
-        <translation>&amp;Über...</translation>
+        <source>&amp;About cliphist2...</source>
+        <oldsource>&amp;About...</oldsource>
+        <translation>&amp;Über cliphist2...</translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="178"/>
@@ -224,14 +243,14 @@
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="221"/>
-        <source>&amp;Activate Clipboart History</source>
-        <oldsource>&amp;Activate cliphist</oldsource>
+        <source>&amp;Activate Clipboard History</source>
+        <oldsource>&amp;Activate Clipboart History</oldsource>
         <translation>&amp;Aktiviere Clipboard History</translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="226"/>
-        <source>&amp;Erase actual clipboard contents</source>
-        <oldsource>&amp;Erase clipboard contents</oldsource>
+        <source>&amp;Erase actual clipboard content</source>
+        <oldsource>&amp;Erase actual clipboard contents</oldsource>
         <translation>L&amp;ösche aktuellen Inhalt der Zwischenablage</translation>
     </message>
     <message>
@@ -248,7 +267,7 @@
     <message>
         <location filename="cliphistwindow.ui" line="247"/>
         <source>&amp;Double click to select</source>
-        <translation type="unfinished">&amp;Doppel Klick zum Auswählen</translation>
+        <translation>&amp;Doppel Klick zum Auswählen</translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="258"/>
