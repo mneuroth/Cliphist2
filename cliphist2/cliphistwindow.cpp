@@ -33,6 +33,17 @@
     make
     cp *.qm Cliphist2.app/Contents/Resources/
     macdeployqt Cliphist2.app -dmg
+
+    Other resources:
+
+    Qt4 cross platform toolkit
+
+    For the icon:
+      http://commons.wikimedia.org/wiki/File:Nuvola_clipboard_unlined.svg
+      http://commons.wikimedia.org/wiki/File:Stock_alarm.svg
+
+    For the windows installer:
+      http://www.jrsoftware.org/isinfo.php      (Inno Setup)
 */
 
 #include "cliphistwindow.h"
@@ -76,6 +87,9 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     ui->setupUi(this);
     //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     
+    QPixmap aIcon("cliphist2_64x64.png");
+    setWindowIcon(aIcon);
+
     QCoreApplication::setOrganizationName("MNeuroth");
     QCoreApplication::setOrganizationDomain("mneuroth.de");
     QCoreApplication::setApplicationName("ClipHist2");    
@@ -149,7 +163,9 @@ CliphistWindow::~CliphistWindow()
         SaveAndCheck();
     }
     SaveSettings();
+#if defined(Q_OS_MAC)
     delete m_pTimer;
+#endif
     delete ui;
 }
 
@@ -173,7 +189,7 @@ void CliphistWindow::OnToggleAlwaysOnTop(bool bChecked)
 
 void CliphistWindow::OnAbout()
 {
-    QMessageBox::about(this,tr("About Application"),QString(tr("Clipboard History 2\n\nVersion %1\n\n(c) 2010 by Michael Neuroth")).arg(VERSION));
+    QMessageBox::about(this,tr("About Application"),QString(tr("Clipboard History 2\n\nVersion %1 from %2\n\n(c) 2010 by Michael Neuroth")).arg(VERSION,__DATE__));
 }
 
 void CliphistWindow::OnAboutQt()
@@ -651,7 +667,7 @@ QBrush CliphistWindow::GetColorOfNeighbour(int iMyIndex) const
     {
         iNeighbourIndex = iMyIndex-1;
     }
-    else if( iMyIndex-1<ui->listWidget->count() )
+    else if( iMyIndex+1<ui->listWidget->count() )
     {
         iNeighbourIndex = iMyIndex+1;
     }
