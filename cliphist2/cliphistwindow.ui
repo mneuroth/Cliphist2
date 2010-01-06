@@ -218,12 +218,12 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>&amp;Activate Clipboart History</string>
+    <string>&amp;Activate Clipboard History</string>
    </property>
   </action>
   <action name="actionErase_clipboard_contents">
    <property name="text">
-    <string>&amp;Erase actual clipboard contents</string>
+    <string>&amp;Erase actual clipboard content</string>
    </property>
   </action>
   <action name="action_Lines_per_entry">
