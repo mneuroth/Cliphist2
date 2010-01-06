@@ -3,6 +3,8 @@
 # -------------------------------------------------
 TARGET = cliphist2
 TEMPLATE = app
+ICON = cliphist2.icns
+win32:RC_FILE = cliphist2.rc
 
 # CONFIG = qt warn_on debug thread static
 SOURCES += main.cpp \
