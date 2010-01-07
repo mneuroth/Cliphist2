@@ -141,8 +141,9 @@ Version %1 vom %2
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="133"/>
-        <source>&amp;Load Data...</source>
-        <translation>Daten &amp;einlesen...</translation>
+        <source>&amp;Load...</source>
+        <oldsource>&amp;Load Data...</oldsource>
+        <translation>&amp;Einlesen...</translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="136"/>
@@ -151,8 +152,9 @@ Version %1 vom %2
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="141"/>
-        <source>&amp;Save Data</source>
-        <translation>Daten &amp;speichern</translation>
+        <source>&amp;Save</source>
+        <oldsource>&amp;Save Data</oldsource>
+        <translation>&amp;Speichern</translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="144"/>
@@ -161,8 +163,9 @@ Version %1 vom %2
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="149"/>
-        <source>Save Data &amp;as...</source>
-        <translation>Daten speichern &amp;unter...</translation>
+        <source>Save &amp;as...</source>
+        <oldsource>Save Data &amp;as...</oldsource>
+        <translation>Speichern &amp;unter...</translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="152"/>
@@ -214,7 +217,7 @@ Version %1 vom %2
     <message>
         <location filename="cliphistwindow.ui" line="191"/>
         <source>&amp;Find text...</source>
-        <translation>&amp;Finde Text...</translation>
+        <translation>&amp;Suche Text...</translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="194"/>
@@ -224,7 +227,7 @@ Version %1 vom %2
     <message>
         <location filename="cliphistwindow.ui" line="199"/>
         <source>Find &amp;next</source>
-        <translation>Finde &amp;nächstes Vorkommen</translation>
+        <translation>&amp;Weitersuchen</translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="202"/>
@@ -255,9 +258,9 @@ Version %1 vom %2
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="231"/>
-        <source>Show &amp;lines per entry...</source>
-        <oldsource>&amp;Lines per entry...</oldsource>
-        <translation>&amp;Zeige Zeilen pro Eintrag...</translation>
+        <source>&amp;Lines per entry...</source>
+        <oldsource>Show &amp;lines per entry...</oldsource>
+        <translation>&amp;Zeilen pro Eintrag...</translation>
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="236"/>

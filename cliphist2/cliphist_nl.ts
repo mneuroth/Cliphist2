@@ -137,7 +137,8 @@ Version %1 from %2
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="133"/>
-        <source>&amp;Load Data...</source>
+        <source>&amp;Load...</source>
+        <oldsource>&amp;Load Data...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -147,7 +148,8 @@ Version %1 from %2
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="141"/>
-        <source>&amp;Save Data</source>
+        <source>&amp;Save</source>
+        <oldsource>&amp;Save Data</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -157,7 +159,8 @@ Version %1 from %2
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="149"/>
-        <source>Save Data &amp;as...</source>
+        <source>Save &amp;as...</source>
+        <oldsource>Save Data &amp;as...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>
@@ -251,8 +254,8 @@ Version %1 from %2
     </message>
     <message>
         <location filename="cliphistwindow.ui" line="231"/>
-        <source>Show &amp;lines per entry...</source>
-        <oldsource>&amp;Lines per entry...</oldsource>
+        <source>&amp;Lines per entry...</source>
+        <oldsource>Show &amp;lines per entry...</oldsource>
         <translation type="unfinished"></translation>
     </message>
     <message>

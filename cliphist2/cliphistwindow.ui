@@ -114,9 +114,9 @@
     <addaction name="action_Activate_cliphist"/>
     <addaction name="actionErase_clipboard_contents"/>
     <addaction name="separator"/>
-    <addaction name="actionMaximal_number_of_entries"/>
-    <addaction name="action_Lines_per_entry"/>
     <addaction name="actionSelect_font"/>
+    <addaction name="action_Lines_per_entry"/>
+    <addaction name="actionMaximal_number_of_entries"/>
     <addaction name="separator"/>
     <addaction name="action_Double_click_to_select"/>
     <addaction name="actionAutoload_data"/>
@@ -130,7 +130,7 @@
   </widget>
   <action name="actionOpen">
    <property name="text">
-    <string>&amp;Load Data...</string>
+    <string>&amp;Load...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -138,7 +138,7 @@
   </action>
   <action name="actionSave">
    <property name="text">
-    <string>&amp;Save Data</string>
+    <string>&amp;Save</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -146,7 +146,7 @@
   </action>
   <action name="actionSave_as">
    <property name="text">
-    <string>Save Data &amp;as...</string>
+    <string>Save &amp;as...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -228,7 +228,7 @@
   </action>
   <action name="action_Lines_per_entry">
    <property name="text">
-    <string>Show &amp;lines per entry...</string>
+    <string>&amp;Lines per entry...</string>
    </property>
   </action>
   <action name="actionSelect_font">
