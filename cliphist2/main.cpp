@@ -46,7 +46,7 @@ int main(int argc, char *argv[])
     if( !bOk )
     {
         // PREFIX"/share/cliphist2" --> PREFIX from qmake PREFIX=/usr ==> is -DPREFIX=/usr option for compiler (define)
-        bOk = myappTranslator.load(QString(PREFIX)+QString("/share/cliphist2/cliphist_")+QLocale::system().name());
+        bOk = myappTranslator.load(QString(PREFIX)+QString("/share/cliphist2/cliphist2_")+QLocale::system().name());
     }
 #else
     bOk = bOk;      // disable compiler warning for other platforms than Mac
