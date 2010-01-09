@@ -1,5 +1,5 @@
 Source: cliphist2
-Section: unknown
+Section: utility
 Priority: extra
 Maintainer: ubuntu <michael.neuroth@freenet.de>
 Build-Depends: debhelper (>= 7)
@@ -10,5 +10,5 @@ Package: cliphist2
 Architecture: any
 Depends: ${shlibs:Depends}, ${misc:Depends}
 Description: cliphist2, a clipboard history application
- cliphist2 is an application to show the history of the clipboard
- text content and to select old entries again.
+ cliphist2 is an application to show the history of the text
+ content of the clipboard and to select old entries again.
