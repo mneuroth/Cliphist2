@@ -3,7 +3,6 @@
 # -------------------------------------------------
 TARGET = cliphist2
 TEMPLATE = app
-ICON = cliphist2.icns
 win32:RC_FILE = cliphist2.rc
 
 # CONFIG = qt warn_on debug thread static
@@ -15,5 +14,51 @@ HEADERS += cliphistwindow.h \
 FORMS += cliphistwindow.ui \
     edititem.ui
 
-TRANSLATIONS = cliphist_de.ts \
-               cliphist_nl.ts
+TRANSLATIONS = cliphist2_de.ts \
+               cliphist2_nl.ts
+
+unix:!macx {
+isEmpty( PREFIX ) {
+    PREFIX=/usr
+}
+isEmpty( DESKTOPDIR ) {
+    DESKTOPDIR=/usr/share/applications
+}
+isEmpty( ICONDIR ) {
+    ICONDIR=/usr/share/pixmaps
+}
+target.path = $${PREFIX}/bin
+INSTALLS += target
+language.path = $${PREFIX}/share/cliphist2
+language.files += cliphist2_de.qm \
+                  cliphist2_nl.qm
+INSTALLS += language
+desktop.path = $${DESKTOPDIR}
+desktop.files = cliphist2.desktop
+INSTALLS += desktop
+icon.path = $${ICONDIR}
+icon.files = cliphist2_64x64.png
+INSTALLS += icon
+#images.path += /usr/share/cliphist2
+#images.files += pixmaps/cliphist2_64x64.png
+#INSTALLS += images
+}
+
+macx {
+UI_DIR = .ui
+MOC_DIR = .moc
+OBJECTS_DIR = .obj
+##universal ? --> install on power book ?
+CONFIG += x86 ppc
+#QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5u.sdk
+#QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.5
+target.path = /Applications
+INSTALLS = target
+utilities.path = Contents/Resources
+utilities.files += cliphist2_de.qm \
+                   cliphist2_nl.qm
+QMAKE_BUNDLE_DATA += utilities
+INSTALLS += utilities
+ICON = cliphist2.icns
+QMAKE_INFO_PLIST = Info.plist
+}

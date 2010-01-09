@@ -18,7 +18,7 @@ Source: "release\cliphist2.exe"; DestDir: "{app}"; Components: main
 ;Source: "cliphist_en.qm"; DestDir: "{app}"; Components: main
 Source: "cliphist_de.qm"; DestDir: "{app}"; Components: main
 Source: "cliphist_nl.qm"; DestDir: "{app}"; Components: main
-Source: "cliphist2_64x64.png"; DestDir: "{app}"; Components: main
+;now inline: Source: "cliphist2_64x64.png"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\qt\bin\QtCore4.dll"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\qt\bin\QtGui4.dll"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\mingw\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; Components: main
@@ -46,7 +46,7 @@ Name: "main"; Description: "Hauptdateien"; Types: full compact custom; Flags: fi
 
 [Tasks]
 Name: desktopicon; Description: "create a desktop icon"; Languages: en;
-Name: desktopicon; Description: "Icon auf der Arbeitsfläche anlegen"; Languages: de;
+Name: desktopicon; Description: "Icon auf der Arbeitsflï¿½che anlegen"; Languages: de;
 Name: desktopicon; Description: "Icon op de desktop anlegen"; Languages: nl;
 ; GroupDescription: "Additional icons:"
 ;Name: startmenu; Description: "Create an &entry in the startmenu"; GroupDescription: "Additional icons:"

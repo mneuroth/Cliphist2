@@ -2,9 +2,9 @@ TODOs Cliphist 2
 ================
 TODO: wo muessen die Daten landen --> user directory ?
 //TODO: beim Mac werden die Clipboard Eintraege nicht sofort eingetragen sondern nur beim Fokus Wechsel --> man bekommt nicht alle Aenderungen mit !!! --> ist ok laut Qt Dokumentation... :-( ==> QTimer verwenden !
-TODO: pruefen ob der in der Registry gespeicherte Dateinamen ueberhaupt noch existiert !
-TODO: pruefen ob das Speichern ok war und ggf. Fehlermeldung anzeigen !
-TODO: beim aktivieren eines alten Eintrages wird dieser erneut in die Liste eingetragen --> sollte der alte Eintrag nur aktiviert werden
+//TODO: pruefen ob der in der Registry gespeicherte Dateinamen ueberhaupt noch existiert !
+//TODO: pruefen ob das Speichern ok war und ggf. Fehlermeldung anzeigen !
+//TODO: beim aktivieren eines alten Eintrages wird dieser erneut in die Liste eingetragen --> sollte der alte Eintrag nur aktiviert werden
 (?TODO: beim ersten Starten sind einige Menueintraege nicht mit den Standard Werten vorbelegt
 // TODO: ggf. globalen Key definieren und auf diese Anwendung umleiten moeglich ?
 // TODO: ggf. nicht auswaehlbare Menueintrage disablen (Find next, Edit Item, Delete act Item)
@@ -18,3 +18,23 @@ TODO: beim aktivieren eines alten Eintrages wird dieser erneut in die Liste eing
 // (TODO: aktuellen Eintrag andersfarbig hervorheben (rot)
 // (TODO: ggf. Option always on top
 // (TODO: selektion des Eintrags (rot) nur durch doppelclick (oder auswaehlbar machen)
+
+// TODO: version angeben, Icon erstellen, Installations Pakete erzeugen (Mac, Windows, Linux ())
+
+Testcases:
+- copy image in clipboard ==> no new entry in list
+- delete acutal cliboard item ==> clears cliboard entry
+- delete item --> selection of next item ?
+- copy text into clipboard, start cliphist -->  first entry is red even if another entry is selected (two red items)
+
+For Icons:
+      http://commons.wikimedia.org/wiki/File:Clipboard_01.svg
+      http://commons.wikimedia.org/wiki/File:Nuvola_clipboard_unlined.svg
+      http://commons.wikimedia.org/wiki/File:Nuvola_apps_clock.png
+      http://commons.wikimedia.org/wiki/File:Nuvola_apps_date.svg
+      http://commons.wikimedia.org/wiki/File:Stock_alarm.svg
+
+apt package erzeugen:  create package for ubuntu    
+      http://www.debian.org/doc/manuals/apt-howto/
+      http://blog.mypapit.net/2006/02/create-you-own-debianubuntu-deb-package.html
+      http://www.ibm.com/developerworks/library/l-debpkg.html

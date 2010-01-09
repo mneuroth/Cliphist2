@@ -1,9 +1,9 @@
-Cliphist2 is a application to show the history of the clipboard
+Cliphist2 is an application to show the history of the clipboard
 text content and to select old entries again.
 
 The application was inspired by the clipboard support of the 
 Borland IDE's (Turbo Pascal, Turbo C++) in the 1980ies.
-The original application was implemented natively on OS/2 in the
+The original application was implemented natively for OS/2 in the
 year 1994 to participate at a OS/2 programming contest of IBM.
 Later (in the year 2001) the application was ported to Windows XP.
 2009 the author decided to port the application to Mac OS X which 

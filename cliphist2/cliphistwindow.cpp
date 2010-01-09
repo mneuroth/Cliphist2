@@ -23,16 +23,19 @@
     Started porting to Qt:       12.9.2009    (Mac, Linux, Windows)
 
     Translation:
-       lupdate Cliphist2.pro    *.cpp --> *.ts
-       linguist cliphist_de.ts
-       lrelease Cliphist2.pro   *.ts  --> *.qm
+      *.pro file must contain something like: TRANSLATIONS = cliphist_de.ts
+      lupdate Cliphist2.pro    *.cpp --> *.ts
+      linguist cliphist_de.ts
+      lrelease Cliphist2.pro   *.ts  --> *.qm
 
-    *.pro file must contain something like: TRANSLATIONS = cliphist_de.ts
+    build on Mac OS X:
+      qmake -spec macx-g++ cliphist2.pro [CONFIG+=release]
+      make
+      #cp *.qm Cliphist2.app/Contents/Resources/
+      macdeployqt cliphist2.app -dmg
 
-    qmake -spec macx-g++ Cliphist2.pro [CONFIG+=release]
-    make
-    cp *.qm Cliphist2.app/Contents/Resources/
-    macdeployqt Cliphist2.app -dmg
+    for xcode:
+      qmake -spec macx-xcode cliphist2.pro
 
     Other resources:
 
@@ -44,12 +47,36 @@
 
     For the windows installer:
       http://www.jrsoftware.org/isinfo.php      (Inno Setup)
+      
+    Debian package:
+      http://www.qtwiki.de/wiki/Der_Weg_vom_fertigen_QT_-_Programm_zum_Debian_Paket
+      http://meetings-archive.debian.net/pub/debian-meetings/2009/fosdem/slides/The_Common_Debian_Build_System_CDBS/cdbs-presentation.pdf
+      http://standards.freedesktop.org/menu-spec/latest/apa.html
+
+      dh_make -s -c gpl -e michael.neuroth@freenet.de -f cliphist2-1.0.0.tar.gz
+      cp rules debian/rules
+      ggf. cp copyright debian/copyright
+      ggf. cp control debian/control
+      dpkg-buildpackage -rfakeroot -b
+      Anpassungen in cliphist.pro -> target.path +=  /usr/bin/      und     INSTALLS += target
+      Anpassungen in debian/rules (siehe erste doku)
+
+TODO: load *.qm files from new location:  $${PREFIX}/share/cliphist2
+TODO: adjust path for data file
+
+    RPM package:
+      http://en.opensuse.org/Packaging/SUSE_Package_Conventions/RPM_Style
+      http://tldp.org/HOWTO/RPM-HOWTO/build.html
+
+      create cliphist2.spec
+      rpm -ba cliphist2.spec
 */
 
 #include "cliphistwindow.h"
 #include "ui_cliphistwindow.h"
 
 #include "edititem.h"
+#include "cliphist2_64x64.h"
 
 #include <QFile>
 #include <QDataStream>
@@ -87,7 +114,9 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     ui->setupUi(this);
     //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     
-    QPixmap aIcon("cliphist2_64x64.png");
+    //QPixmap aIcon("cliphist2_64x64.png");
+    QPixmap aIcon;
+    /*bool bOk =*/ aIcon.loadFromData((uchar *)cliphist2_64x64_png,sizeof(cliphist2_64x64_png));
     setWindowIcon(aIcon);
 
     QCoreApplication::setOrganizationName("MNeuroth");

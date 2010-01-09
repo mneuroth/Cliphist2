@@ -35,11 +35,18 @@ int main(int argc, char *argv[])
     a.installTranslator(&qtTranslator);
 
     QTranslator myappTranslator;
-    bool bOk = myappTranslator.load("cliphist_" + QLocale::system().name());
+    bool bOk = myappTranslator.load("cliphist2_" + QLocale::system().name());
 #if defined(Q_OS_MAC)
     if( !bOk )
     {
-        bOk = myappTranslator.load(QDir::currentPath()+QString("/Cliphist2.app/Contents/Resources/cliphist_")+QLocale::system().name());
+        // QCoreApplication::applicationDirPath();  + /../Resources/cliphist_
+        bOk = myappTranslator.load(QDir::currentPath()+QString("/cliphist2.app/Contents/Resources/cliphist2_")+QLocale::system().name());
+    }
+#elif defined(Q_OS_UNIX)
+    if( !bOk )
+    {
+        // PREFIX"/share/cliphist2" --> PREFIX from qmake PREFIX=/usr ==> is -DPREFIX=/usr option for compiler (define)
+        bOk = myappTranslator.load(QString(PREFIX)+QString("/share/cliphist2/cliphist_")+QLocale::system().name());
     }
 #else
     bOk = bOk;      // disable compiler warning for other platforms than Mac
