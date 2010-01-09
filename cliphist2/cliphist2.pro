@@ -28,6 +28,7 @@ isEmpty( DESKTOPDIR ) {
 isEmpty( ICONDIR ) {
     ICONDIR=/usr/share/pixmaps
 }
+DEFINES += PREFIX=\\\"$${PREFIX}\\\"
 target.path = $${PREFIX}/bin
 INSTALLS += target
 language.path = $${PREFIX}/share/cliphist2
