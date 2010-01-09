@@ -9,26 +9,26 @@ AppVerName=cliphist2 Version 1.0.0
 DefaultDirName={pf}\cliphist2
 DefaultGroupName=cliphist2
 UninstallDisplayIcon={app}\cliphist2.exe
-LicenseFile=COPYING
+LicenseFile=..\COPYING
 ShowLanguageDialog=yes
 DisableProgramGroupPage=no
 
 [Files]
-Source: "release\cliphist2.exe"; DestDir: "{app}"; Components: main
-;Source: "cliphist_en.qm"; DestDir: "{app}"; Components: main
-Source: "cliphist_de.qm"; DestDir: "{app}"; Components: main
-Source: "cliphist_nl.qm"; DestDir: "{app}"; Components: main
+Source: "..\release\cliphist2.exe"; DestDir: "{app}"; Components: main
+;Source: "..\cliphist2_en.qm"; DestDir: "{app}"; Components: main
+Source: "..\cliphist2_de.qm"; DestDir: "{app}"; Components: main
+Source: "..\cliphist2_nl.qm"; DestDir: "{app}"; Components: main
 ;now inline: Source: "cliphist2_64x64.png"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\qt\bin\QtCore4.dll"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\qt\bin\QtGui4.dll"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\mingw\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\mingw\bin\mingwm10.dll"; DestDir: "{app}"; Components: main
-Source: "README"; DestDir: "{app}"; Components: main
-Source: "INSTALL"; DestDir: "{app}"; Components: main
-Source: "HISTORY"; DestDir: "{app}"; Components: main
-Source: "COPYING"; DestDir: "{app}"; Components: main
-Source: "BUGS"; DestDir: "{app}"; Components: main
-Source: "AUTHORS"; DestDir: "{app}"; Components: main
+Source: "..\README"; DestDir: "{app}"; Components: main
+Source: "..\INSTALL"; DestDir: "{app}"; Components: main
+Source: "..\HISTORY"; DestDir: "{app}"; Components: main
+Source: "..\COPYING"; DestDir: "{app}"; Components: main
+Source: "..\BUGS"; DestDir: "{app}"; Components: main
+Source: "..\AUTHORS"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Inno Setup 5\license.txt"; DestDir: "{app}"; Components: main
 
 [Components]
