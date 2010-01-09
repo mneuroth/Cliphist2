@@ -10,7 +10,8 @@ SOURCES += main.cpp \
     cliphistwindow.cpp \
     edititem.cpp
 HEADERS += cliphistwindow.h \
-    edititem.h
+    edititem.h \
+    cliphist2_64x64.h
 FORMS += cliphistwindow.ui \
     edititem.ui
 
@@ -60,5 +61,5 @@ utilities.files += cliphist2_de.qm \
 QMAKE_BUNDLE_DATA += utilities
 INSTALLS += utilities
 ICON = cliphist2.icns
-QMAKE_INFO_PLIST = Info.plist
+QMAKE_INFO_PLIST = dist/Info.plist
 }
