@@ -1,5 +1,5 @@
-Cliphist2 is an application to show the history of the clipboard
-text content and to select old entries again.
+Cliphist2 is an application to show the history of the text 
+content of the clipboard and to select old entries again.
 
 The application was inspired by the clipboard support of the 
 Borland IDE's (Turbo Pascal, Turbo C++) in the 1980ies.
