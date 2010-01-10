@@ -1,5 +1,7 @@
 #!/bin/sh
 echo "make binary distribution of cliphist2 for Debian/Ubuntu (*.deb):"
+echo "create source archive"
+./make_src_tar.sh
 echo "call qmake"
 qmake -unix PREFIX=/usr cliphist2.pro CONFIG+=release
 #echo "make application"
