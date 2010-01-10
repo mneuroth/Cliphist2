@@ -76,6 +76,8 @@
       create cliphist2.spec
 
       rpmbuild -bb cliphist2.spec
+
+TODO: probleme mit dem editieren von text der html code enthaelt !
 */
 
 #include "cliphistwindow.h"
