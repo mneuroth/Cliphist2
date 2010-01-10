@@ -10,5 +10,5 @@ cd cliphist2-1.0.0
 #echo "make application"
 #make   # will be done by making deb package in next step
 echo "make *.rpm"
-rpm -ba cliphist2.spec      
+rpm -ba dist/cliphist2.spec      
 # rpm is created in: /usr/src/packages/RPMS/i586
