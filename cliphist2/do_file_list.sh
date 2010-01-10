@@ -1,0 +1,1 @@
+ls -1 *.h *.cpp *.ui *.ts *.qm *.pro AUTHORS BUGS COPYING HISTORY INSTALL README *.txt *.desktop *.sh *.bat *.png *.icns *.ico *.xcf *.rc dist/* >file.lst
