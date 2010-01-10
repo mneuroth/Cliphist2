@@ -24,9 +24,9 @@
 
     Translation:
       *.pro file must contain something like: TRANSLATIONS = cliphist_de.ts
-      lupdate Cliphist2.pro    *.cpp --> *.ts
+      lupdate cliphist2.pro    *.cpp --> *.ts
       linguist cliphist_de.ts
-      lrelease Cliphist2.pro   *.ts  --> *.qm
+      lrelease cliphist2.pro   *.ts  --> *.qm
 
     build on Mac OS X:
       qmake -spec macx-g++ cliphist2.pro [CONFIG+=release]
@@ -36,6 +36,8 @@
 
     for xcode:
       qmake -spec macx-xcode cliphist2.pro
+
+    Used infos about making distributions from texmaker application (http://www.xm1math.net/texmaker/)
 
     Other resources:
 
@@ -61,15 +63,19 @@
       Anpassungen in cliphist.pro -> target.path +=  /usr/bin/      und     INSTALLS += target
       Anpassungen in debian/rules (siehe erste doku)
 
-TODO: load *.qm files from new location:  $${PREFIX}/share/cliphist2
-TODO: adjust path for data file
-
     RPM package:
       http://en.opensuse.org/Packaging/SUSE_Package_Conventions/RPM_Style
       http://tldp.org/HOWTO/RPM-HOWTO/build.html
+      http://en.opensuse.org/Packaging/SUSE_Package_Conventions/RPM_Style
 
+      http://forums.opensuse.org/applications/420946-howto-install-virtualbox-guest-additions-opensuse-11-1-a.html#post2060879
+
+      cd ..
+      tar -cf cliphist2.tar cliphist2/ *
+      gzip cliphist2.tar
       create cliphist2.spec
-      rpm -ba cliphist2.spec
+
+      rpmbuild -bb cliphist2.spec
 */
 
 #include "cliphistwindow.h"
@@ -79,6 +85,7 @@ TODO: adjust path for data file
 #include "cliphist2_64x64.h"
 
 #include <QFile>
+#include <QDir>
 #include <QDataStream>
 #include <QClipboard>
 #include <QFileDialog>
@@ -97,9 +104,14 @@ TODO: adjust path for data file
 // ************************************************************************
 
 #define VERSION                     "1.0.0"
+#define TITLE                       "<a href=http://www.mneuroth.de/privat/cliphist2/index.html>Clipboard History 2</a>"
+#define HOMEPAGE                    "<a href=http://www.mneuroth.de/privat/cliphist2/index.html>Homepage</a>"
+#define LICENSE                     "<a href=http://www.fsf.org/licensing/licenses/gpl.html>GPL</a>"
+#define AUTHORS                     "Michael Neuroth"
 
 #define FILE_VERSION                1
-#define DEFAULT_FILE_NAME           "cliphist2.dat"
+#define EXTENSIONS                  "*.clp"
+#define DEFAULT_FILE_NAME           "cliphist2.clp"
 #define DEFAULT_LINES_PER_ENTRY     3
 #define DEFAULT_MAX_ENTRIES         100
 #define BLUE                        "#0000ff"   //"blue"
@@ -119,9 +131,9 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     /*bool bOk =*/ aIcon.loadFromData((uchar *)cliphist2_64x64_png,sizeof(cliphist2_64x64_png));
     setWindowIcon(aIcon);
 
-    QCoreApplication::setOrganizationName("MNeuroth");
+    QCoreApplication::setOrganizationName("mneuroth");
     QCoreApplication::setOrganizationDomain("mneuroth.de");
-    QCoreApplication::setApplicationName("ClipHist2");    
+    QCoreApplication::setApplicationName("cliphist2");
     
     m_pClipboard        = QApplication::clipboard();    
     m_iFindIndex        = -1;
@@ -130,7 +142,7 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     m_iActSelectedIndex = -1;
     m_iMaxEntries       = DEFAULT_MAX_ENTRIES;
     m_iMaxLinesPerEntry = DEFAULT_LINES_PER_ENTRY;
-    m_sFileName         = DEFAULT_FILE_NAME;
+    m_sFileName         = QDir::homePath()+QDir::separator()+QString(DEFAULT_FILE_NAME);
     
     LoadSettings();
     if( ui->actionAutoload_data->isChecked() )
@@ -200,7 +212,7 @@ CliphistWindow::~CliphistWindow()
 
 void CliphistWindow::OnHelp()
 {
-    QMessageBox::about(this,tr("Help"),tr("Sorry, no help available yet !"));
+    QMessageBox::information(this,tr("Help"),QString(tr("<p>Sorry, no help available yet !</p><p>See %1 for more information.</p>")).arg(HOMEPAGE));
 }
 
 void CliphistWindow::OnToggleAlwaysOnTop(bool bChecked)
@@ -218,7 +230,7 @@ void CliphistWindow::OnToggleAlwaysOnTop(bool bChecked)
 
 void CliphistWindow::OnAbout()
 {
-    QMessageBox::about(this,tr("About Application"),QString(tr("Clipboard History 2\n\nVersion %1 from %2\n\n(c) 2010 by Michael Neuroth")).arg(VERSION,__DATE__));
+    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2010 by %4</p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
 }
 
 void CliphistWindow::OnAboutQt()
@@ -438,7 +450,7 @@ void CliphistWindow::OnLoadData()
             return;
         }
     }
-    QString sFileName = QFileDialog::getOpenFileName(this,tr("Open Data"), ".", tr("Data Files (*.dat)"));    
+    QString sFileName = QFileDialog::getOpenFileName(this,tr("Open Data"), ".", QString(tr("Data Files (%1)")).arg(EXTENSIONS));
     if( !sFileName.isEmpty() )
     {
         m_sFileName = sFileName;
@@ -454,7 +466,7 @@ void CliphistWindow::OnSaveData()
 
 void CliphistWindow::OnSaveDataAs()
 {
-    QString sFileName = QFileDialog::getSaveFileName(this,tr("Save Data as"), m_sFileName, tr("Data Files (*.dat)"));    
+    QString sFileName = QFileDialog::getSaveFileName(this,tr("Save Data as"), m_sFileName, QString(tr("Data Files (%1)")).arg(EXTENSIONS));
     if( !sFileName.isEmpty() )
     {
         m_sFileName = sFileName;
