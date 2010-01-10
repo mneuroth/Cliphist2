@@ -494,7 +494,8 @@ void CliphistWindow::OnSelectFont()
 void CliphistWindow::OnMaxEntries()
 {
     bool ok;
-    int i = QInputDialog::getInt(this,tr("Input"),tr("Maximal number of entries:"),m_iMaxEntries,1,2147483647,1,&ok );
+    // for Qt >= 4.4.x use QInputDialog::getInt(...)
+    int i = QInputDialog::getInteger(this,tr("Input"),tr("Maximal number of entries:"),m_iMaxEntries,1,2147483647,1,&ok );
     if( ok )
     {
         m_iMaxEntries = i;
@@ -504,7 +505,8 @@ void CliphistWindow::OnMaxEntries()
 void CliphistWindow::OnLinesPerEntry()
 {
     bool ok;
-    int i = QInputDialog::getInt(this,tr("Input"),tr("Lines per entry:"),m_iMaxLinesPerEntry,1,2147483647,1,&ok );
+    // for Qt >= 4.4.x use QInputDialog::getInt(...)
+    int i = QInputDialog::getInteger(this,tr("Input"),tr("Lines per entry:"),m_iMaxLinesPerEntry,1,2147483647,1,&ok );
     if( ok )
     {
         m_iMaxLinesPerEntry = i;
