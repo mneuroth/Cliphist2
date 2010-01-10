@@ -14,7 +14,7 @@ Prefix: /usr
 Cliphist2 is an application to show the history of the text 
 content of the clipboard and to select old entries again.
 
-Homepage: http://www.mneuroth.de/privat/cliphist2.html
+Homepage: http://www.mneuroth.de/privat/cliphist2/index.html
 
 Author:   Michael Neuroth (michael.neuroth@freenet.de)
 
