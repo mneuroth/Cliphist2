@@ -19,6 +19,7 @@ Source: "..\release\cliphist2.exe"; DestDir: "{app}"; Components: main
 Source: "..\cliphist2_de.qm"; DestDir: "{app}"; Components: main
 Source: "..\cliphist2_nl.qm"; DestDir: "{app}"; Components: main
 ;now inline: Source: "cliphist2_64x64.png"; DestDir: "{app}"; Components: main
+Source: "C:\Programme\Qt\2009.05\qt\translations\qt_de.qm"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\qt\bin\QtCore4.dll"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\qt\bin\QtGui4.dll"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Qt\2009.05\mingw\bin\libgcc_s_dw2-1.dll"; DestDir: "{app}"; Components: main
