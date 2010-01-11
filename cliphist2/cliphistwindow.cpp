@@ -28,6 +28,8 @@
       linguist cliphist_de.ts
       lrelease cliphist2.pro   *.ts  --> *.qm
 
+      copy /Developer/Applications/Qt/translations/qt_de.qm to working directory
+
     build on Mac OS X:
       qmake -spec macx-g++ cliphist2.pro [CONFIG+=release]
       make
@@ -54,12 +56,14 @@
       http://www.qtwiki.de/wiki/Der_Weg_vom_fertigen_QT_-_Programm_zum_Debian_Paket
       http://meetings-archive.debian.net/pub/debian-meetings/2009/fosdem/slides/The_Common_Debian_Build_System_CDBS/cdbs-presentation.pdf
       http://standards.freedesktop.org/menu-spec/latest/apa.html
+      http://www.debian-administration.org/articles/336
 
       dh_make -s -c gpl -e michael.neuroth@freenet.de -f cliphist2-1.0.0.tar.gz
       cp rules debian/rules
       ggf. cp copyright debian/copyright
       ggf. cp control debian/control
       dpkg-buildpackage -rfakeroot -b
+      lintian cliphist2-1.0.0.deb # zur Ueberpruefung
       Anpassungen in cliphist.pro -> target.path +=  /usr/bin/      und     INSTALLS += target
       Anpassungen in debian/rules (siehe erste doku)
 
@@ -67,6 +71,7 @@
       http://en.opensuse.org/Packaging/SUSE_Package_Conventions/RPM_Style
       http://tldp.org/HOWTO/RPM-HOWTO/build.html
       http://en.opensuse.org/Packaging/SUSE_Package_Conventions/RPM_Style
+      http://www.rpm.org/max-rpm/ch-rpm-b-command.html
 
       http://forums.opensuse.org/applications/420946-howto-install-virtualbox-guest-additions-opensuse-11-1-a.html#post2060879
 
@@ -78,6 +83,7 @@
       rpmbuild -bb cliphist2.spec
 
 TODO: probleme mit dem editieren von text der html code enthaelt !
+TODO: Bug: manchmal werden doppelte Eintraege alle rot angezeigt ?
 */
 
 #include "cliphistwindow.h"

@@ -31,11 +31,27 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     
     QTranslator qtTranslator;
-    qtTranslator.load("qt_" + QLocale::system().name(),QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    bool bOk = qtTranslator.load("qt_" + QLocale::system().name(),QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    if( !bOk )
+    {
+        bOk = qtTranslator.load("qt_" + QLocale::system().name());
+#if defined(Q_OS_MAC)
+        if( !bOk )
+        {
+            bOk = qtTranslator.load(QDir::currentPath()+QString("/cliphist2.app/Contents/Resources/qt_")+QLocale::system().name());
+        }
+#elif defined(Q_OS_UNIX)
+        // should never be called because we read from the translation path before...
+        if( !bOk )
+        {
+            bOk = qtTranslator.load(QString("/usr/share/qt4/translations/qt_")+QLocale::system().name());
+        }
+#endif
+}
     a.installTranslator(&qtTranslator);
 
     QTranslator myappTranslator;
-    bool bOk = myappTranslator.load("cliphist2_" + QLocale::system().name());
+    bOk = myappTranslator.load("cliphist2_" + QLocale::system().name());
 #if defined(Q_OS_MAC)
     if( !bOk )
     {

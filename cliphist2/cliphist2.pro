@@ -33,7 +33,8 @@ target.path = $${PREFIX}/bin
 INSTALLS += target
 language.path = $${PREFIX}/share/cliphist2
 language.files += cliphist2_de.qm \
-                  cliphist2_nl.qm
+                  cliphist2_nl.qm \
+                  qt_de.qm
 INSTALLS += language
 desktop.path = $${DESKTOPDIR}
 desktop.files = cliphist2.desktop
@@ -58,7 +59,8 @@ target.path = /Applications
 INSTALLS = target
 utilities.path = Contents/Resources
 utilities.files += cliphist2_de.qm \
-                   cliphist2_nl.qm
+                   cliphist2_nl.qm \
+                   qt_de.qm
 QMAKE_BUNDLE_DATA += utilities
 INSTALLS += utilities
 ICON = cliphist2.icns
