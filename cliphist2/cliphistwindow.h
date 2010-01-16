@@ -29,7 +29,6 @@
 #include <QPair>
 #include <QClipboard>
 
-class QClipboard;
 class QTimer;
 class QListWidgetItem;
     
@@ -111,7 +110,7 @@ private:   /*data*/
     QList<QListWidgetItem *>    m_aFindList;            // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
     bool                        m_bChangedData;         // temp
-    bool    	                m_bMyCopy;              // temp
+    bool    	                m_bMyClipboardCopy;     // temp, flag to show that the current clipboard operation comes from this application
     int                         m_iFindIndex;           // temp
     int                         m_iActSelectedIndex;    // temp --> TODO: maybe use ui->listWidget->currentItem() ?
     int                         m_iMaxEntries;

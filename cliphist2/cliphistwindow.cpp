@@ -146,7 +146,7 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     m_pClipboard        = QApplication::clipboard();    
     m_iFindIndex        = -1;
     m_bChangedData      = false;
-    m_bMyCopy           = false;
+    m_bMyClipboardCopy  = false;
     m_iActSelectedIndex = -1;
     m_iMaxEntries       = DEFAULT_MAX_ENTRIES;
     m_iMaxLinesPerEntry = DEFAULT_LINES_PER_ENTRY;
@@ -369,7 +369,7 @@ bool CliphistWindow::IsAnyItemSelected() const
 
 void CliphistWindow::OnClipboardDataChanged()
 {
-    if( !m_bMyCopy &&
+    if( !m_bMyClipboardCopy &&
         !IsActClipboardEntryEmpty() &&
         !IsActClipboardEntrySameAsActSelectedItem() &&
         ui->action_Activate_cliphist->isChecked() )
@@ -453,17 +453,16 @@ void CliphistWindow::OnLoadData()
     if( m_bChangedData )
     {
         QMessageBox::StandardButtons aButton = QMessageBox::question(this,tr("Question"),tr("Actual data not saved, really load new data ?"),QMessageBox::Yes|QMessageBox::No);
-        if( aButton == QMessageBox::No )
+        if( aButton == QMessageBox::Yes )
         {
-            return;
+            QString sFileName = QFileDialog::getOpenFileName(this,tr("Open Data"), ".", QString(tr("Data Files (%1)")).arg(EXTENSIONS));
+            if( !sFileName.isEmpty() )
+            {
+                m_sFileName = sFileName;
+                LoadAndCheck();
+                SyncListWithUi();
+            }
         }
-    }
-    QString sFileName = QFileDialog::getOpenFileName(this,tr("Open Data"), ".", QString(tr("Data Files (%1)")).arg(EXTENSIONS));
-    if( !sFileName.isEmpty() )
-    {
-        m_sFileName = sFileName;
-        LoadAndCheck();
-        SyncListWithUi();
     }
 }
 
@@ -484,9 +483,9 @@ void CliphistWindow::OnSaveDataAs()
 
 void CliphistWindow::OnEraseClipboard()
 {
-    m_bMyCopy = true;
+    m_bMyClipboardCopy = true;
     m_pClipboard->setText(QString());
-    m_bMyCopy = false;
+    m_bMyClipboardCopy = false;
 }
 
 void CliphistWindow::OnSelectFont()
@@ -694,10 +693,10 @@ void CliphistWindow::ActivateEntry(QListWidgetItem * current)
     if( current )
     {
         UpdateColorOfLastSelectedItem();
-        m_bMyCopy = true;
+        m_bMyClipboardCopy = true;
         UpdateLastSelectedItemData(current);
         m_pClipboard->setText(m_aTxtHistory[m_iActSelectedIndex]);
-        m_bMyCopy = false;
+        m_bMyClipboardCopy = false;
     }
 }
 
@@ -742,10 +741,13 @@ void CliphistWindow::UpdateColorOfLastSelectedItem()
 void CliphistWindow::UpdateLastSelectedItemData(QListWidgetItem * current)
 {
     m_iActSelectedIndex = ui->listWidget->row(current);
-    current->setForeground(QBrush(RED));
-    // create also a number entry
-    QListWidgetItem * pNumber = ui->listWidgetLineNumbers->item(m_iActSelectedIndex);
-    pNumber->setForeground(QBrush(RED));
+    if( current )
+    {
+        current->setForeground(QBrush(RED));
+        // create also a number entry
+        QListWidgetItem * pNumber = ui->listWidgetLineNumbers->item(m_iActSelectedIndex);
+        pNumber->setForeground(QBrush(RED));
+    }
 }
 
 void CliphistWindow::SetFont(const QFont & aFont)
