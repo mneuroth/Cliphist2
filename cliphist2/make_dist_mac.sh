@@ -8,4 +8,4 @@ make
 echo "make dmg"
 macdeployqt cliphist2.app -dmg
 echo "clean up"
-rm qt_de.qm
+#rm qt_de.qm
