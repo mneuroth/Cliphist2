@@ -462,16 +462,17 @@ void CliphistWindow::OnLoadData()
     if( m_bChangedData )
     {
         QMessageBox::StandardButtons aButton = QMessageBox::question(this,tr("Question"),tr("Actual data not saved, really load new data ?"),QMessageBox::Yes|QMessageBox::No);
-        if( aButton == QMessageBox::Yes )
+        if( aButton == QMessageBox::No )
         {
-            QString sFileName = QFileDialog::getOpenFileName(this,tr("Open Data"), ".", QString(tr("Data Files (%1)")).arg(EXTENSIONS));
-            if( !sFileName.isEmpty() )
-            {
-                m_sFileName = sFileName;
-                LoadAndCheck();
-                SyncListWithUi();
-            }
+            return;
         }
+    }
+    QString sFileName = QFileDialog::getOpenFileName(this,tr("Open Data"), ".", QString(tr("Data Files (%1)")).arg(EXTENSIONS));
+    if( !sFileName.isEmpty() )
+    {
+        m_sFileName = sFileName;
+        LoadAndCheck();
+        SyncListWithUi();
     }
 }
 
