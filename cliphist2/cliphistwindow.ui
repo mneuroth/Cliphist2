@@ -93,10 +93,10 @@
     <addaction name="actionDelete_all_entries"/>
     <addaction name="actionDelete_marked_entry"/>
     <addaction name="separator"/>
+    <addaction name="action_Edit_entry"/>
+    <addaction name="separator"/>
     <addaction name="action_Find_text"/>
     <addaction name="actionFind_next"/>
-    <addaction name="separator"/>
-    <addaction name="action_Edit_entry"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
