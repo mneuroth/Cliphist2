@@ -4,6 +4,8 @@
 TARGET = cliphist2
 TEMPLATE = app
 win32:RC_FILE = cliphist2.rc
+win32:QMAKE_LFLAGS += -static-libgcc        # remove dependency to libgcc_s_dw2-1.dll
+#win32:QMAKE_CXX_FLAGS+= -static-libgcc
 
 # CONFIG = qt warn_on debug thread static
 SOURCES += main.cpp \
