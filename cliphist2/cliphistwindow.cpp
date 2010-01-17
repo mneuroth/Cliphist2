@@ -51,7 +51,16 @@
 
     For the windows installer:
       http://www.jrsoftware.org/isinfo.php      (Inno Setup)
-      
+
+    Windows installer:
+      remove dependencies to other DLLs:
+      - mingwm10.dll ==> http://blog.lugru.com/2009/03/qt-static-mingwm10dll-and-deployment-under-windows-environment/
+                     ==> http://www.qtforum.org/article/12863/qt4-for-win-and-mingw10-dll-dependency.html
+      - libgcc_s_dw2-1.dll ==> -static-libgcc ==> http://sourceforge.net/project/shownotes.php?release_id=691876
+
+      reduce size of exe file under Windows:
+      - upx -9 cliphist2.exe
+
     Debian package:
       http://www.qtwiki.de/wiki/Der_Weg_vom_fertigen_QT_-_Programm_zum_Debian_Paket
       http://meetings-archive.debian.net/pub/debian-meetings/2009/fosdem/slides/The_Common_Debian_Build_System_CDBS/cdbs-presentation.pdf
