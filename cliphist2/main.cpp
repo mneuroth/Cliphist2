@@ -31,7 +31,7 @@ int main(int argc, char *argv[])
     QApplication a(argc, argv);
     
     QTranslator qtTranslator;
-    bool bOk = qtTranslator.load("qt_" + QLocale::system().name(),QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+    bool bOk = qtTranslator.load(":/translations/qt_" + QLocale::system().name(),QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     if( !bOk )
     {
         bOk = qtTranslator.load("qt_" + QLocale::system().name());
@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     a.installTranslator(&qtTranslator);
 
     QTranslator myappTranslator;
-    bOk = myappTranslator.load("cliphist2_" + QLocale::system().name());
+    bOk = myappTranslator.load(":/translations/cliphist2_" + QLocale::system().name());
 #if defined(Q_OS_MAC)
     if( !bOk )
     {
