@@ -92,6 +92,7 @@ private:
     void UpdateLastSelectedItemData(QListWidgetItem * current);
     void SetFont(const QFont & aFont);
     void InsertNewData(const QString & sText, int iNumber);
+    void CheckHistoryMemory();
     void SetDataChanged(bool bValue);
     void UpdateSelection(int iCurrentRow);
     QBrush GetColorOfNeighbour(int iMyIndex) const;

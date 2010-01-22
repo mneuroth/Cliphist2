@@ -309,13 +309,22 @@ void CliphistWindow::OnFindItem()
 
 void CliphistWindow::OnFindNextItem()
 {
-    if( m_aFindList.size()>0 && m_iFindIndex<m_aFindList.size() )
+    if( m_aFindList.size()==0 )
+    {
+        QMessageBox::warning(this,tr("Warning"),tr("Search text not found !"));
+    }
+    else if( m_iFindIndex<m_aFindList.size() )
     {
         ActivateEntry(m_iFindIndex++);
     }
     else
     {
-        QMessageBox::warning(this,tr("Warning"),tr("No more occurrences of the search text found !"));
+        if( QMessageBox::warning(this,tr("Warning"),tr("No more occurrences of the search text found !\nGoto first item again ?"),QMessageBox::Yes|QMessageBox::No)
+            == QMessageBox::Yes )
+        {
+            m_iFindIndex = 0;
+            OnFindNextItem();
+        }
     }
 }
 
@@ -332,7 +341,15 @@ void CliphistWindow::OnEditItem()
         if( aDlg.exec()==QDialog::Accepted )
         {
             m_aEditDialogGeometry = aDlg.saveGeometry();
-            m_aTxtHistory[ui->listWidget->currentRow()] = aDlg.text();
+            if( aDlg.asNewEntry() )
+            {
+                m_aTxtHistory.insert(ui->listWidget->currentRow(),aDlg.text());
+                CheckHistoryMemory();
+            }
+            else
+            {
+                m_aTxtHistory[ui->listWidget->currentRow()] = aDlg.text();
+            }
             SetDataChanged(true);
             SyncListWithUi();
             UpdateSelection(iCurrentRow);
@@ -385,10 +402,7 @@ void CliphistWindow::OnClipboardDataChanged()
     {
         UpdateColorOfLastSelectedItem();
         m_aTxtHistory.insert(0,m_pClipboard->text());
-        while( m_aTxtHistory.size()>m_iMaxEntries )
-        {
-            m_aTxtHistory.removeLast();
-        }
+        CheckHistoryMemory();
         SetDataChanged(true);
         SyncListWithUi();        
         UpdateLastSelectedItemData(ui->listWidget->item(0));        // update of clipboard data always into index 0 !
@@ -616,6 +630,14 @@ void CliphistWindow::InsertNewData(const QString & sText, int iNumber)
     pNewNumberItem->setToolTip("");
     pNewNumberItem->setTextAlignment(Qt::AlignRight);
     ui->listWidgetLineNumbers->insertItem(0,pNewNumberItem);
+}
+
+void CliphistWindow::CheckHistoryMemory()
+{
+    while( m_aTxtHistory.size()>m_iMaxEntries )
+    {
+        m_aTxtHistory.removeLast();
+    }
 }
 
 bool CliphistWindow::SaveSettings()
