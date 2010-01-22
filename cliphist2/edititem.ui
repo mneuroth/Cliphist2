@@ -14,10 +14,7 @@
    <string>Edit item</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <property name="margin">
-    <number>6</number>
-   </property>
-   <item row="0" column="0">
+   <item row="0" column="0" colspan="2">
     <widget class="QFrame" name="frame">
      <property name="frameShape">
       <enum>QFrame::Box</enum>
@@ -42,13 +39,20 @@
      </layout>
     </widget>
    </item>
-   <item row="1" column="0">
+   <item row="1" column="1">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
      </property>
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="0">
+    <widget class="QPushButton" name="btnAsNewEntry">
+     <property name="text">
+      <string>As new entry</string>
      </property>
     </widget>
    </item>
@@ -63,8 +67,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>248</x>
-     <y>254</y>
+     <x>347</x>
+     <y>293</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -79,8 +83,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>316</x>
-     <y>260</y>
+     <x>347</x>
+     <y>293</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -88,5 +92,24 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnAsNewEntry</sender>
+   <signal>clicked()</signal>
+   <receiver>EditItem</receiver>
+   <slot>sltAsNewEntry()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>73</x>
+     <y>270</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>6</x>
+     <y>156</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
+ <slots>
+  <slot>sltAsNewEntry()</slot>
+ </slots>
 </ui>

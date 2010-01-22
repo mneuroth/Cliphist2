@@ -23,7 +23,7 @@
 #include <QtGui/QTextEdit>
 
 EditItem::EditItem(QWidget *parent, const QFont & aFont, const QString & sText)
-: QDialog(parent)
+: QDialog(parent), m_bAsNewEntry(false)
 {
     ui.setupUi(this);
     ui.textEdit->setText(sText);
@@ -33,4 +33,15 @@ EditItem::EditItem(QWidget *parent, const QFont & aFont, const QString & sText)
 QString EditItem::text() const
 {
     return ui.textEdit->toPlainText();
+}
+
+void EditItem::sltAsNewEntry()
+{
+    m_bAsNewEntry = true;
+    accept();
+}
+
+bool EditItem::asNewEntry() const
+{
+    return m_bAsNewEntry;
 }

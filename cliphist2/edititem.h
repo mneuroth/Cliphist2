@@ -35,8 +35,14 @@ public:
  
     QString text() const;
 
+    bool asNewEntry() const;
+
+public slots:
+    void sltAsNewEntry();
+
 private:
     Ui::EditItem ui;
+    bool m_bAsNewEntry;
 };
 
 #endif // EDITITEM_H
