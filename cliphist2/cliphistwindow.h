@@ -29,6 +29,13 @@
 #include <QPair>
 #include <QClipboard>
 
+#if defined(Q_OS_MAC)
+#define _WITH_TIMER
+#else
+#undef _WITH_TIMER
+#endif
+
+class QUndoStack;
 class QTimer;
 class QListWidgetItem;
     
@@ -59,7 +66,7 @@ private slots:
     void OnEditItem();
     void OnClipboardDataChanged();
     void OnClipboardChanged(QClipboard::Mode);
-#if defined(Q_OS_MAC)
+#if defined(_WITH_TIMER)
     void OnTimerUpdate();
 #endif
     void OnEraseClipboard();
@@ -74,6 +81,7 @@ private slots:
     void OnItemDoubleClicked(QListWidgetItem * current);
     void OnItemActivated(QListWidgetItem * current);    
     void OnSelectionChanged();
+    void OnEditAboutToShow();
 
 private:
     bool SaveSettings();
@@ -94,7 +102,6 @@ private:
     void InsertNewData(const QString & sText, int iNumber);
     void CheckHistoryMemory();
     void SetDataChanged(bool bValue);
-    void UpdateSelection(int iCurrentRow);
     QBrush GetColorOfNeighbour(int iMyIndex) const;
     QBrush GetNextColor(const QBrush & aActColor) const;
     QBrush GetColorForIndex(int iIndex) const;
@@ -102,10 +109,16 @@ private:
     QPair<QString,bool> FilterForDisplay(const QString & s) const;
     QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
     QString GetNewLine() const;
+public:
+    int GetIndexOfActSelected() const;
+    QString RemoveActSelected();
+    void UpdateList(int iPosition, const QString & sText, bool bUpdate);
+    void UpdateSelection(int iCurrentRow);
 
 private:   /*data*/
     Ui::CliphistWindow *        ui;
 
+    QUndoStack *                m_pUndoStack;
     QClipboard *                m_pClipboard;           // temp
     QTimer *                    m_pTimer;               // temp
     QList<QListWidgetItem *>    m_aFindList;            // temp

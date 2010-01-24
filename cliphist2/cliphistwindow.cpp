@@ -113,8 +113,10 @@ TODO: Bug: manchmal werden doppelte Eintraege alle rot angezeigt ?
 #include <QScrollBar>
 #include <QFont>
 #include <QFontMetrics>
+#include <QUndoStack>
+#include <QUndoCommand>
 
-#if defined(Q_OS_MAC)
+#if defined(_WITH_TIMER)
 #include <QTimer>
 #endif
 
@@ -137,6 +139,41 @@ TODO: Bug: manchmal werden doppelte Eintraege alle rot angezeigt ?
 
 // ************************************************************************
 
+class DeleteActSelectedCommand : public QUndoCommand
+ {
+ public:
+     DeleteActSelectedCommand(CliphistWindow * pApp, QUndoCommand *parent = 0)
+         : QUndoCommand(parent),
+           m_pApp(pApp),
+           m_iPosition(-1),
+           m_sText(QString::null)
+     {}
+
+     void undo()
+     {
+         if( m_pApp && m_iPosition>=0 && m_sText!=QString::null )
+         {
+             m_pApp->UpdateList(m_iPosition,m_sText,/*bUpdate*/false);
+             m_pApp->UpdateSelection(m_iPosition);
+         }
+     }
+     void redo()
+     {
+         if( m_pApp )
+         {
+             m_iPosition = m_pApp->GetIndexOfActSelected();
+             m_sText = m_pApp->RemoveActSelected();
+         }
+     }
+
+ private:
+     CliphistWindow *   m_pApp;
+     int                m_iPosition;
+     QString            m_sText;
+ };
+
+// ************************************************************************
+
 CliphistWindow::CliphistWindow(QWidget *parent)
     : QMainWindow(parent), ui(new Ui::CliphistWindow)
 {
@@ -152,6 +189,8 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     QCoreApplication::setOrganizationDomain("mneuroth.de");
     QCoreApplication::setApplicationName("cliphist2");
     
+    m_pUndoStack        = new QUndoStack();
+
     m_pClipboard        = QApplication::clipboard();    
     m_iFindIndex        = -1;
     m_bChangedData      = false;
@@ -185,6 +224,16 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(OnLoadData()));
     connect(ui->actionSave, SIGNAL(triggered()), this, SLOT(OnSaveData()));
     connect(ui->actionSave_as, SIGNAL(triggered()), this, SLOT(OnSaveDataAs()));
+
+    // handle undo/redo
+    QAction * redoAction = m_pUndoStack->createRedoAction(this, tr("&Redo"));
+    redoAction->setShortcuts(QKeySequence::Redo);
+    ui->menu_Edit->insertAction(ui->actionDelete_all_entries,redoAction);;
+    QAction * undoAction = m_pUndoStack->createUndoAction(this, tr("&Undo"));
+    undoAction->setShortcuts(QKeySequence::Undo);
+    ui->menu_Edit->insertAction(redoAction,undoAction);
+    ui->menu_Edit->insertSeparator(ui->actionDelete_all_entries);
+
     connect(ui->actionDelete_all_entries, SIGNAL(triggered()), this, SLOT(OnDeleteAllItems()));
     connect(ui->actionDelete_marked_entry, SIGNAL(triggered()), this, SLOT(OnDeleteItem()));
     connect(this, SIGNAL(SelectionChanged(bool)), ui->actionDelete_marked_entry, SLOT(setEnabled(bool)));
@@ -201,7 +250,9 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     connect(ui->actionAbout_Qt, SIGNAL(triggered()), this, SLOT(OnAboutQt()));
     connect(ui->actionAlways_on_top, SIGNAL(triggered(bool)), this, SLOT(OnToggleAlwaysOnTop(bool)));
 
-#if defined(Q_OS_MAC)
+    connect(ui->menu_Edit,SIGNAL(aboutToShow()),this,SLOT(OnEditAboutToShow()));
+
+#if defined(_WITH_TIMER)
     // because the semantic of the dataChanged() signal of the QClipboard class is different for Mac
     // we use a timer to get the changes of the clipboard contents...
     m_pTimer = new QTimer(this);
@@ -221,7 +272,8 @@ CliphistWindow::~CliphistWindow()
         SaveAndCheck();
     }
     SaveSettings();
-#if defined(Q_OS_MAC)
+    delete m_pUndoStack;
+#if defined(_WITH_TIMER)
     delete m_pTimer;
 #endif
     delete ui;
@@ -268,21 +320,7 @@ void CliphistWindow::OnDeleteAllItems()
 
 void CliphistWindow::OnDeleteItem()
 {
-    if( ui->listWidget->currentItem() )
-    {
-        int iIndexOfSelectedItem = ui->listWidget->currentRow();
-        m_aTxtHistory.removeAt(iIndexOfSelectedItem);
-        // WARNING:
-        // side effect --> if actual selected item is the contents of the clipboard,
-        // than also clear the contents of the clipboard !
-        if( iIndexOfSelectedItem==m_iActSelectedIndex )
-        {
-            m_pClipboard->setText(QString());
-        }
-        SetDataChanged(true);
-        SyncListWithUi();
-        UpdateSelection(iIndexOfSelectedItem);
-    }
+    m_pUndoStack->push(new DeleteActSelectedCommand(this));
 }
 
 void CliphistWindow::OnFindItem()
@@ -341,18 +379,20 @@ void CliphistWindow::OnEditItem()
         if( aDlg.exec()==QDialog::Accepted )
         {
             m_aEditDialogGeometry = aDlg.saveGeometry();
-            if( aDlg.asNewEntry() )
-            {
-                m_aTxtHistory.insert(ui->listWidget->currentRow(),aDlg.text());
-                CheckHistoryMemory();
-            }
-            else
-            {
-                m_aTxtHistory[ui->listWidget->currentRow()] = aDlg.text();
-            }
-            SetDataChanged(true);
-            SyncListWithUi();
-            UpdateSelection(iCurrentRow);
+//TODO: InsertNewData(m_pClipboard->text(),0);
+            UpdateList(ui->listWidget->currentRow(),aDlg.text(),!aDlg.asNewEntry());
+//            if( aDlg.asNewEntry() )
+//            {
+//                m_aTxtHistory.insert(ui->listWidget->currentRow(),aDlg.text());
+//                CheckHistoryMemory();
+//            }
+//            else
+//            {
+//                m_aTxtHistory[ui->listWidget->currentRow()] = aDlg.text();
+//            }
+//            SetDataChanged(true);
+//            SyncListWithUi();
+//            UpdateSelection(iCurrentRow);
         }
     }        
 }
@@ -360,7 +400,11 @@ void CliphistWindow::OnEditItem()
 void CliphistWindow::UpdateSelection(int iCurrentRow)
 {
     // update selection after modifying list
-    if( iCurrentRow<ui->listWidget->count() )
+    if( iCurrentRow<0 && ui->listWidget->count()>0 )
+    {
+        ui->listWidget->setCurrentRow(0);
+    }
+    else if( iCurrentRow<ui->listWidget->count() )
     {
         ui->listWidget->setCurrentRow(iCurrentRow);
     }
@@ -400,12 +444,14 @@ void CliphistWindow::OnClipboardDataChanged()
         !IsActClipboardEntrySameAsActSelectedItem() &&
         ui->action_Activate_cliphist->isChecked() )
     {
-        UpdateColorOfLastSelectedItem();
-        m_aTxtHistory.insert(0,m_pClipboard->text());
-        CheckHistoryMemory();
-        SetDataChanged(true);
-        SyncListWithUi();        
-        UpdateLastSelectedItemData(ui->listWidget->item(0));        // update of clipboard data always into index 0 !
+//TODO: InsertNewData(m_pClipboard->text(),0);
+        UpdateList(0,m_pClipboard->text(),/*bUpdate*/false);
+//        UpdateColorOfLastSelectedItem();
+//        m_aTxtHistory.insert(0,m_pClipboard->text());
+//        CheckHistoryMemory();
+//        SetDataChanged(true);
+//        SyncListWithUi();
+//        UpdateLastSelectedItemData(ui->listWidget->item(0));        // update of clipboard data always into index 0 !
     }
     else
     {
@@ -422,7 +468,7 @@ void CliphistWindow::OnClipboardChanged(QClipboard::Mode /*aMode*/)
 {
 }
 
-#if defined(Q_OS_MAC)
+#if defined(_WITH_TIMER)
 void CliphistWindow::OnTimerUpdate()
 {
     OnClipboardDataChanged();
@@ -453,6 +499,10 @@ void CliphistWindow::OnItemActivated(QListWidgetItem* current)
 void CliphistWindow::OnSelectionChanged()
 {
     emit SelectionChanged(ui->listWidget->currentItem()!=0);
+}
+
+void CliphistWindow::OnEditAboutToShow()
+{
 }
 
 void CliphistWindow::LoadAndCheck()
@@ -800,3 +850,48 @@ QString CliphistWindow::GetNewLine() const
 {
     return "\n";
 }
+
+int CliphistWindow::GetIndexOfActSelected() const
+{
+    return ui->listWidget->currentRow();
+}
+
+QString CliphistWindow::RemoveActSelected()
+{
+    QString sActSelected = QString::null;
+    if( ui->listWidget->currentItem() )
+    {
+        int iIndexOfSelectedItem = GetIndexOfActSelected();
+        sActSelected = m_aTxtHistory[iIndexOfSelectedItem];
+        m_aTxtHistory.removeAt(iIndexOfSelectedItem);
+        // WARNING:
+        // side effect --> if actual selected item is the contents of the clipboard,
+        // than also clear the contents of the clipboard !
+        if( iIndexOfSelectedItem==m_iActSelectedIndex )
+        {
+            m_pClipboard->setText(QString());
+        }
+        SetDataChanged(true);
+        SyncListWithUi();
+        UpdateSelection(iIndexOfSelectedItem);
+    }
+    return sActSelected;
+}
+
+void CliphistWindow::UpdateList(int iPosition, const QString & sText, bool bUpdate)
+{
+    UpdateColorOfLastSelectedItem();
+    if( bUpdate )
+    {
+         m_aTxtHistory[iPosition] = sText;
+    }
+    else
+    {
+        m_aTxtHistory.insert(iPosition,sText);
+    }
+    CheckHistoryMemory();
+    SetDataChanged(true);
+    SyncListWithUi();
+    UpdateLastSelectedItemData(ui->listWidget->item(iPosition));
+}
+
