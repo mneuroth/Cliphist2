@@ -71,8 +71,8 @@ private slots:
 #endif
     void OnEraseClipboard();
     void OnSelectFont();
-    void OnMaxEntries();
-    void OnLinesPerEntry();
+    void OnMaxItems();
+    void OnLinesPerItem();
     void OnHelp();
     void OnAbout();
     void OnAboutQt();
@@ -81,7 +81,6 @@ private slots:
     void OnItemDoubleClicked(QListWidgetItem * current);
     void OnItemActivated(QListWidgetItem * current);    
     void OnSelectionChanged();
-    void OnEditAboutToShow();
 
 private:
     bool SaveSettings();
@@ -89,15 +88,15 @@ private:
     bool Save();
     bool Load();
     bool SyncListWithUi();
-    bool IsActClipboardEntrySameAsActSelectedItem() const;
+    bool IsActClipboardEntrySameAsActivatedItem() const;
     bool IsActClipboardEntryEmpty() const;
-    bool IsAnyItemSelected() const;
+    bool IsAnyItemActivated() const;
     void LoadAndCheck();
     void SaveAndCheck();
-    void ActivateEntry(int iIndex);   
-    void ActivateEntry(QListWidgetItem * current);
-    void UpdateColorOfLastSelectedItem();
-    void UpdateLastSelectedItemData(QListWidgetItem * current);
+    void ActivateItem(int iIndex);
+    void ActivateItem(QListWidgetItem * current);
+    void UpdateColorOfLastActivatedItem();
+    void UpdateLastActivatedItemData(QListWidgetItem * current);
     void SetFont(const QFont & aFont);
     void InsertNewData(const QString & sText, int iNumber);
     void CheckHistoryMemory();
@@ -126,7 +125,7 @@ private:   /*data*/
     bool                        m_bChangedData;         // temp
     bool    	                m_bMyClipboardCopy;     // temp, flag to show that the current clipboard operation comes from this application
     int                         m_iFindIndex;           // temp
-    int                         m_iActSelectedIndex;    // temp --> TODO: maybe use ui->listWidget->currentItem() ?
+    int                         m_iActivatedIndex;      // temp --> TODO: maybe use ui->listWidget->currentItem() ? ==> No, currentItem()!=activatedItem
     int                         m_iMaxEntries;
     int                         m_iMaxLinesPerEntry;    
     QString                     m_sFileName;
