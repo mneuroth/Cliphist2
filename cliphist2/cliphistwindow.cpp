@@ -93,6 +93,16 @@
 
 TODO: probleme mit dem editieren von text der html code enthaelt !
 TODO: Bug: manchmal werden doppelte Eintraege alle rot angezeigt ?
+
+TODO: bessere unterscheidung zwischen Selektion (in Liste) und Aktivierung (in Clipboard, rot)
+Operationen:
+  - add new Clipboard entry at begin of list + activate entry
+  - select any item
+  - activate any item = select + activate as clipboard entry (red)
+  - delete selected item + select entry after selected item
+  - edit selected item (+ select this entry again)
+  - insert new item before actual position + select new entry
+
 */
 
 #include "cliphistwindow.h"
@@ -139,6 +149,40 @@ TODO: Bug: manchmal werden doppelte Eintraege alle rot angezeigt ?
 
 // ************************************************************************
 
+class AddCommand : public QUndoCommand
+ {
+ public:
+     AddCommand(CliphistWindow * pApp, int iPosition, const QString & sText, bool bUpdate, QUndoCommand *parent = 0)
+         : QUndoCommand(parent),
+           m_pApp(pApp),
+           m_iPosition(iPosition),
+           m_sText(sText),
+           m_bUpdate(bUpdate)
+     {}
+
+     void undo()
+     {
+         if( m_pApp && m_iPosition>=0 )
+         {
+             /*m_sText =*/ m_pApp->RemoveGiven(m_iPosition);
+         }
+     }
+     void redo()
+     {
+         if( m_pApp )
+         {
+             // verify if operation was successfully
+             m_iPosition = m_pApp->UpdateOrInsertList(m_iPosition,m_sText,m_bUpdate);
+         }
+     }
+
+ private:
+     CliphistWindow *   m_pApp;
+     int                m_iPosition;
+     QString            m_sText;
+     bool               m_bUpdate;
+ };
+
 class DeleteActSelectedCommand : public QUndoCommand
  {
  public:
@@ -153,7 +197,7 @@ class DeleteActSelectedCommand : public QUndoCommand
      {
          if( m_pApp && m_iPosition>=0 && m_sText!=QString::null )
          {
-             m_pApp->UpdateList(m_iPosition,m_sText,/*bUpdate*/false);
+             m_pApp->UpdateOrInsertList(m_iPosition,m_sText,/*bUpdate*/false);
              m_pApp->UpdateSelection(m_iPosition);
          }
      }
@@ -161,8 +205,11 @@ class DeleteActSelectedCommand : public QUndoCommand
      {
          if( m_pApp )
          {
-             m_iPosition = m_pApp->GetIndexOfActSelected();
-             m_sText = m_pApp->RemoveActSelected();
+             if( m_iPosition<0 )
+             {
+                 m_iPosition = m_pApp->GetIndexOfActSelected();
+             }
+             m_sText = m_pApp->RemoveGiven(m_iPosition);
          }
      }
 
@@ -380,7 +427,8 @@ void CliphistWindow::OnEditItem()
         {
             m_aEditDialogGeometry = aDlg.saveGeometry();
 //TODO: InsertNewData(m_pClipboard->text(),0);
-            UpdateList(ui->listWidget->currentRow(),aDlg.text(),!aDlg.asNewEntry());
+            m_pUndoStack->push(new AddCommand(this,ui->listWidget->currentRow(),aDlg.text(),!aDlg.asNewEntry()));
+////            UpdateOrInsertList(ui->listWidget->currentRow(),aDlg.text(),!aDlg.asNewEntry());
 //            if( aDlg.asNewEntry() )
 //            {
 //                m_aTxtHistory.insert(ui->listWidget->currentRow(),aDlg.text());
@@ -445,7 +493,8 @@ void CliphistWindow::OnClipboardDataChanged()
         ui->action_Activate_cliphist->isChecked() )
     {
 //TODO: InsertNewData(m_pClipboard->text(),0);
-        UpdateList(0,m_pClipboard->text(),/*bUpdate*/false);
+        m_pUndoStack->push(new AddCommand(this,0,m_pClipboard->text(),/*bUpdate*/false));
+////        UpdateOrInsertList(0,m_pClipboard->text(),/*bUpdate*/false);
 //        UpdateColorOfLastSelectedItem();
 //        m_aTxtHistory.insert(0,m_pClipboard->text());
 //        CheckHistoryMemory();
@@ -459,7 +508,12 @@ void CliphistWindow::OnClipboardDataChanged()
         if( IsActClipboardEntryEmpty() && IsAnyItemSelected() )
         {
             m_iActSelectedIndex = -1;
+            int iCurrentIndex = ui->listWidget->currentRow();
             SyncListWithUi();
+            if( iCurrentIndex>=0 )
+            {
+                UpdateSelection(iCurrentIndex);
+            }
         }
     }
 }
@@ -856,13 +910,12 @@ int CliphistWindow::GetIndexOfActSelected() const
     return ui->listWidget->currentRow();
 }
 
-QString CliphistWindow::RemoveActSelected()
+QString CliphistWindow::RemoveGiven(int iIndexOfSelectedItem)
 {
-    QString sActSelected = QString::null;
-    if( ui->listWidget->currentItem() )
+    QString sItem = QString::null;
+    if( iIndexOfSelectedItem>=0 && iIndexOfSelectedItem<m_aTxtHistory.size() )
     {
-        int iIndexOfSelectedItem = GetIndexOfActSelected();
-        sActSelected = m_aTxtHistory[iIndexOfSelectedItem];
+        sItem = m_aTxtHistory[iIndexOfSelectedItem];
         m_aTxtHistory.removeAt(iIndexOfSelectedItem);
         // WARNING:
         // side effect --> if actual selected item is the contents of the clipboard,
@@ -873,25 +926,31 @@ QString CliphistWindow::RemoveActSelected()
         }
         SetDataChanged(true);
         SyncListWithUi();
+// nur updaten wenn selektion geloescht...
         UpdateSelection(iIndexOfSelectedItem);
     }
-    return sActSelected;
+    return sItem;
 }
 
-void CliphistWindow::UpdateList(int iPosition, const QString & sText, bool bUpdate)
+int CliphistWindow::UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate)
 {
-    UpdateColorOfLastSelectedItem();
-    if( bUpdate )
+    if( iPosition>=0 && iPosition<m_aTxtHistory.size() && sText.length()>0 )
     {
-         m_aTxtHistory[iPosition] = sText;
+        UpdateColorOfLastSelectedItem();
+        if( bUpdate )
+        {
+             m_aTxtHistory[iPosition] = sText;
+        }
+        else
+        {
+            m_aTxtHistory.insert(iPosition,sText);
+        }
+        CheckHistoryMemory();
+        SetDataChanged(true);
+        SyncListWithUi();
+        UpdateLastSelectedItemData(ui->listWidget->item(iPosition));
+        return iPosition;
     }
-    else
-    {
-        m_aTxtHistory.insert(iPosition,sText);
-    }
-    CheckHistoryMemory();
-    SetDataChanged(true);
-    SyncListWithUi();
-    UpdateLastSelectedItemData(ui->listWidget->item(iPosition));
+    return -1;
 }
 

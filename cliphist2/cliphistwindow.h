@@ -111,8 +111,8 @@ private:
     QString GetNewLine() const;
 public:
     int GetIndexOfActSelected() const;
-    QString RemoveActSelected();
-    void UpdateList(int iPosition, const QString & sText, bool bUpdate);
+    QString RemoveGiven(int iIndexOfSelectedItem = -1);
+    int UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate);
     void UpdateSelection(int iCurrentRow);
 
 private:   /*data*/
