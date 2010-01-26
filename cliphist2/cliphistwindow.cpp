@@ -103,6 +103,19 @@ Operationen:
   - edit selected item (+ select this entry again)
   - insert new item before actual position + select new entry
 
+SyncListWithUi()
+ --> OnDeleteAllItems()			--> full, selected_id=-1, index=-1
+ --> OnClipboardDataChanged()		--> no,   calc(selected_id), index=0 ==> +1
+ --> OnLoadData()			--> full, selected_id=0, index=-1
+ --> OnLinesPerItem()			--> full, selected_id, (aktive_id) == bleiben erhalten !
+  --> RemoveGiven()			--> no,   calc(selected_id), index=deleteIndex    ==> -1 if selected_id>=deleteIndex else 0
+  --> UpdateOrInsertList()		--> full, calc(selected_id), index=insertPosition ==> +1 if selected_id>=insertIndex else 0 / update: 0
+  --> constructor			--> full, selected_id=0, index=-1
+
+SyncListWithUi(bFull,iSelectedIndex=0,iIndex)	--> full --> clear + new + no activate + selected item == iIndex
+
+updateSelection() nur aus SyncListWithUi() aufrufen
+
 */
 
 #include "cliphistwindow.h"
@@ -198,7 +211,7 @@ class DeleteActSelectedCommand : public QUndoCommand
          if( m_pApp && m_iPosition>=0 && m_sText!=QString::null )
          {
              m_pApp->UpdateOrInsertList(m_iPosition,m_sText,/*bUpdate*/false);
-             m_pApp->UpdateSelection(m_iPosition);
+//             m_pApp->UpdateSelection(m_iPosition);
          }
      }
      void redo()
@@ -243,6 +256,7 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     m_bChangedData      = false;
     m_bMyClipboardCopy  = false;
     m_iActivatedIndex   = -1;
+    m_iSelectedIndex    = -1;
     m_iMaxEntries       = DEFAULT_MAX_ENTRIES;
     m_iMaxLinesPerEntry = DEFAULT_LINES_PER_ENTRY;
     m_sFileName         = QDir::homePath()+QDir::separator()+QString(DEFAULT_FILE_NAME);
@@ -252,7 +266,7 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     {
         LoadAndCheck();
     }
-    SyncListWithUi();
+    SyncListWithUi(0);
 
     OnToggleAlwaysOnTop(ui->actionAlways_on_top->isChecked());
 
@@ -360,7 +374,7 @@ void CliphistWindow::OnDeleteAllItems()
 // TODO --> redo/undo support
         m_aTxtHistory.clear();
         SetDataChanged(false);
-        SyncListWithUi();
+        SyncListWithUi(-1);
     }
 }
 
@@ -445,6 +459,7 @@ void CliphistWindow::OnEditItem()
     }        
 }
 
+// TODO --> delete
 void CliphistWindow::UpdateSelection(int iCurrentRow)
 {
     // update selection after modifying list
@@ -482,7 +497,7 @@ bool CliphistWindow::IsActClipboardEntryEmpty() const
 
 bool CliphistWindow::IsAnyItemActivated() const
 {
-    return m_iActivatedIndex!=-1;
+    return m_iActivatedIndex>=0;
 }
 
 void CliphistWindow::OnClipboardDataChanged()
@@ -508,12 +523,12 @@ void CliphistWindow::OnClipboardDataChanged()
         if( IsActClipboardEntryEmpty() && IsAnyItemActivated() )
         {
             m_iActivatedIndex = -1;
-            int iCurrentIndex = ui->listWidget->currentRow();
-            SyncListWithUi();
-            if( iCurrentIndex>=0 )
-            {
-                UpdateSelection(iCurrentIndex);
-            }
+//            int iCurrentIndex = ui->listWidget->currentRow();
+            SyncListWithUi(+1);
+//            if( iCurrentIndex>=0 )
+//            {
+//                UpdateSelection(iCurrentIndex);
+//            }
         }
     }
 }
@@ -552,7 +567,8 @@ void CliphistWindow::OnItemActivated(QListWidgetItem* current)
 
 void CliphistWindow::OnSelectionChanged()
 {
-    emit SelectionChanged(ui->listWidget->currentItem()!=0);
+    m_iSelectedIndex = ui->listWidget->currentRow(); /*ui->listWidget->currentItem();*/
+    emit SelectionChanged(m_iSelectedIndex>=0);
 }
 
 void CliphistWindow::LoadAndCheck()
@@ -567,7 +583,10 @@ void CliphistWindow::SaveAndCheck()
 {
     if( !Save() )
     {
-        QMessageBox::warning(this,tr("Warning"),QString(tr("Can not save data file %1")).arg(m_sFileName),QMessageBox::Ok);
+        if( QMessageBox::Retry == QMessageBox::warning(this,tr("Warning"),QString(tr("Can not save data file %1\nDiscard changes or retry with other name?")).arg(m_sFileName),QMessageBox::Discard|QMessageBox::Retry) )
+        {
+            OnSaveDataAs();
+        }
     }
 }
 
@@ -586,7 +605,7 @@ void CliphistWindow::OnLoadData()
     {
         m_sFileName = sFileName;
         LoadAndCheck();
-        SyncListWithUi();
+        SyncListWithUi(0);
     }
 }
 
@@ -641,7 +660,7 @@ void CliphistWindow::OnLinesPerItem()
     if( ok )
     {
         m_iMaxLinesPerEntry = i;
-        SyncListWithUi();
+        SyncListWithUi(ui->listWidget->currentRow());
     }
 }    
 
@@ -686,16 +705,17 @@ QString CliphistWindow::FilterNumber(const QString & s, const QString & sNumber,
     return sRet.mid(0,sRet.size()-GetNewLine().size());   // remove last \n from return string
 }
 
-bool CliphistWindow::SyncListWithUi()
+bool CliphistWindow::SyncListWithUi(int iSelectIdx)
 {
     QString sActClipBoardText = m_pClipboard->text();
-    bool bNeedUpdate = true;
+    bool bActivatedNeedUpdate = true;
     int iFirstOccurance = -1;
+// in aufrufer verschieben: int iCurrentSelectedIdx = ui->listWidget->currentRow();
     ui->listWidget->clear();
     ui->listWidgetLineNumbers->clear();
     for( int i=m_aTxtHistory.size()-1; i>=0; i-- )
     {
-        if( sActClipBoardText==m_aTxtHistory[i] && bNeedUpdate )
+        if( sActClipBoardText==m_aTxtHistory[i] && bActivatedNeedUpdate )
         {
             if( iFirstOccurance==-1 )
             {
@@ -704,12 +724,12 @@ bool CliphistWindow::SyncListWithUi()
             // actual index is still valid --> no update needed
             if( m_iActivatedIndex==i )
             {
-                bNeedUpdate = false;
+                bActivatedNeedUpdate = false;
             }
         }
-        InsertNewData(m_aTxtHistory[i],i+1);
+        InsertNewUiData(m_aTxtHistory[i],i+1);
     }
-    if( bNeedUpdate && iFirstOccurance!=-1 )
+    if( bActivatedNeedUpdate && iFirstOccurance!=-1 )
     {
         m_iActivatedIndex = iFirstOccurance;
     }
@@ -717,10 +737,14 @@ bool CliphistWindow::SyncListWithUi()
     {
         UpdateLastActivatedItemData(ui->listWidget->item(m_iActivatedIndex));
     }
+    if( iSelectIdx>=0 )
+    {
+        ui->listWidget->setCurrentRow(iSelectIdx);
+    }
     return true;
 }
 
-void CliphistWindow::InsertNewData(const QString & sText, int iNumber)
+void CliphistWindow::InsertNewUiData(const QString & sText, int iNumber)
 {
     QListWidgetItem * pNewItem = CreateNewItem(sText,GetColorForIndex(iNumber));
     ui->listWidget->insertItem(0,pNewItem);
@@ -921,9 +945,9 @@ QString CliphistWindow::RemoveGiven(int iIndexOfSelectedItem)
             m_pClipboard->setText(QString());
         }
         SetDataChanged(true);
-        SyncListWithUi();
+        SyncListWithUi( ui->listWidget->currentRow()>=iIndexOfSelectedItem ? -1 : 0 );
 // TODO: ggf.nur updaten wenn selektion geloescht... ?
-        UpdateSelection(iIndexOfSelectedItem);
+//        UpdateSelection(iIndexOfSelectedItem);
     }
     return sItem;
 }
@@ -932,7 +956,7 @@ int CliphistWindow::UpdateOrInsertList(int iPosition, const QString & sText, boo
 {
     if( iPosition>=0 && iPosition<m_aTxtHistory.size() && sText.length()>0 )
     {
-        UpdateColorOfLastActivatedItem();
+/*DELETE?*/        UpdateColorOfLastActivatedItem();
         if( bUpdate )
         {
              m_aTxtHistory[iPosition] = sText;
@@ -943,8 +967,15 @@ int CliphistWindow::UpdateOrInsertList(int iPosition, const QString & sText, boo
         }
         CheckHistoryMemory();
         SetDataChanged(true);
-        SyncListWithUi();
-        UpdateLastActivatedItemData(ui->listWidget->item(iPosition));
+        if( bUpdate )
+        {
+            SyncListWithUi( ui->listWidget->currentRow() );
+        }
+        else
+        {
+            SyncListWithUi( ui->listWidget->currentRow()>=iPosition ? -1 : 0 );
+        }
+/*DELETE?*/        UpdateLastActivatedItemData(ui->listWidget->item(iPosition));
         return iPosition;
     }
     return -1;

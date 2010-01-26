@@ -87,7 +87,7 @@ private:
     bool LoadSettings();
     bool Save();
     bool Load();
-    bool SyncListWithUi();
+    bool SyncListWithUi(int iSelectIdx=-1);
     bool IsActClipboardEntrySameAsActivatedItem() const;
     bool IsActClipboardEntryEmpty() const;
     bool IsAnyItemActivated() const;
@@ -98,7 +98,7 @@ private:
     void UpdateColorOfLastActivatedItem();
     void UpdateLastActivatedItemData(QListWidgetItem * current);
     void SetFont(const QFont & aFont);
-    void InsertNewData(const QString & sText, int iNumber);
+    void InsertNewUiData(const QString & sText, int iNumber);
     void CheckHistoryMemory();
     void SetDataChanged(bool bValue);
     QBrush GetColorOfNeighbour(int iMyIndex) const;
@@ -126,6 +126,7 @@ private:   /*data*/
     bool    	                m_bMyClipboardCopy;     // temp, flag to show that the current clipboard operation comes from this application
     int                         m_iFindIndex;           // temp
     int                         m_iActivatedIndex;      // temp --> TODO: maybe use ui->listWidget->currentItem() ? ==> No, currentItem()!=activatedItem
+    int                         m_iSelectedIndex;       // temp
     int                         m_iMaxEntries;
     int                         m_iMaxLinesPerEntry;    
     QString                     m_sFileName;
