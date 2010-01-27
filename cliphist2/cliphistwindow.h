@@ -64,11 +64,12 @@ private slots:
     void OnFindItem();
     void OnFindNextItem();
     void OnEditItem();
-    void OnClipboardDataChanged();
-    void OnClipboardChanged(QClipboard::Mode);
 #if defined(_WITH_TIMER)
     void OnTimerUpdate();
+#else
+    void OnClipboardChanged(QClipboard::Mode);
 #endif
+    void OnClipboardDataChanged();
     void OnEraseClipboard();
     void OnSelectFont();
     void OnMaxItems();
@@ -111,8 +112,13 @@ private:
 public:
     int GetIndexOfActSelected() const;
     QString RemoveGiven(int iIndexOfSelectedItem = -1);
-    int UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate);
+    //int UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate);
+    int UpdateList(int iPosition, const QString & sText);
+    int InsertInList(int iPosition, const QString & sText);
     void UpdateSelection(int iCurrentRow);
+    void DoDeleteAllItems();
+    void UndoDeleteAllItems(const QStringList & aHistory, int iActSelected);
+
 
 private:   /*data*/
     Ui::CliphistWindow *        ui;
@@ -126,7 +132,6 @@ private:   /*data*/
     bool    	                m_bMyClipboardCopy;     // temp, flag to show that the current clipboard operation comes from this application
     int                         m_iFindIndex;           // temp
     int                         m_iActivatedIndex;      // temp --> TODO: maybe use ui->listWidget->currentItem() ? ==> No, currentItem()!=activatedItem
-    int                         m_iSelectedIndex;       // temp
     int                         m_iMaxEntries;
     int                         m_iMaxLinesPerEntry;    
     QString                     m_sFileName;

@@ -27,6 +27,7 @@
       lupdate cliphist2.pro    *.cpp --> *.ts
       linguist cliphist_de.ts
       lrelease cliphist2.pro   *.ts  --> *.qm
+      make (*.qm is contained in executable file via qrc)
 
       copy /Developer/Applications/Qt/translations/qt_de.qm to working directory
 
@@ -162,75 +163,157 @@ updateSelection() nur aus SyncListWithUi() aufrufen
 
 // ************************************************************************
 
-class AddCommand : public QUndoCommand
- {
- public:
-     AddCommand(CliphistWindow * pApp, int iPosition, const QString & sText, bool bUpdate, QUndoCommand *parent = 0)
+// ************************************************************************
+//class AddCommand : public QUndoCommand
+// {
+// public:
+//     AddCommand(CliphistWindow * pApp, int iPosition, const QString & sText, const QString & sOldText, bool bUpdate, QUndoCommand *parent = 0)
+//         : QUndoCommand(parent),
+//           m_pApp(pApp),
+//           m_iPosition(iPosition),
+//           m_sText(sText),
+//           m_sOldText(sOldText),
+//           m_bUpdate(bUpdate)
+//     {}
+//
+//     void undo()
+//     {
+//         if( m_pApp && m_iPosition>=0 )
+//         {
+//             if( m_bUpdate )
+//             {
+//                 m_iPosition = m_pApp->UpdateOrInsertList(m_iPosition,m_sOldText,m_bUpdate);
+//             }
+//             else
+//             {
+//                /*m_sText =*/ m_pApp->RemoveGiven(m_iPosition);
+//             }
+//         }
+//     }
+//     void redo()
+//     {
+//         if( m_pApp )
+//         {
+//             // verify if operation was successfully
+//             m_iPosition = m_pApp->UpdateOrInsertList(m_iPosition,m_sText,m_bUpdate);
+//         }
+//     }
+//
+// private:
+//     CliphistWindow *   m_pApp;
+//     int                m_iPosition;
+//     QString            m_sText;
+//     QString            m_sOldText;
+//     bool               m_bUpdate;
+// };
+
+// ************************************************************************
+class UpdateCommand : public QUndoCommand
+{
+public:
+     UpdateCommand(CliphistWindow * pApp, int iPosition, const QString & sText, const QString & sOldText, QUndoCommand *parent = 0)
          : QUndoCommand(parent),
            m_pApp(pApp),
            m_iPosition(iPosition),
            m_sText(sText),
-           m_bUpdate(bUpdate)
+           m_sOldText(sOldText)
      {}
 
      void undo()
      {
-         if( m_pApp && m_iPosition>=0 )
-         {
-             /*m_sText =*/ m_pApp->RemoveGiven(m_iPosition);
-         }
+         m_iPosition = m_pApp->UpdateList(m_iPosition,m_sOldText);
      }
      void redo()
      {
-         if( m_pApp )
-         {
-             // verify if operation was successfully
-             m_iPosition = m_pApp->UpdateOrInsertList(m_iPosition,m_sText,m_bUpdate);
-         }
+         // verify if operation was successfully
+         m_iPosition = m_pApp->UpdateList(m_iPosition,m_sText);
      }
 
- private:
+private:
      CliphistWindow *   m_pApp;
      int                m_iPosition;
      QString            m_sText;
-     bool               m_bUpdate;
- };
+     QString            m_sOldText;
+};
 
-class DeleteActSelectedCommand : public QUndoCommand
- {
- public:
-     DeleteActSelectedCommand(CliphistWindow * pApp, QUndoCommand *parent = 0)
+// ************************************************************************
+class InsertCommand : public QUndoCommand
+{
+public:
+     InsertCommand(CliphistWindow * pApp, int iPosition, const QString & sText, QUndoCommand *parent = 0)
          : QUndoCommand(parent),
            m_pApp(pApp),
-           m_iPosition(-1),
+           m_iPosition(iPosition),
+           m_sText(sText)
+     {}
+
+     void undo()
+     {
+         /*m_sText =*/ m_pApp->RemoveGiven(m_iPosition);
+     }
+     void redo()
+     {
+         // verify if operation was successfully
+         m_iPosition = m_pApp->InsertInList(m_iPosition,m_sText);
+     }
+
+private:
+     CliphistWindow *   m_pApp;
+     int                m_iPosition;
+     QString            m_sText;
+};
+
+// ************************************************************************
+class DeleteItemCommand : public QUndoCommand
+ {
+ public:
+     DeleteItemCommand(CliphistWindow * pApp, int iPos, QUndoCommand *parent = 0)
+         : QUndoCommand(parent),
+           m_pApp(pApp),
+           m_iPosition(iPos),
            m_sText(QString::null)
      {}
 
      void undo()
      {
-         if( m_pApp && m_iPosition>=0 && m_sText!=QString::null )
-         {
-             m_pApp->UpdateOrInsertList(m_iPosition,m_sText,/*bUpdate*/false);
-//             m_pApp->UpdateSelection(m_iPosition);
-         }
+         m_pApp->InsertInList(m_iPosition,m_sText);
      }
      void redo()
      {
-         if( m_pApp )
-         {
-             if( m_iPosition<0 )
-             {
-                 m_iPosition = m_pApp->GetIndexOfActSelected();
-             }
-             m_sText = m_pApp->RemoveGiven(m_iPosition);
-         }
+         m_sText = m_pApp->RemoveGiven(m_iPosition);
      }
 
- private:
+private:
      CliphistWindow *   m_pApp;
      int                m_iPosition;
      QString            m_sText;
- };
+};
+
+// ************************************************************************
+class DeleteAllCommand : public QUndoCommand
+{
+public:
+     DeleteAllCommand(CliphistWindow * pApp, const QStringList & aHistory, int iActSelected, QUndoCommand *parent = 0)
+         : QUndoCommand(parent),
+           m_pApp(pApp),
+           m_aHistory(aHistory),
+           m_iActSelected(iActSelected)
+     {}
+
+     void undo()
+     {
+         m_pApp->UndoDeleteAllItems(m_aHistory,m_iActSelected);
+     }
+     void redo()
+     {
+         m_pApp->DoDeleteAllItems();
+     }
+
+private:
+     CliphistWindow *   m_pApp;
+     QStringList        m_aHistory;
+     int                m_iActSelected;
+};
 
 // ************************************************************************
 
@@ -256,7 +339,6 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     m_bChangedData      = false;
     m_bMyClipboardCopy  = false;
     m_iActivatedIndex   = -1;
-    m_iSelectedIndex    = -1;
     m_iMaxEntries       = DEFAULT_MAX_ENTRIES;
     m_iMaxLinesPerEntry = DEFAULT_LINES_PER_ENTRY;
     m_sFileName         = QDir::homePath()+QDir::separator()+QString(DEFAULT_FILE_NAME);
@@ -270,9 +352,6 @@ CliphistWindow::CliphistWindow(QWidget *parent)
 
     OnToggleAlwaysOnTop(ui->actionAlways_on_top->isChecked());
 
-    connect(m_pClipboard, SIGNAL(changed(QClipboard::Mode)), this, SLOT(OnClipboardChanged(QClipboard::Mode)));
-    connect(m_pClipboard, SIGNAL(dataChanged()), this, SLOT(OnClipboardDataChanged()));
-// TODO findBufferChanged signal ?
     connect(ui->listWidget, SIGNAL(itemClicked(QListWidgetItem *)), this, SLOT(OnItemClicked(QListWidgetItem *)));
     connect(ui->listWidget, SIGNAL(itemDoubleClicked(QListWidgetItem *)), this, SLOT(OnItemDoubleClicked(QListWidgetItem *)));
     connect(ui->listWidget, SIGNAL(itemActivated(QListWidgetItem*)), this, SLOT(OnItemActivated(QListWidgetItem*)));
@@ -319,6 +398,9 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     m_pTimer->start(200);
 #else
     m_pTimer = 0;
+    connect(m_pClipboard, SIGNAL(changed(QClipboard::Mode)), this, SLOT(OnClipboardChanged(QClipboard::Mode)));
+    connect(m_pClipboard, SIGNAL(dataChanged()), this, SLOT(OnClipboardDataChanged()));
+// TODO findBufferChanged signal ?
 #endif
 
     OnSelectionChanged();
@@ -371,17 +453,27 @@ void CliphistWindow::OnDeleteAllItems()
     QMessageBox::StandardButtons aButton = QMessageBox::question(this,tr("Question"),tr("Really delete all items in the list ?"),QMessageBox::Yes|QMessageBox::No);
     if( aButton == QMessageBox::Yes )
     {
-// TODO --> redo/undo support
-        m_aTxtHistory.clear();
-        SetDataChanged(false);
-        SyncListWithUi(-1);
+        m_pUndoStack->push(new DeleteAllCommand(this,m_aTxtHistory,GetIndexOfActSelected()));
     }
+}
+
+void CliphistWindow::DoDeleteAllItems()
+{
+    m_aTxtHistory.clear();
+    SetDataChanged(false);
+    SyncListWithUi(-1);
+}
+
+void CliphistWindow::UndoDeleteAllItems(const QStringList & aHistory, int iActSelected)
+{
+    m_aTxtHistory = aHistory;
+    SetDataChanged(true);
+    SyncListWithUi(iActSelected);
 }
 
 void CliphistWindow::OnDeleteItem()
 {
-//TODO rename: DeleteGiven(), selbst index herausfinden, nicht in undo command !?
-    m_pUndoStack->push(new DeleteActSelectedCommand(this));
+    m_pUndoStack->push(new DeleteItemCommand(this,GetIndexOfActSelected()));
 }
 
 void CliphistWindow::OnFindItem()
@@ -431,7 +523,7 @@ void CliphistWindow::OnEditItem()
 {
     if( ui->listWidget->currentItem() )
     {
-        int iCurrentRow = ui->listWidget->currentRow();
+        int iCurrentRow = GetIndexOfActSelected();
         EditItem aDlg(this,ui->listWidget->font(),m_aTxtHistory[iCurrentRow]);
         if( m_aEditDialogGeometry.count()>0 )
         {
@@ -440,26 +532,18 @@ void CliphistWindow::OnEditItem()
         if( aDlg.exec()==QDialog::Accepted )
         {
             m_aEditDialogGeometry = aDlg.saveGeometry();
-//TODO: InsertNewData(m_pClipboard->text(),0);
-            m_pUndoStack->push(new AddCommand(this,ui->listWidget->currentRow(),aDlg.text(),!aDlg.asNewEntry()));
-////            UpdateOrInsertList(ui->listWidget->currentRow(),aDlg.text(),!aDlg.asNewEntry());
-//            if( aDlg.asNewEntry() )
-//            {
-//                m_aTxtHistory.insert(ui->listWidget->currentRow(),aDlg.text());
-//                CheckHistoryMemory();
-//            }
-//            else
-//            {
-//                m_aTxtHistory[ui->listWidget->currentRow()] = aDlg.text();
-//            }
-//            SetDataChanged(true);
-//            SyncListWithUi();
-//            UpdateSelection(iCurrentRow);
+            if( aDlg.asNewEntry() )
+            {
+                m_pUndoStack->push(new InsertCommand(this,GetIndexOfActSelected(),aDlg.text()));
+            }
+            else
+            {
+                m_pUndoStack->push(new UpdateCommand(this,GetIndexOfActSelected(),aDlg.text(),m_aTxtHistory[iCurrentRow]));
+            }
         }
     }        
 }
 
-// TODO --> delete
 void CliphistWindow::UpdateSelection(int iCurrentRow)
 {
     // update selection after modifying list
@@ -500,6 +584,18 @@ bool CliphistWindow::IsAnyItemActivated() const
     return m_iActivatedIndex>=0;
 }
 
+#if defined(_WITH_TIMER)
+void CliphistWindow::OnTimerUpdate()
+{
+    OnClipboardDataChanged();
+}
+#else
+
+void CliphistWindow::OnClipboardChanged(QClipboard::Mode /*aMode*/)
+{
+}
+#endif
+
 void CliphistWindow::OnClipboardDataChanged()
 {
     if( !m_bMyClipboardCopy &&
@@ -507,15 +603,7 @@ void CliphistWindow::OnClipboardDataChanged()
         !IsActClipboardEntrySameAsActivatedItem() &&
         ui->action_Activate_cliphist->isChecked() )
     {
-//TODO: InsertNewData(m_pClipboard->text(),0);
-        m_pUndoStack->push(new AddCommand(this,0,m_pClipboard->text(),/*bUpdate*/false));
-////        UpdateOrInsertList(0,m_pClipboard->text(),/*bUpdate*/false);
-//        UpdateColorOfLastActivatedItem();
-//        m_aTxtHistory.insert(0,m_pClipboard->text());
-//        CheckHistoryMemory();
-//        SetDataChanged(true);
-//        SyncListWithUi();
-//        UpdateLastActivatedItemData(ui->listWidget->item(0));        // update of clipboard data always into index 0 !
+        m_pUndoStack->push(new InsertCommand(this,0,m_pClipboard->text()));
     }
     else
     {
@@ -523,26 +611,10 @@ void CliphistWindow::OnClipboardDataChanged()
         if( IsActClipboardEntryEmpty() && IsAnyItemActivated() )
         {
             m_iActivatedIndex = -1;
-//            int iCurrentIndex = ui->listWidget->currentRow();
-            SyncListWithUi(+1);
-//            if( iCurrentIndex>=0 )
-//            {
-//                UpdateSelection(iCurrentIndex);
-//            }
+            SyncListWithUi(GetIndexOfActSelected());
         }
     }
 }
-
-void CliphistWindow::OnClipboardChanged(QClipboard::Mode /*aMode*/)
-{
-}
-
-#if defined(_WITH_TIMER)
-void CliphistWindow::OnTimerUpdate()
-{
-    OnClipboardDataChanged();
-}
-#endif
 
 void CliphistWindow::OnItemClicked(QListWidgetItem * current)
 {
@@ -567,8 +639,7 @@ void CliphistWindow::OnItemActivated(QListWidgetItem* current)
 
 void CliphistWindow::OnSelectionChanged()
 {
-    m_iSelectedIndex = ui->listWidget->currentRow(); /*ui->listWidget->currentItem();*/
-    emit SelectionChanged(m_iSelectedIndex>=0);
+    emit SelectionChanged(GetIndexOfActSelected()>=0);
 }
 
 void CliphistWindow::LoadAndCheck()
@@ -660,7 +731,7 @@ void CliphistWindow::OnLinesPerItem()
     if( ok )
     {
         m_iMaxLinesPerEntry = i;
-        SyncListWithUi(ui->listWidget->currentRow());
+        SyncListWithUi(GetIndexOfActSelected());
     }
 }    
 
@@ -710,17 +781,13 @@ bool CliphistWindow::SyncListWithUi(int iSelectIdx)
     QString sActClipBoardText = m_pClipboard->text();
     bool bActivatedNeedUpdate = true;
     int iFirstOccurance = -1;
-// in aufrufer verschieben: int iCurrentSelectedIdx = ui->listWidget->currentRow();
     ui->listWidget->clear();
     ui->listWidgetLineNumbers->clear();
     for( int i=m_aTxtHistory.size()-1; i>=0; i-- )
     {
         if( sActClipBoardText==m_aTxtHistory[i] && bActivatedNeedUpdate )
         {
-            if( iFirstOccurance==-1 )
-            {
-                iFirstOccurance = i;
-            }
+            iFirstOccurance = i;        // always update variable because we loop from high indizes
             // actual index is still valid --> no update needed
             if( m_iActivatedIndex==i )
             {
@@ -737,10 +804,7 @@ bool CliphistWindow::SyncListWithUi(int iSelectIdx)
     {
         UpdateLastActivatedItemData(ui->listWidget->item(m_iActivatedIndex));
     }
-    if( iSelectIdx>=0 )
-    {
-        ui->listWidget->setCurrentRow(iSelectIdx);
-    }
+    UpdateSelection(iSelectIdx);
     return true;
 }
 
@@ -930,54 +994,79 @@ int CliphistWindow::GetIndexOfActSelected() const
     return ui->listWidget->currentRow();
 }
 
-QString CliphistWindow::RemoveGiven(int iIndexOfSelectedItem)
+QString CliphistWindow::RemoveGiven(int iIndexOfDeletedItem)
 {
     QString sItem = QString::null;
-    if( iIndexOfSelectedItem>=0 && iIndexOfSelectedItem<m_aTxtHistory.size() )
+    if( iIndexOfDeletedItem>=0 && iIndexOfDeletedItem<m_aTxtHistory.size() )
     {
-        sItem = m_aTxtHistory[iIndexOfSelectedItem];
-        m_aTxtHistory.removeAt(iIndexOfSelectedItem);
+        sItem = m_aTxtHistory[iIndexOfDeletedItem];
+        m_aTxtHistory.removeAt(iIndexOfDeletedItem);
         // WARNING:
         // side effect --> if actual selected item is the contents of the clipboard,
         // than also clear the contents of the clipboard !
-        if( iIndexOfSelectedItem==m_iActivatedIndex )
+        if( iIndexOfDeletedItem==m_iActivatedIndex )
         {
             m_pClipboard->setText(QString());
         }
         SetDataChanged(true);
-        SyncListWithUi( ui->listWidget->currentRow()>=iIndexOfSelectedItem ? -1 : 0 );
-// TODO: ggf.nur updaten wenn selektion geloescht... ?
-//        UpdateSelection(iIndexOfSelectedItem);
+        SyncListWithUi( GetIndexOfActSelected()>iIndexOfDeletedItem ? GetIndexOfActSelected()-1 : GetIndexOfActSelected() );
     }
     return sItem;
 }
 
-int CliphistWindow::UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate)
+//int CliphistWindow::UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate)
+//{
+//    if( !bUpdate || (iPosition>=0 && iPosition<m_aTxtHistory.size() && sText.length()>0) )
+//    {
+//        if( bUpdate )
+//        {
+//             m_aTxtHistory[iPosition] = sText;
+//        }
+//        else
+//        {
+//            m_aTxtHistory.insert(iPosition,sText);
+//        }
+//        CheckHistoryMemory();
+//        SetDataChanged(true);
+//        if( bUpdate )
+//        {
+//            SyncListWithUi( GetIndexOfActSelected() );
+//        }
+//        else
+//        {
+//            SyncListWithUi( GetIndexOfActSelected()>iPosition ? GetIndexOfActSelected()+1 : GetIndexOfActSelected() );
+//        }
+//        return iPosition;
+//    }
+//    return -1;
+//}
+
+int CliphistWindow::UpdateList(int iPosition, const QString & sText)
 {
-    if( iPosition>=0 && iPosition<m_aTxtHistory.size() && sText.length()>0 )
+    if( (iPosition>=0 && iPosition<m_aTxtHistory.size() && sText.length()>0) )
     {
-/*DELETE?*/        UpdateColorOfLastActivatedItem();
-        if( bUpdate )
+        m_aTxtHistory[iPosition] = sText;
+        if( iPosition==m_iActivatedIndex )
         {
-             m_aTxtHistory[iPosition] = sText;
-        }
-        else
-        {
-            m_aTxtHistory.insert(iPosition,sText);
+            m_pClipboard->setText(m_aTxtHistory[m_iActivatedIndex]);
         }
         CheckHistoryMemory();
         SetDataChanged(true);
-        if( bUpdate )
-        {
-            SyncListWithUi( ui->listWidget->currentRow() );
-        }
-        else
-        {
-            SyncListWithUi( ui->listWidget->currentRow()>=iPosition ? -1 : 0 );
-        }
-/*DELETE?*/        UpdateLastActivatedItemData(ui->listWidget->item(iPosition));
+        SyncListWithUi( GetIndexOfActSelected() );
         return iPosition;
     }
     return -1;
 }
 
+int CliphistWindow::InsertInList(int iPosition, const QString & sText)
+{
+    if( iPosition>=0 && iPosition<m_aTxtHistory.size() && !sText.isEmpty() && !sText.isNull() )
+    {
+        m_aTxtHistory.insert(iPosition,sText);
+        CheckHistoryMemory();
+        SetDataChanged(true);
+        SyncListWithUi( GetIndexOfActSelected()>iPosition ? GetIndexOfActSelected()+1 : GetIndexOfActSelected() );
+        return iPosition;
+    }
+    return -1;
+}
