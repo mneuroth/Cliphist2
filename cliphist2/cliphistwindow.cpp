@@ -93,29 +93,6 @@
       rpmbuild -bb cliphist2.spec
 
 TODO: probleme mit dem editieren von text der html code enthaelt !
-TODO: Bug: manchmal werden doppelte Eintraege alle rot angezeigt ?
-
-TODO: bessere unterscheidung zwischen Selektion (in Liste) und Aktivierung (in Clipboard, rot)
-Operationen:
-  - add new Clipboard entry at begin of list + activate entry
-  - select any item
-  - activate any item = select + activate as clipboard entry (red)
-  - delete selected item + select entry after selected item
-  - edit selected item (+ select this entry again)
-  - insert new item before actual position + select new entry
-
-SyncListWithUi()
- --> OnDeleteAllItems()			--> full, selected_id=-1, index=-1
- --> OnClipboardDataChanged()		--> no,   calc(selected_id), index=0 ==> +1
- --> OnLoadData()			--> full, selected_id=0, index=-1
- --> OnLinesPerItem()			--> full, selected_id, (aktive_id) == bleiben erhalten !
-  --> RemoveGiven()			--> no,   calc(selected_id), index=deleteIndex    ==> -1 if selected_id>=deleteIndex else 0
-  --> UpdateOrInsertList()		--> full, calc(selected_id), index=insertPosition ==> +1 if selected_id>=insertIndex else 0 / update: 0
-  --> constructor			--> full, selected_id=0, index=-1
-
-SyncListWithUi(bFull,iSelectedIndex=0,iIndex)	--> full --> clear + new + no activate + selected item == iIndex
-
-updateSelection() nur aus SyncListWithUi() aufrufen
 
 */
 
@@ -160,52 +137,6 @@ updateSelection() nur aus SyncListWithUi() aufrufen
 #define BLUE                        "#0000ff"   //"blue"
 #define GREEN                       "#008000"   //"green"
 #define RED                         "#ff0000"   //"red"
-
-// ************************************************************************
-
-// ************************************************************************
-//class AddCommand : public QUndoCommand
-// {
-// public:
-//     AddCommand(CliphistWindow * pApp, int iPosition, const QString & sText, const QString & sOldText, bool bUpdate, QUndoCommand *parent = 0)
-//         : QUndoCommand(parent),
-//           m_pApp(pApp),
-//           m_iPosition(iPosition),
-//           m_sText(sText),
-//           m_sOldText(sOldText),
-//           m_bUpdate(bUpdate)
-//     {}
-//
-//     void undo()
-//     {
-//         if( m_pApp && m_iPosition>=0 )
-//         {
-//             if( m_bUpdate )
-//             {
-//                 m_iPosition = m_pApp->UpdateOrInsertList(m_iPosition,m_sOldText,m_bUpdate);
-//             }
-//             else
-//             {
-//                /*m_sText =*/ m_pApp->RemoveGiven(m_iPosition);
-//             }
-//         }
-//     }
-//     void redo()
-//     {
-//         if( m_pApp )
-//         {
-//             // verify if operation was successfully
-//             m_iPosition = m_pApp->UpdateOrInsertList(m_iPosition,m_sText,m_bUpdate);
-//         }
-//     }
-//
-// private:
-//     CliphistWindow *   m_pApp;
-//     int                m_iPosition;
-//     QString            m_sText;
-//     QString            m_sOldText;
-//     bool               m_bUpdate;
-// };
 
 // ************************************************************************
 class UpdateCommand : public QUndoCommand
@@ -1013,33 +944,6 @@ QString CliphistWindow::RemoveGiven(int iIndexOfDeletedItem)
     }
     return sItem;
 }
-
-//int CliphistWindow::UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate)
-//{
-//    if( !bUpdate || (iPosition>=0 && iPosition<m_aTxtHistory.size() && sText.length()>0) )
-//    {
-//        if( bUpdate )
-//        {
-//             m_aTxtHistory[iPosition] = sText;
-//        }
-//        else
-//        {
-//            m_aTxtHistory.insert(iPosition,sText);
-//        }
-//        CheckHistoryMemory();
-//        SetDataChanged(true);
-//        if( bUpdate )
-//        {
-//            SyncListWithUi( GetIndexOfActSelected() );
-//        }
-//        else
-//        {
-//            SyncListWithUi( GetIndexOfActSelected()>iPosition ? GetIndexOfActSelected()+1 : GetIndexOfActSelected() );
-//        }
-//        return iPosition;
-//    }
-//    return -1;
-//}
 
 int CliphistWindow::UpdateList(int iPosition, const QString & sText)
 {
