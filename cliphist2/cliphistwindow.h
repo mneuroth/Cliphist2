@@ -114,7 +114,7 @@ public:
     QString RemoveGiven(int iIndexOfSelectedItem = -1);
     //int UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate);
     int UpdateList(int iPosition, const QString & sText);
-    int InsertInList(int iPosition, const QString & sText);
+    int InsertInList(int iPosition, const QString & sText, bool bUpdateSelection=false);
     void UpdateSelection(int iCurrentRow);
     void DoDeleteAllItems();
     void UndoDeleteAllItems(const QStringList & aHistory, int iActSelected);

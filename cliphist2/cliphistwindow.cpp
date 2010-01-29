@@ -171,11 +171,12 @@ private:
 class InsertCommand : public QUndoCommand
 {
 public:
-     InsertCommand(CliphistWindow * pApp, int iPosition, const QString & sText, QUndoCommand *parent = 0)
+     InsertCommand(CliphistWindow * pApp, int iPosition, const QString & sText, bool bUpdateSelection=false, QUndoCommand *parent = 0)
          : QUndoCommand(parent),
            m_pApp(pApp),
            m_iPosition(iPosition),
-           m_sText(sText)
+           m_sText(sText),
+           m_bUpdateSelection(bUpdateSelection)
      {}
 
      void undo()
@@ -185,13 +186,14 @@ public:
      void redo()
      {
          // verify if operation was successfully
-         m_iPosition = m_pApp->InsertInList(m_iPosition,m_sText);
+         m_iPosition = m_pApp->InsertInList(m_iPosition,m_sText,m_bUpdateSelection);
      }
 
 private:
      CliphistWindow *   m_pApp;
      int                m_iPosition;
      QString            m_sText;
+     bool               m_bUpdateSelection;
 };
 
 // ************************************************************************
@@ -534,7 +536,7 @@ void CliphistWindow::OnClipboardDataChanged()
         !IsActClipboardEntrySameAsActivatedItem() &&
         ui->action_Activate_cliphist->isChecked() )
     {
-        m_pUndoStack->push(new InsertCommand(this,0,m_pClipboard->text()));
+        m_pUndoStack->push(new InsertCommand(this,0,m_pClipboard->text(),ui->actionNew_clipboard_content_updates_selection->isChecked()));
     }
     else
     {
@@ -962,14 +964,21 @@ int CliphistWindow::UpdateList(int iPosition, const QString & sText)
     return -1;
 }
 
-int CliphistWindow::InsertInList(int iPosition, const QString & sText)
+int CliphistWindow::InsertInList(int iPosition, const QString & sText, bool bUpdateSelection)
 {
     if( iPosition>=0 && iPosition<m_aTxtHistory.size() && !sText.isEmpty() && !sText.isNull() )
     {
         m_aTxtHistory.insert(iPosition,sText);
         CheckHistoryMemory();
         SetDataChanged(true);
-        SyncListWithUi( GetIndexOfActSelected()>iPosition ? GetIndexOfActSelected()+1 : GetIndexOfActSelected() );
+        if( bUpdateSelection )
+        {
+            SyncListWithUi( iPosition );
+        }
+        else
+        {
+            SyncListWithUi( GetIndexOfActSelected()>iPosition ? GetIndexOfActSelected()+1 : GetIndexOfActSelected() );
+        }
         return iPosition;
     }
     return -1;

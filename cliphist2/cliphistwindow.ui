@@ -121,6 +121,7 @@
     <addaction name="action_Double_click_to_select"/>
     <addaction name="actionAutoload_data"/>
     <addaction name="actionAutoload_window_position_and_size"/>
+    <addaction name="actionNew_clipboard_content_updates_selection"/>
     <addaction name="actionAlways_on_top"/>
    </widget>
    <addaction name="menuFile"/>
@@ -170,7 +171,7 @@
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>&amp;About cliphist2...</string>
+    <string>&amp;About application...</string>
    </property>
   </action>
   <action name="actionDelete_all_entries">
@@ -288,6 +289,17 @@
   <action name="actionMaximal_number_of_entries">
    <property name="text">
     <string>Ma&amp;ximal number of entries...</string>
+   </property>
+  </action>
+  <action name="actionNew_clipboard_content_updates_selection">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>&amp;New clipboard content updates selection</string>
    </property>
   </action>
  </widget>
