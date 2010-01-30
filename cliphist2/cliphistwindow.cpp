@@ -94,6 +94,8 @@
 
 TODO: probleme mit dem editieren von text der html code enthaelt !
 
+TODO: build scripts fuer binaere pakete noch anpassen, dass *.qm und ggf. *,png als *.qrc resource geladen werden
+
 */
 
 #include "cliphistwindow.h"
@@ -966,7 +968,7 @@ int CliphistWindow::UpdateList(int iPosition, const QString & sText)
 
 int CliphistWindow::InsertInList(int iPosition, const QString & sText, bool bUpdateSelection)
 {
-    if( iPosition>=0 && iPosition<m_aTxtHistory.size() && !sText.isEmpty() && !sText.isNull() )
+    if( iPosition>=0 /*&& iPosition<m_aTxtHistory.size()*/ && !sText.isEmpty() && !sText.isNull() )
     {
         m_aTxtHistory.insert(iPosition,sText);
         CheckHistoryMemory();
