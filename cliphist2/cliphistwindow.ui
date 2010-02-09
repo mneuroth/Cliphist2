@@ -122,6 +122,7 @@
     <addaction name="actionAutoload_data"/>
     <addaction name="actionAutoload_window_position_and_size"/>
     <addaction name="actionNew_clipboard_content_updates_selection"/>
+    <addaction name="actionUse_timer_to_detect_clipboard_changes"/>
     <addaction name="actionAlways_on_top"/>
    </widget>
    <addaction name="menuFile"/>
@@ -300,6 +301,14 @@
    </property>
    <property name="text">
     <string>&amp;New clipboard content updates selection</string>
+   </property>
+  </action>
+  <action name="actionUse_timer_to_detect_clipboard_changes">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Use &amp;timer to detect clipboard changes</string>
    </property>
   </action>
  </widget>

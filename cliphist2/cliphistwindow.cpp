@@ -118,10 +118,7 @@ TODO: build scripts fuer binaere pakete noch anpassen, dass *.qm und ggf. *,png 
 #include <QFontMetrics>
 #include <QUndoStack>
 #include <QUndoCommand>
-
-#if defined(_WITH_TIMER)
 #include <QTimer>
-#endif
 
 // ************************************************************************
 
@@ -139,6 +136,12 @@ TODO: build scripts fuer binaere pakete noch anpassen, dass *.qm und ggf. *,png 
 #define BLUE                        "#0000ff"   //"blue"
 #define GREEN                       "#008000"   //"green"
 #define RED                         "#ff0000"   //"red"
+
+#if defined(Q_OS_MAC)
+#define DEFAULT_VALUE_USE_TIMER true
+#else
+#define DEFAULT_VALUE_USE_TIMER false
+#endif
 
 // ************************************************************************
 class UpdateCommand : public QUndoCommand
@@ -324,19 +327,21 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(OnAbout()));    
     connect(ui->actionAbout_Qt, SIGNAL(triggered()), this, SLOT(OnAboutQt()));
     connect(ui->actionAlways_on_top, SIGNAL(triggered(bool)), this, SLOT(OnToggleAlwaysOnTop(bool)));
+    connect(ui->actionUse_timer_to_detect_clipboard_changes, SIGNAL(triggered(bool)), this, SLOT(OnToggleUseTimer(bool)));
 
-#if defined(_WITH_TIMER)
     // because the semantic of the dataChanged() signal of the QClipboard class is different for Mac
     // we use a timer to get the changes of the clipboard contents...
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(OnTimerUpdate()));
-    m_pTimer->start(200);
-#else
-    m_pTimer = 0;
+    if( ui->actionUse_timer_to_detect_clipboard_changes->isChecked() )
+    {
+        m_pTimer->start(200);
+    }
     connect(m_pClipboard, SIGNAL(changed(QClipboard::Mode)), this, SLOT(OnClipboardChanged(QClipboard::Mode)));
     connect(m_pClipboard, SIGNAL(dataChanged()), this, SLOT(OnClipboardDataChanged()));
 // TODO findBufferChanged signal ?
-#endif
+
+    OnToggleUseTimer(ui->actionUse_timer_to_detect_clipboard_changes->isChecked());
 
     OnSelectionChanged();
 }
@@ -349,9 +354,7 @@ CliphistWindow::~CliphistWindow()
     }
     SaveSettings();
     delete m_pUndoStack;
-#if defined(_WITH_TIMER)
     delete m_pTimer;
-#endif
     delete ui;
 }
 
@@ -371,6 +374,18 @@ void CliphistWindow::OnToggleAlwaysOnTop(bool bChecked)
         setWindowFlags(windowFlags() & ~Qt::WindowStaysOnTopHint);
     }
     show();
+}
+
+void CliphistWindow::OnToggleUseTimer(bool bChecked)
+{
+    if( bChecked )
+    {
+        m_pTimer->start(200);
+    }
+    else
+    {
+        m_pTimer->stop();
+    }
 }
 
 void CliphistWindow::OnAbout()
@@ -519,17 +534,17 @@ bool CliphistWindow::IsAnyItemActivated() const
     return m_iActivatedIndex>=0;
 }
 
-#if defined(_WITH_TIMER)
 void CliphistWindow::OnTimerUpdate()
 {
-    OnClipboardDataChanged();
+    if( ui->actionUse_timer_to_detect_clipboard_changes->isChecked() )
+    {
+        OnClipboardDataChanged();
+    }
 }
-#else
 
 void CliphistWindow::OnClipboardChanged(QClipboard::Mode /*aMode*/)
 {
 }
-#endif
 
 void CliphistWindow::OnClipboardDataChanged()
 {
@@ -778,6 +793,7 @@ bool CliphistWindow::SaveSettings()
     aSettings.setValue("App/AutoLoadData",ui->actionAutoload_data->isChecked());
     aSettings.setValue("App/AutoWindowData",ui->actionAutoload_window_position_and_size->isChecked()); 
     aSettings.setValue("App/AlwaysOnTop",ui->actionAlways_on_top->isChecked()); 
+    aSettings.setValue("App/UseTimer",ui->actionUse_timer_to_detect_clipboard_changes->isChecked());
     return true;
 }
 
@@ -794,6 +810,7 @@ bool CliphistWindow::LoadSettings()
     ui->actionAutoload_data->setChecked(aSettings.value("App/AutoLoadData",true).toBool());
     ui->actionAutoload_window_position_and_size->setChecked(aSettings.value("App/AutoWindowData",true).toBool());
     ui->actionAlways_on_top->setChecked(aSettings.value("App/AlwaysOnTop",false).toBool());
+    ui->actionUse_timer_to_detect_clipboard_changes->setChecked(aSettings.value("App/UseTimer",DEFAULT_VALUE_USE_TIMER).toBool());
     if( ui->actionAutoload_window_position_and_size->isChecked() )
     {
         restoreState(aSettings.value("App/WindowState").toByteArray());

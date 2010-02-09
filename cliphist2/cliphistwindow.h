@@ -29,12 +29,6 @@
 #include <QPair>
 #include <QClipboard>
 
-#if defined(Q_OS_MAC)
-#define _WITH_TIMER
-#else
-#undef _WITH_TIMER
-#endif
-
 class QUndoStack;
 class QTimer;
 class QListWidgetItem;
@@ -64,11 +58,8 @@ private slots:
     void OnFindItem();
     void OnFindNextItem();
     void OnEditItem();
-#if defined(_WITH_TIMER)
     void OnTimerUpdate();
-#else
     void OnClipboardChanged(QClipboard::Mode);
-#endif
     void OnClipboardDataChanged();
     void OnEraseClipboard();
     void OnSelectFont();
@@ -78,6 +69,7 @@ private slots:
     void OnAbout();
     void OnAboutQt();
     void OnToggleAlwaysOnTop(bool bChecked);
+    void OnToggleUseTimer(bool bChecked);
     void OnItemClicked(QListWidgetItem * current);
     void OnItemDoubleClicked(QListWidgetItem * current);
     void OnItemActivated(QListWidgetItem * current);    
