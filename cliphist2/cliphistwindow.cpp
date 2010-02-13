@@ -328,6 +328,11 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     connect(ui->actionAbout_Qt, SIGNAL(triggered()), this, SLOT(OnAboutQt()));
     connect(ui->actionAlways_on_top, SIGNAL(triggered(bool)), this, SLOT(OnToggleAlwaysOnTop(bool)));
     connect(ui->actionUse_timer_to_detect_clipboard_changes, SIGNAL(triggered(bool)), this, SLOT(OnToggleUseTimer(bool)));
+#if defined(Q_OS_MAC)
+    // Mac only supports all detection of changes via timer
+    ui->actionUse_timer_to_detect_clipboard_changes->setEnabled(false);
+    ui->actionUse_timer_to_detect_clipboard_changes->setChecked(true);
+#endif
 
     // because the semantic of the dataChanged() signal of the QClipboard class is different for Mac
     // we use a timer to get the changes of the clipboard contents...
