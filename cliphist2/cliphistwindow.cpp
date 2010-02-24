@@ -486,7 +486,6 @@ void CliphistWindow::OnEditItem()
         }
         if( aDlg.exec()==QDialog::Accepted )
         {
-            m_aEditDialogGeometry = aDlg.saveGeometry();
             if( aDlg.asNewEntry() )
             {
                 m_pUndoStack->push(new InsertCommand(this,GetIndexOfActSelected(),aDlg.text()));
@@ -496,7 +495,9 @@ void CliphistWindow::OnEditItem()
                 m_pUndoStack->push(new UpdateCommand(this,GetIndexOfActSelected(),aDlg.text(),m_aTxtHistory[iCurrentRow]));
             }
         }
-    }        
+        // in any case --> save the new size of the window
+        m_aEditDialogGeometry = aDlg.saveGeometry();
+    }
 }
 
 void CliphistWindow::UpdateSelection(int iCurrentRow)
@@ -799,6 +800,7 @@ bool CliphistWindow::SaveSettings()
     aSettings.setValue("App/AutoWindowData",ui->actionAutoload_window_position_and_size->isChecked()); 
     aSettings.setValue("App/AlwaysOnTop",ui->actionAlways_on_top->isChecked()); 
     aSettings.setValue("App/UseTimer",ui->actionUse_timer_to_detect_clipboard_changes->isChecked());
+    aSettings.setValue("App/GeometryEditDlg",m_aEditDialogGeometry);
     return true;
 }
 
@@ -823,6 +825,7 @@ bool CliphistWindow::LoadSettings()
     }
     aFont.fromString(aSettings.value("App/Font",QString("Courier")).toString());
     SetFont(aFont);
+    m_aEditDialogGeometry = aSettings.value("App/GeometryEditDlg",QVariant(QByteArray())).toByteArray();
     return true;
 }
 
