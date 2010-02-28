@@ -12,6 +12,7 @@ UninstallDisplayIcon={app}\cliphist2.exe
 LicenseFile=..\COPYING
 ShowLanguageDialog=yes
 DisableProgramGroupPage=no
+ChangesAssociations=yes
 
 [Files]
 Source: "..\release\cliphist2.exe"; DestDir: "{app}"; Components: main
@@ -38,7 +39,12 @@ Name: "main"; Description: "Hauptdateien"; Types: full compact custom; Flags: fi
 ; ggf. in User-Documents ? {userappdata} --> gibt dann Probleme mit *.qm und *.html Dateien !
 
 [Registry]
-; Position der Ini-Datei eintragen
+; register file extension
+Root: HKCR; Subkey: ".clp"; ValueType: string; ValueName: ""; ValueData: "Cliphist2"; Flags: uninsdeletevalue
+Root: HKCR; Subkey: "Cliphist2"; ValueType: string; ValueName: ""; ValueData: "Cliphist2"; Flags: uninsdeletekey
+Root: HKCR; Subkey: "Cliphist2\DefaultIcon"; ValueType: string; ValueName: ""; ValueData: "{app}\cliphist2.exe,0"
+Root: HKCR; Subkey: "Cliphist2\shell\open\command"; ValueType: string; ValueName: ""; ValueData: """{app}\cliphist2.exe"" ""%1"""
+
 
 [UninstallDelete]
 ;
