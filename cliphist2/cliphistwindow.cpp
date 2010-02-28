@@ -255,7 +255,7 @@ private:
 
 // ************************************************************************
 
-CliphistWindow::CliphistWindow(QWidget *parent)
+CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     : QMainWindow(parent), ui(new Ui::CliphistWindow)
 {
     ui->setupUi(this);
@@ -282,6 +282,10 @@ CliphistWindow::CliphistWindow(QWidget *parent)
     m_sFileName         = QDir::homePath()+QDir::separator()+QString(DEFAULT_FILE_NAME);
     
     LoadSettings();
+    if( !sFileName.isNull() )
+    {
+        m_sFileName = sFileName;
+    }
     if( ui->actionAutoload_data->isChecked() )
     {
         LoadAndCheck();
@@ -600,7 +604,7 @@ void CliphistWindow::OnSelectionChanged()
 
 void CliphistWindow::LoadAndCheck()
 {
-    if( !Load() )
+    if( !Load(m_sFileName) )
     {
         QMessageBox::warning(this,tr("Warning"),QString(tr("Can not read data file %1")).arg(m_sFileName),QMessageBox::Ok);
     }
@@ -628,12 +632,7 @@ void CliphistWindow::OnLoadData()
         }
     }
     QString sFileName = QFileDialog::getOpenFileName(this,tr("Open Data"), ".", QString(tr("Data Files (%1)")).arg(EXTENSIONS));
-    if( !sFileName.isEmpty() )
-    {
-        m_sFileName = sFileName;
-        LoadAndCheck();
-        SyncListWithUi(0);
-    }
+    LoadFileAndSync(sFileName);
 }
 
 void CliphistWindow::OnSaveData()
@@ -844,11 +843,11 @@ bool CliphistWindow::Save()
     return false;
 }
 
-bool CliphistWindow::Load()
+bool CliphistWindow::Load(const QString sFileName)
 {
-    if( QFile::exists(m_sFileName) )
+    if( QFile::exists(sFileName) )
     {
-        QFile aFile(m_sFileName);
+        QFile aFile(sFileName);
         if( aFile.open(QIODevice::ReadOnly) )
         {
             QDataStream in(&aFile);
@@ -1009,4 +1008,14 @@ int CliphistWindow::InsertInList(int iPosition, const QString & sText, bool bUpd
         return iPosition;
     }
     return -1;
+}
+
+void CliphistWindow::LoadFileAndSync(const QString sFileName)
+{
+    if( !sFileName.isEmpty() )
+    {
+        m_sFileName = sFileName;
+        LoadAndCheck();
+        SyncListWithUi(0);
+    }
 }

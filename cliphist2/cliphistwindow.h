@@ -43,7 +43,7 @@ class CliphistWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    CliphistWindow(QWidget *parent = 0);
+    CliphistWindow(const QString sFileName = QString::null, QWidget *parent = 0);
     ~CliphistWindow();
 
 signals:
@@ -79,7 +79,7 @@ private:
     bool SaveSettings();
     bool LoadSettings();
     bool Save();
-    bool Load();
+    bool Load(const QString sFileName);
     bool SyncListWithUi(int iSelectIdx=-1);
     bool IsActClipboardEntrySameAsActivatedItem() const;
     bool IsActClipboardEntryEmpty() const;
@@ -101,7 +101,9 @@ private:
     QPair<QString,bool> FilterForDisplay(const QString & s) const;
     QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
     QString GetNewLine() const;
+
 public:
+    void LoadFileAndSync(const QString sFileName);
     int GetIndexOfActSelected() const;
     QString RemoveGiven(int iIndexOfSelectedItem = -1);
     //int UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate);
@@ -110,7 +112,6 @@ public:
     void UpdateSelection(int iCurrentRow);
     void DoDeleteAllItems();
     void UndoDeleteAllItems(const QStringList & aHistory, int iActSelected);
-
 
 private:   /*data*/
     Ui::CliphistWindow *        ui;

@@ -25,6 +25,7 @@
 #include <QLocale>
 #include <QLibraryInfo>
 #include <QDir>
+#include <QFileOpenEvent>
 
 QString GetLocaleName(QStringList aArgs)
 {
@@ -49,9 +50,69 @@ QString GetLocaleName(QStringList aArgs)
     return QLocale::system().name();
 }
 
+class CliphistApp : public QApplication
+{
+public:
+    CliphistApp(int & argc, char ** argv);
+    ~CliphistApp();
+
+    void init(const QString & sFileName);
+
+#if defined( Q_WS_MACX )
+protected:
+    bool event(QEvent *event);
+#endif
+
+private:
+    CliphistWindow *    m_pMainWindow;
+    QString             m_sMacFile;
+};
+
+CliphistApp::CliphistApp(int & argc, char ** argv)
+: QApplication(argc,argv),
+  m_pMainWindow(0)
+{
+}
+
+CliphistApp::~CliphistApp()
+{
+    delete m_pMainWindow;
+}
+
+void CliphistApp::init(const QString & sFileName)
+{
+    m_pMainWindow = new CliphistWindow(sFileName);
+    m_pMainWindow->show();
+    if( !m_sMacFile.isEmpty() )
+    {
+        m_pMainWindow->LoadFileAndSync(m_sMacFile);
+    }
+}
+
+#if defined( Q_WS_MACX )
+bool CliphistApp::event( QEvent * event )
+{
+    if( event->type() == QEvent::FileOpen )
+    {
+        QFileOpenEvent *oe = static_cast<QFileOpenEvent *>(event);
+        if ( m_pMainWindow )
+        {
+            m_pMainWindow->LoadFileAndSync(oe->file());
+        }
+        else
+        {
+            m_sMacFile = oe->file();
+        }
+    }
+    return QApplication::event(event);
+}
+#endif
+
+
+
 int main(int argc, char *argv[])
 {
-    QApplication a(argc, argv);
+    CliphistApp a(argc, argv);
     
     QTranslator qtTranslator;
     QString sLocale = GetLocaleName(a.arguments());
@@ -71,7 +132,7 @@ int main(int argc, char *argv[])
             bOk = qtTranslator.load(QString("/usr/share/qt4/translations/qt_")+sLocale);
         }
 #endif
-}
+    }
     a.installTranslator(&qtTranslator);
 
     QTranslator myappTranslator;
@@ -93,8 +154,13 @@ int main(int argc, char *argv[])
 #endif
     a.installTranslator(&myappTranslator);
     
-    CliphistWindow w;
-    w.show();
+    QString sFileName = QString::null;
+    if( argc>1 )
+    {
+        sFileName = argv[1];
+    }
+
+    a.init(sFileName);
     
     return a.exec();
 }
