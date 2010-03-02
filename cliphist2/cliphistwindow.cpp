@@ -327,6 +327,7 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     connect(ui->actionSelect_font, SIGNAL(triggered()), this, SLOT(OnSelectFont()));    
     connect(ui->actionMaximal_number_of_entries, SIGNAL(triggered()), this, SLOT(OnMaxItems()));
     connect(ui->action_Lines_per_entry, SIGNAL(triggered()), this, SLOT(OnLinesPerItem()));
+    connect(ui->actionSet_to_default_position_and_size, SIGNAL(triggered()), this, SLOT(OnSetDefaultPosSize()));
     connect(ui->actionHelp, SIGNAL(triggered()), this, SLOT(OnHelp()));    
     connect(ui->actionAbout, SIGNAL(triggered()), this, SLOT(OnAbout()));    
     connect(ui->actionAbout_Qt, SIGNAL(triggered()), this, SLOT(OnAboutQt()));
@@ -370,6 +371,16 @@ CliphistWindow::~CliphistWindow()
 void CliphistWindow::OnHelp()
 {
     QMessageBox::information(this,tr("Help"),QString(tr("<p>Sorry, no help available yet !</p><p>See %1 for more information.</p>")).arg(HOMEPAGE));
+}
+
+void CliphistWindow::OnSetDefaultPosSize()
+{
+    resize(300,400);
+#if defined( Q_WS_MACX )
+    move(1,20);
+#else
+    move(1,1);
+#endif
 }
 
 void CliphistWindow::OnToggleAlwaysOnTop(bool bChecked)

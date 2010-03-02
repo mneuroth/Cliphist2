@@ -68,6 +68,7 @@ private slots:
     void OnHelp();
     void OnAbout();
     void OnAboutQt();
+    void OnSetDefaultPosSize();
     void OnToggleAlwaysOnTop(bool bChecked);
     void OnToggleUseTimer(bool bChecked);
     void OnItemClicked(QListWidgetItem * current);

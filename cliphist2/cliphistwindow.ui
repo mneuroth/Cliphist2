@@ -124,6 +124,7 @@
     <addaction name="actionNew_clipboard_content_updates_selection"/>
     <addaction name="actionUse_timer_to_detect_clipboard_changes"/>
     <addaction name="actionAlways_on_top"/>
+    <addaction name="actionSet_to_default_position_and_size"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Edit"/>
@@ -309,6 +310,11 @@
    </property>
    <property name="text">
     <string>Use &amp;timer to detect clipboard changes</string>
+   </property>
+  </action>
+  <action name="actionSet_to_default_position_and_size">
+   <property name="text">
+    <string>Set to default position and size</string>
    </property>
   </action>
  </widget>
