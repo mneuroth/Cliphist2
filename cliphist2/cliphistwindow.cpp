@@ -59,6 +59,11 @@
                      ==> http://www.qtforum.org/article/12863/qt4-for-win-and-mingw10-dll-dependency.html
       - libgcc_s_dw2-1.dll ==> -static-libgcc ==> http://sourceforge.net/project/shownotes.php?release_id=691876
 
+      build Qt from source:
+        - modify in notepad %qtdir%\mkspecs\win32-g++\qmake.conf --> add -static
+            --> QMAKE_LFLAGS = -static -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
+        >configure -static -release -no-exceptions
+
       reduce size of exe file under Windows:
       - upx -9 cliphist2.exe
 
@@ -95,6 +100,13 @@
 TODO: probleme mit dem editieren von text der html code enthaelt !
 
 TODO: build scripts fuer binaere pakete noch anpassen, dass *.qm und ggf. *,png als *.qrc resource geladen werden
+
+TODO:
+- Mehrere Items zu einem zusammen fassen
+- Reihenfolge der Items veraenderbar machen
+- ggf. Position für einzelne Items fixieren ?
+//- existierende Eintraege immer aktivieren
+- ggf. Probleme mit Zeilen-Synchronisation zwischen Text und Nummer ListWidget, falls Sonderzeichen vorkommen... (Kopie aus Safari)
 
 */
 
@@ -458,7 +470,7 @@ void CliphistWindow::OnFindItem()
         if( m_aFindList.size()>0 )
         {
             m_iFindIndex = 0;
-            ActivateItem(m_iFindIndex++);
+            ActivateItem(m_aFindList[m_iFindIndex++]);
         }
         else
         {
@@ -476,7 +488,7 @@ void CliphistWindow::OnFindNextItem()
     }
     else if( m_iFindIndex<m_aFindList.size() )
     {
-        ActivateItem(m_iFindIndex++);
+        ActivateItem(m_aFindList[m_iFindIndex++]);
     }
     else
     {
@@ -544,6 +556,18 @@ bool CliphistWindow::IsActClipboardEntrySameAsActivatedItem() const
     }
 }
 
+int CliphistWindow::FindItemIndex(const QString & sItemText) const
+{
+    for( int i=0; i<m_aTxtHistory.size(); i++ )
+    {
+        if( sItemText==m_aTxtHistory[i] )
+        {
+            return i;
+        }
+    }
+    return -1;
+}
+
 bool CliphistWindow::IsActClipboardEntryEmpty() const
 {
     QString sActClipboardEntry = m_pClipboard->text();
@@ -574,7 +598,15 @@ void CliphistWindow::OnClipboardDataChanged()
         !IsActClipboardEntrySameAsActivatedItem() &&
         ui->action_Activate_cliphist->isChecked() )
     {
-        m_pUndoStack->push(new InsertCommand(this,0,m_pClipboard->text(),ui->actionNew_clipboard_content_updates_selection->isChecked()));
+        int iFoundIndex = FindItemIndex(m_pClipboard->text());
+        if( iFoundIndex>=0 )
+        {
+            ActivateItemIdx(iFoundIndex);
+        }
+        else
+        {
+            m_pUndoStack->push(new InsertCommand(this,0,m_pClipboard->text(),ui->actionNew_clipboard_content_updates_selection->isChecked()));
+        }
     }
     else
     {
@@ -872,9 +904,9 @@ bool CliphistWindow::Load(const QString sFileName)
     return false;
 }
 
-void CliphistWindow::ActivateItem(int iIndex)
+void CliphistWindow::ActivateItemIdx(int iIndex)
 {
-    ui->listWidget->setCurrentItem(m_aFindList[iIndex]);
+    ui->listWidget->setCurrentRow(iIndex);
     ActivateItem(ui->listWidget->currentItem());
 }
 
@@ -882,6 +914,7 @@ void CliphistWindow::ActivateItem(QListWidgetItem * current)
 {
     if( current )
     {
+        ui->listWidget->setCurrentItem(current);
         UpdateColorOfLastActivatedItem();
         m_bMyClipboardCopy = true;
         UpdateLastActivatedItemData(current);

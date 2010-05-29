@@ -87,7 +87,7 @@ private:
     bool IsAnyItemActivated() const;
     void LoadAndCheck();
     void SaveAndCheck();
-    void ActivateItem(int iIndex);
+    void ActivateItemIdx(int iIndex);
     void ActivateItem(QListWidgetItem * current);
     void UpdateColorOfLastActivatedItem();
     void UpdateLastActivatedItemData(QListWidgetItem * current);
@@ -102,6 +102,7 @@ private:
     QPair<QString,bool> FilterForDisplay(const QString & s) const;
     QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
     QString GetNewLine() const;
+    int FindItemIndex(const QString & sItemText) const;
 
 public:
     void LoadFileAndSync(const QString sFileName);
