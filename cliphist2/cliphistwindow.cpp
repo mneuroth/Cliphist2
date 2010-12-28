@@ -107,7 +107,7 @@ TODO:
 - Probleme mit dem editieren von text der html code enthaelt !
 - ggf. Probleme mit Zeilen-Synchronisation zwischen Text und Nummer ListWidget, falls Sonderzeichen vorkommen... (Kopie aus Safari)
 - ggf. Farben konfigurierbar machen
-- Mehrere Items zu einem zusammen fassen
+//- Mehrere Items zu einem zusammen fassen
 (- bessere Umsetzung der Enable/Disable von Menueeintraegen je nach Zustand: z. B. CTRL-N geht nur wenn vorher CTRL-F etc.
 
 */
@@ -340,6 +340,8 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     connect(ui->actionDelete_all_entries, SIGNAL(triggered()), this, SLOT(OnDeleteAllItems()));
     connect(ui->actionDelete_marked_entry, SIGNAL(triggered()), this, SLOT(OnDeleteItem()));
     connect(this, SIGNAL(SelectionChanged(bool)), ui->actionDelete_marked_entry, SLOT(setEnabled(bool)));
+    connect(ui->actionA_dd_marked_to_new_entry, SIGNAL(triggered()), this, SLOT(OnAddSelectedToNewEntry()));
+    connect(this, SIGNAL(MoreThanOneSelected(bool)), ui->actionA_dd_marked_to_new_entry, SLOT(setEnabled(bool)));
     connect(ui->action_Find_text, SIGNAL(triggered()), this, SLOT(OnFindItem()));
     connect(ui->actionFind_next, SIGNAL(triggered()), this, SLOT(OnFindNextItem()));
     connect(ui->action_Edit_entry, SIGNAL(triggered()), this, SLOT(OnEditItem()));
@@ -529,6 +531,21 @@ void CliphistWindow::OnMoveSelectedEntryToTop()
     m_pUndoStack->endMacro();
 }
 
+void CliphistWindow::OnAddSelectedToNewEntry()
+{
+    QString sNewItem;
+    QList<int> aSelected = GetAllIndicesOfActSelected(false);
+    for( int i=0; i<aSelected.size(); i++ )
+    {
+        if( sNewItem.length()>0 )
+        {
+            sNewItem += GetNewLine();
+        }
+        sNewItem += m_aTxtHistory[aSelected[i]];
+    }
+    m_pUndoStack->push(new InsertCommand(this,0,sNewItem,/*bUpdateSelection*/true));
+}
+
 void CliphistWindow::OnEditItem()
 {
     if( ui->listWidget->currentItem() )
@@ -664,6 +681,7 @@ void CliphistWindow::OnSelectionChanged()
     int iCount = ui->listWidget->selectedItems().size();
     emit SelectionChanged(iCount>0);
     emit JustOneSelected(iCount==1);
+    emit MoreThanOneSelected(iCount>1);
 }
 
 void CliphistWindow::LoadAndCheck()
@@ -1024,12 +1042,15 @@ QString CliphistWindow::GetNewLine() const
 //    return i;
 //}
 
-QList<int> CliphistWindow::GetAllIndicesOfActSelected() const
+QList<int> CliphistWindow::GetAllIndicesOfActSelected(bool bSort) const
 {
     QList<int> aIndexLst;
     foreach(QListWidgetItem * pItem,ui->listWidget->selectedItems())
         aIndexLst.append(ui->listWidget->row(pItem));
-    qSort(aIndexLst);
+    if( bSort )
+    {
+        qSort(aIndexLst);
+    }
     return aIndexLst;
 }
 

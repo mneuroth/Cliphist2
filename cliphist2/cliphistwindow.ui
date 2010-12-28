@@ -93,6 +93,7 @@
     <addaction name="actionDelete_all_entries"/>
     <addaction name="actionDelete_marked_entry"/>
     <addaction name="separator"/>
+    <addaction name="actionA_dd_marked_to_new_entry"/>
     <addaction name="actionMove_selected_entry_to_top"/>
     <addaction name="action_Edit_entry"/>
     <addaction name="separator"/>
@@ -321,10 +322,18 @@
   </action>
   <action name="actionMove_selected_entry_to_top">
    <property name="text">
-    <string>Move selected entry to top</string>
+    <string>Move marked entry to top</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+V</string>
+   </property>
+  </action>
+  <action name="actionA_dd_marked_to_new_entry">
+   <property name="text">
+    <string>A&amp;dd marked to new entry</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+Y</string>
    </property>
   </action>
  </widget>

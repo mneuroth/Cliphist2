@@ -49,6 +49,7 @@ public:
 signals:
     void SelectionChanged(bool bAnySelected);
     void JustOneSelected(bool bJustOneSelected);
+    void MoreThanOneSelected(bool bMoreThanOneSelected);
 
 private slots:
     void OnLoadData();
@@ -59,6 +60,7 @@ private slots:
     void OnFindItem();
     void OnFindNextItem();
     void OnMoveSelectedEntryToTop();
+    void OnAddSelectedToNewEntry();
     void OnEditItem();
     void OnTimerUpdate();
     void OnClipboardChanged(QClipboard::Mode);
@@ -109,7 +111,7 @@ private:
 public:
     void LoadFileAndSync(const QString sFileName);
 //    int GetIndexOfActSelected() const;
-    QList<int> GetAllIndicesOfActSelected() const;
+    QList<int> GetAllIndicesOfActSelected(bool bSort=true) const;
     QString RemoveGiven(int iIndexOfSelectedItem = -1);
     //int UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate);
     int UpdateList(int iPosition, const QString & sText);
