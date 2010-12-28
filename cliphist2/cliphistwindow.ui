@@ -93,10 +93,12 @@
     <addaction name="actionDelete_all_entries"/>
     <addaction name="actionDelete_marked_entry"/>
     <addaction name="separator"/>
+    <addaction name="actionMove_selected_entry_to_top"/>
     <addaction name="action_Edit_entry"/>
     <addaction name="separator"/>
     <addaction name="action_Find_text"/>
     <addaction name="actionFind_next"/>
+    <addaction name="separator"/>
    </widget>
    <widget class="QMenu" name="menuHelp">
     <property name="title">
@@ -173,7 +175,7 @@
   </action>
   <action name="actionAbout">
    <property name="text">
-    <string>&amp;About application...</string>
+    <string>&amp;About...</string>
    </property>
   </action>
   <action name="actionDelete_all_entries">
@@ -183,7 +185,7 @@
   </action>
   <action name="actionDelete_marked_entry">
    <property name="text">
-    <string>&amp;Delete marked entry</string>
+    <string>&amp;Delete marked entries</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
@@ -315,6 +317,14 @@
   <action name="actionSet_to_default_position_and_size">
    <property name="text">
     <string>Set to default position and size</string>
+   </property>
+  </action>
+  <action name="actionMove_selected_entry_to_top">
+   <property name="text">
+    <string>Move selected entry to top</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+V</string>
    </property>
   </action>
  </widget>

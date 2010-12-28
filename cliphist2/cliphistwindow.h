@@ -48,6 +48,7 @@ public:
 
 signals:
     void SelectionChanged(bool bAnySelected);
+    void JustOneSelected(bool bJustOneSelected);
 
 private slots:
     void OnLoadData();
@@ -57,6 +58,7 @@ private slots:
     void OnDeleteItem();
     void OnFindItem();
     void OnFindNextItem();
+    void OnMoveSelectedEntryToTop();
     void OnEditItem();
     void OnTimerUpdate();
     void OnClipboardChanged(QClipboard::Mode);
@@ -81,7 +83,7 @@ private:
     bool LoadSettings();
     bool Save();
     bool Load(const QString sFileName);
-    bool SyncListWithUi(int iSelectIdx=-1);
+    bool SyncListWithUi(const QList<int> & aSelectIdx);
     bool IsActClipboardEntrySameAsActivatedItem() const;
     bool IsActClipboardEntryEmpty() const;
     bool IsAnyItemActivated() const;
@@ -106,14 +108,15 @@ private:
 
 public:
     void LoadFileAndSync(const QString sFileName);
-    int GetIndexOfActSelected() const;
+//    int GetIndexOfActSelected() const;
+    QList<int> GetAllIndicesOfActSelected() const;
     QString RemoveGiven(int iIndexOfSelectedItem = -1);
     //int UpdateOrInsertList(int iPosition, const QString & sText, bool bUpdate);
     int UpdateList(int iPosition, const QString & sText);
     int InsertInList(int iPosition, const QString & sText, bool bUpdateSelection=false);
-    void UpdateSelection(int iCurrentRow);
+    void UpdateSelection(const QList<int> & aCurrentRows);
     void DoDeleteAllItems();
-    void UndoDeleteAllItems(const QStringList & aHistory, int iActSelected);
+    void UndoDeleteAllItems(const QStringList & aHistory, const QList<int> & aActSelected);
 
 private:   /*data*/
     Ui::CliphistWindow *        ui;
