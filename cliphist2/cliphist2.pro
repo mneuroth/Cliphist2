@@ -47,8 +47,8 @@ macx {
     OBJECTS_DIR = .obj
     
     # #universal ? --> install on power book ?
-    CONFIG += x86 \
-        ppc
+    CONFIG += x86 #\
+#        ppc
     
     # QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5u.sdk
     # QMAKE_MACOSX_DEPLOYMENT_TARGET = 10.5
