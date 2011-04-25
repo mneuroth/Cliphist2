@@ -394,10 +394,11 @@ void CliphistWindow::OnHelp()
 
 void CliphistWindow::OnSetDefaultPosSize()
 {
-    resize(300,280);
 #if defined( Q_WS_MACX )
+    resize(300,260);
     move(1,20);
 #else
+    resize(300,280);
     move(1,1);
 #endif
 }
