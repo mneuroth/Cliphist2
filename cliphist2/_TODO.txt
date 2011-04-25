@@ -21,6 +21,19 @@ TODO: wo muessen die Daten landen --> user directory ?
 
 // TODO: version angeben, Icon erstellen, Installations Pakete erzeugen (Mac, Windows, Linux ())
 
+TODO:
+//- existierende Eintraege immer aktivieren
+//- Aktuelles Item auf Position 1 schieben
+(- Reihenfolge der Items veraenderbar machen
+(- ggf. Position für einzelne Items fixieren ?
+- build scripts fuer binaere pakete noch anpassen, dass *.qm und ggf. *.png als *.qrc resource geladen werden
+- Probleme mit dem editieren von text der html code enthaelt !
+- ggf. Probleme mit Zeilen-Synchronisation zwischen Text und Nummer ListWidget, falls Sonderzeichen vorkommen... (Kopie aus Safari)
+- ggf. Farben konfigurierbar machen
+//- Mehrere Items zu einem zusammen fassen
+(- bessere Umsetzung der Enable/Disable von Menueeintraegen je nach Zustand: z. B. CTRL-N geht nur wenn vorher CTRL-F etc.
+
+
 Testcases:
 - copy image in clipboard ==> no new entry in list
 - delete acutal cliboard item ==> clears cliboard entry

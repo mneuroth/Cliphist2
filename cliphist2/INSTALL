@@ -7,12 +7,12 @@ for all supported platforms.
 Tested and supported platforms are: 
 
   a) Mac OS X (for Qt 4.5.x or greater), tested: Mac OS X 10.6
-  b) Linux Desktop (for Qt 4.5.x or greater), tested: Ubuntu 9.04 and SuSE 11.2
+  b) Linux Desktop (for Qt 4.5.x or greater), tested: Ubuntu 10.10
   c) Windows Desktop (for Qt 4.5.x or greater, mingw), tested: Windows XP Home
 
 Dependencies:
 -------------  
-This application needs the Qt4 toolkit (tested with 4.5.3 and 4.6.0).
+This application needs the Qt4 toolkit (tested with 4.7.x).
 
 Build with qmake:
 -----------------

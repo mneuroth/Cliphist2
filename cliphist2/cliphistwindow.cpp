@@ -2,17 +2,17 @@
  *
  *	project				 : cliphist2
  *
- *	copyright            : (C) 2009-2010 by Michael Neuroth
+ *	copyright            : (C) 2009-2011 by Michael Neuroth
  *
  */
 /*********************************************************************************
- *																				 *
+ *																				   *
  * This file is part of the Cliphist2 package (a clipboard history application)  *
- *																				 *
- * Copyright (C) 2009-2010 by Michael Neuroth.								     *
+ *																				   *
+ * Copyright (C) 2009-2011 by Michael Neuroth.								       *
  *                                                                               *
- * This program is free software; you can redistribute it and/or modify			 *
- * it under the terms of the GNU General Public License as published by    		 *
+ * This program is free software; you can redistribute it and/or modify		   *
+ * it under the terms of the GNU General Public License as published by    	   *
  * the Free Software Foundation; either version 2 of the License, or             *
  * (at your option) any later version.                                           *
  *                                                                               *
@@ -97,19 +97,6 @@
 
       rpmbuild -bb cliphist2.spec
 
-
-TODO:
-//- existierende Eintraege immer aktivieren
-//- Aktuelles Item auf Position 1 schieben
-(- Reihenfolge der Items veraenderbar machen
-(- ggf. Position für einzelne Items fixieren ?
-- build scripts fuer binaere pakete noch anpassen, dass *.qm und ggf. *.png als *.qrc resource geladen werden
-- Probleme mit dem editieren von text der html code enthaelt !
-- ggf. Probleme mit Zeilen-Synchronisation zwischen Text und Nummer ListWidget, falls Sonderzeichen vorkommen... (Kopie aus Safari)
-- ggf. Farben konfigurierbar machen
-//- Mehrere Items zu einem zusammen fassen
-(- bessere Umsetzung der Enable/Disable von Menueeintraegen je nach Zustand: z. B. CTRL-N geht nur wenn vorher CTRL-F etc.
-
 */
 
 #include "cliphistwindow.h"
@@ -137,8 +124,8 @@ TODO:
 // ************************************************************************
 
 #define VERSION                     "1.0.0"
-#define TITLE                       "<a href=http://www.mneuroth.de/privat/cliphist2/index.html>Clipboard History 2</a>"
-#define HOMEPAGE                    "<a href=http://www.mneuroth.de/privat/cliphist2/index.html>Homepage</a>"
+#define TITLE                       "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Clipboard History 2</a>"
+#define HOMEPAGE                    "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Homepage</a>"
 #define LICENSE                     "<a href=http://www.fsf.org/licensing/licenses/gpl.html>GPL</a>"
 #define AUTHORS                     "Michael Neuroth"
 
@@ -380,6 +367,10 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     OnToggleUseTimer(ui->actionUse_timer_to_detect_clipboard_changes->isChecked());
 
     ui->listWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
+//    QPalette aPalette;
+//    aPalette.setColor(QPalette::HighlightedText,QColor("#00FFFF"));
+//    aPalette.setColor(QPalette::Highlight,QColor("#FF00FF"));
+//    ui->listWidget->setPalette(aPalette);
 
     OnSelectionChanged();
 }
@@ -403,7 +394,7 @@ void CliphistWindow::OnHelp()
 
 void CliphistWindow::OnSetDefaultPosSize()
 {
-    resize(300,400);
+    resize(300,280);
 #if defined( Q_WS_MACX )
     move(1,20);
 #else
@@ -438,7 +429,7 @@ void CliphistWindow::OnToggleUseTimer(bool bChecked)
 
 void CliphistWindow::OnAbout()
 {
-    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2010 by %4</p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
+    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2011 by %4</p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
 }
 
 void CliphistWindow::OnAboutQt()
