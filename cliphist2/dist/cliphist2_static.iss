@@ -29,6 +29,7 @@ Source: "..\HISTORY"; DestDir: "{app}"; Components: main
 Source: "..\COPYING"; DestDir: "{app}"; Components: main
 Source: "..\BUGS"; DestDir: "{app}"; Components: main
 Source: "..\AUTHORS"; DestDir: "{app}"; Components: main
+Source: "..\cliphist2.clp"; DestDir: "{app}"; Components: main
 Source: "C:\Programme\Inno Setup 5\license.txt"; DestDir: "{app}"; Components: main
 
 [Components]
