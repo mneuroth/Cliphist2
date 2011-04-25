@@ -4,7 +4,7 @@ Priority: extra
 Maintainer: ubuntu <michael.neuroth@freenet.de>
 Build-Depends: debhelper (>= 7)
 Standards-Version: 3.8.0
-Homepage: http://www.mneuroth.de/privat/cliphist2/index.html
+Homepage: http://www.mneuroth.de/projects/Cliphist2.html
 
 Package: cliphist2
 Architecture: any
