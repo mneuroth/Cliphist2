@@ -29,7 +29,6 @@ edititem.cpp
 edititem.h
 edititem.ui
 main.cpp
-qrc_cliphist2.cpp
 resource.h
 do_file_list.sh
 do_src_zip.sh
