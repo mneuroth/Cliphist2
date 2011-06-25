@@ -8,6 +8,7 @@ win32:QMAKE_LFLAGS += -static-libgcc # remove dependency to libgcc_s_dw2-1.dll
 
 # win32:QMAKE_CXX_FLAGS+= -static-libgcc
 # CONFIG = qt warn_on debug thread static
+#CONFIG = qt release thread static 
 SOURCES += main.cpp \
     cliphistwindow.cpp \
     edititem.cpp
@@ -47,7 +48,7 @@ macx {
     OBJECTS_DIR = .obj
     
     # #universal ? --> install on power book ?
-    CONFIG += x86 #\
+#    CONFIG += x86 #\
 #        ppc
     
     # QMAKE_MAC_SDK=/Developer/SDKs/MacOSX10.5u.sdk
@@ -57,7 +58,7 @@ macx {
     utilities.path = Contents/Resources
     utilities.files += cliphist2_de.qm \
         cliphist2_nl.qm \
-        qt_de.qm
+        qt_de.qm 
     QMAKE_BUNDLE_DATA += utilities
     INSTALLS += utilities
     ICON = cliphist2.icns
