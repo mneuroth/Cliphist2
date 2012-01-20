@@ -7,6 +7,7 @@ qmake -spec macx-g++ cliphist2.pro CONFIG+=release CONFIG-=debug
 echo "make app"
 make
 cp -r /Users/min/Downloads/Programmierung/qt-everywhere-opensource-src-4.7.3/src/gui/mac/qt_menu.nib cliphist2.app/Contents/Resources
+cp cliphist2orig.clp cliphist2.app/Contents/Resources/cliphist2.clp
 echo "make dmg"
 rm cliphist2.dmg
 macdeployqt cliphist2.app -dmg -verbose=3 -no-plugins
