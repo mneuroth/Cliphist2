@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=cliphist2
-AppVerName=cliphist2 Version 1.0.0
+AppVerName=cliphist2 Version 1.0.1
 DefaultDirName={pf}\cliphist2
 DefaultGroupName=cliphist2
 UninstallDisplayIcon={app}\cliphist2.exe
