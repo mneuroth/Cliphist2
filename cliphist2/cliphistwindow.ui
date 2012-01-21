@@ -125,8 +125,10 @@
     <addaction name="actionAutoload_data"/>
     <addaction name="actionAutoload_window_position_and_size"/>
     <addaction name="actionNew_clipboard_content_updates_selection"/>
+    <addaction name="actionAlways_move_to_first_position_if_found"/>
     <addaction name="actionUse_timer_to_detect_clipboard_changes"/>
     <addaction name="actionAlways_on_top"/>
+    <addaction name="separator"/>
     <addaction name="actionSet_to_default_position_and_size"/>
    </widget>
    <addaction name="menuFile"/>
@@ -334,6 +336,14 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+Y</string>
+   </property>
+  </action>
+  <action name="actionAlways_move_to_first_position_if_found">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Always move to first position if found</string>
    </property>
   </action>
  </widget>

@@ -2,14 +2,14 @@
  *
  *	project				 : cliphist2
  *
- *	copyright            : (C) 2009-2011 by Michael Neuroth
+ *	copyright            : (C) 2009-2012 by Michael Neuroth
  *
  */
 /*********************************************************************************
  *																				   *
  * This file is part of the Cliphist2 package (a clipboard history application)  *
  *																				   *
- * Copyright (C) 2009-2011 by Michael Neuroth.								       *
+ * Copyright (C) 2009-2012 by Michael Neuroth.								       *
  *                                                                               *
  * This program is free software; you can redistribute it and/or modify		   *
  * it under the terms of the GNU General Public License as published by    	   *
@@ -67,6 +67,10 @@
       reduce size of exe file under Windows:
       - upx -9 cliphist2.exe
 
+    Mac dmg:
+      >. qt473static.sh
+      >./make_dist_mac.sh
+
     Debian package:
       http://www.qtwiki.de/wiki/Der_Weg_vom_fertigen_QT_-_Programm_zum_Debian_Paket
       http://meetings-archive.debian.net/pub/debian-meetings/2009/fosdem/slides/The_Common_Debian_Build_System_CDBS/cdbs-presentation.pdf
@@ -103,7 +107,6 @@
 #include "ui_cliphistwindow.h"
 
 #include "edititem.h"
-#include "cliphist2_64x64.h"
 
 #include <QFile>
 #include <QDir>
@@ -123,7 +126,7 @@
 
 // ************************************************************************
 
-#define VERSION                     "1.0.0"
+#define VERSION                     "1.0.1"
 #define TITLE                       "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Clipboard History 2</a>"
 #define HOMEPAGE                    "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Homepage</a>"
 #define LICENSE                     "<a href=http://www.fsf.org/licensing/licenses/gpl.html>GPL</a>"
@@ -267,12 +270,10 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     ui->setupUi(this);
     //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
     
-    //QPixmap aIcon("cliphist2_64x64.png");
-    QPixmap aIcon;
-    /*bool bOk =*/ aIcon.loadFromData((uchar *)cliphist2_64x64_png,sizeof(cliphist2_64x64_png));
+    QPixmap aIcon(":/icons/cliphist2_512x512.png");
     setWindowIcon(aIcon);
 
-    QCoreApplication::setOrganizationName("mneuroth");
+    //QCoreApplication::setOrganizationName("mneuroth");
     QCoreApplication::setOrganizationDomain("mneuroth.de");
     QCoreApplication::setApplicationName("cliphist2");
     
@@ -282,11 +283,17 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     m_iFindIndex        = -1;
     m_bChangedData      = false;
     m_bMyClipboardCopy  = false;
+    m_bIfFoundMoveToFirstPos   = false;
     m_iActivatedIndex   = -1;
     m_iMaxEntries       = DEFAULT_MAX_ENTRIES;
     m_iMaxLinesPerEntry = DEFAULT_LINES_PER_ENTRY;
-    m_sFileName         = QDir::homePath()+QDir::separator()+QString(DEFAULT_FILE_NAME);
-    
+#if defined( Q_WS_MACX )
+    m_sFileName         = QCoreApplication::applicationDirPath()+QDir::separator()+".."+QDir::separator()+"Resources"+QDir::separator()+QString(DEFAULT_FILE_NAME);
+#else
+    m_sFileName         = QCoreApplication::applicationDirPath()+QDir::separator()+QString(DEFAULT_FILE_NAME);
+    //m_sFileName         = QDir::homePath()+QDir::separator()+QString(DEFAULT_FILE_NAME);
+#endif
+
     LoadSettings();
     if( !sFileName.isNull() )
     {
@@ -345,6 +352,7 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     connect(ui->actionAbout_Qt, SIGNAL(triggered()), this, SLOT(OnAboutQt()));
     connect(ui->actionAlways_on_top, SIGNAL(triggered(bool)), this, SLOT(OnToggleAlwaysOnTop(bool)));
     connect(ui->actionUse_timer_to_detect_clipboard_changes, SIGNAL(triggered(bool)), this, SLOT(OnToggleUseTimer(bool)));
+    connect(ui->actionAlways_move_to_first_position_if_found, SIGNAL(triggered(bool)), this, SLOT(OnAlwaysMoveToTopIfFound(bool)) );
 
 #if defined(Q_OS_MAC)
     // Mac only supports all detection of changes via timer
@@ -395,12 +403,17 @@ void CliphistWindow::OnHelp()
 void CliphistWindow::OnSetDefaultPosSize()
 {
 #if defined( Q_WS_MACX )
-    resize(300,260);
+    resize(380,300);
     move(1,20);
 #else
-    resize(300,280);
+    resize(380,320);
     move(1,1);
 #endif
+}
+
+void CliphistWindow::OnAlwaysMoveToTopIfFound(bool bChecked)
+{
+    m_bIfFoundMoveToFirstPos = bChecked;
 }
 
 void CliphistWindow::OnToggleAlwaysOnTop(bool bChecked)
@@ -430,7 +443,7 @@ void CliphistWindow::OnToggleUseTimer(bool bChecked)
 
 void CliphistWindow::OnAbout()
 {
-    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2011 by %4</p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
+    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2012 by %4</p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
 }
 
 void CliphistWindow::OnAboutQt()
@@ -630,6 +643,11 @@ void CliphistWindow::OnClipboardDataChanged()
         if( iFoundIndex>=0 )
         {
             ActivateItemIdx(iFoundIndex);
+            if( m_bIfFoundMoveToFirstPos )
+            {
+                OnMoveSelectedEntryToTop();
+                ActivateItemIdx(0);
+            }
         }
         else
         {
@@ -864,7 +882,8 @@ bool CliphistWindow::SaveSettings()
     aSettings.setValue("App/DataFileName",m_sFileName);
     aSettings.setValue("App/LastSearchText",m_sLastSearchText);
     aSettings.setValue("App/MaxLinesPerEntry",m_iMaxLinesPerEntry);    
-    aSettings.setValue("App/MaxEntries",m_iMaxEntries);    
+    aSettings.setValue("App/MaxEntries",m_iMaxEntries);
+    aSettings.setValue("App/MoveToFirstPos",m_bIfFoundMoveToFirstPos);
     aSettings.setValue("App/WindowState",saveState());
     aSettings.setValue("App/WindowGeometry",saveGeometry());
     aSettings.setValue("App/Font",ui->listWidget->font().toString());   
@@ -882,10 +901,11 @@ bool CliphistWindow::LoadSettings()
     QSettings aSettings;
     QFont aFont;
     
-    m_sFileName = aSettings.value("App/DataFileName",DEFAULT_FILE_NAME).toString();
+    m_sFileName = aSettings.value("App/DataFileName",m_sFileName).toString();
     m_sLastSearchText = aSettings.value("App/LastSearchText").toString();
     m_iMaxLinesPerEntry = aSettings.value("App/MaxLinesPerEntry",DEFAULT_LINES_PER_ENTRY).toInt();    
-    m_iMaxEntries = aSettings.value("App/MaxEntries",DEFAULT_MAX_ENTRIES).toInt();    
+    m_iMaxEntries = aSettings.value("App/MaxEntries",DEFAULT_MAX_ENTRIES).toInt();
+    m_bIfFoundMoveToFirstPos = aSettings.value("App/MoveToFirstPos",false).toBool();
     ui->action_Double_click_to_select->setChecked(aSettings.value("App/DblClickToSelect",true).toBool());
     ui->actionAutoload_data->setChecked(aSettings.value("App/AutoLoadData",true).toBool());
     ui->actionAutoload_window_position_and_size->setChecked(aSettings.value("App/AutoWindowData",true).toBool());

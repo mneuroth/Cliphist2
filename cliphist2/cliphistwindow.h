@@ -2,14 +2,14 @@
  *
  *	project				 : cliphist2
  *
- *	copyright            : (C) 2009-2010 by Michael Neuroth
+ *	copyright            : (C) 2009-2012 by Michael Neuroth
  *
  */
 /*********************************************************************************
  *																				 *
  * This file is part of the Cliphist2 package (a clipboard history application)  *
  *																				 *
- * Copyright (C) 2009-2010 by Michael Neuroth.								     *
+ * Copyright (C) 2009-2012 by Michael Neuroth.								     *
  *                                                                               *
  * This program is free software; you can redistribute it and/or modify			 *
  * it under the terms of the GNU General Public License as published by    		 *
@@ -60,6 +60,7 @@ private slots:
     void OnFindItem();
     void OnFindNextItem();
     void OnMoveSelectedEntryToTop();
+    void OnAlwaysMoveToTopIfFound(bool bChecked);
     void OnAddSelectedToNewEntry();
     void OnEditItem();
     void OnTimerUpdate();
@@ -128,6 +129,7 @@ private:   /*data*/
     QTimer *                    m_pTimer;               // temp
     QList<QListWidgetItem *>    m_aFindList;            // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
+    bool                        m_bIfFoundMoveToFirstPos; // temp
     bool                        m_bChangedData;         // temp
     bool    	                m_bMyClipboardCopy;     // temp, flag to show that the current clipboard operation comes from this application
     int                         m_iFindIndex;           // temp
