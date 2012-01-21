@@ -4,4 +4,7 @@
         <file>cliphist2_de.qm</file>
         <file>cliphist2_nl.qm</file>
     </qresource>
+    <qresource prefix="/icons">
+        <file>cliphist2_512x512.png</file>
+    </qresource>
 </RCC>

@@ -13,8 +13,7 @@ SOURCES += main.cpp \
     cliphistwindow.cpp \
     edititem.cpp
 HEADERS += cliphistwindow.h \
-    edititem.h \
-    cliphist2_64x64.h
+    edititem.h
 FORMS += cliphistwindow.ui \
     edititem.ui
 TRANSLATIONS = cliphist2_de.ts \
@@ -35,7 +34,7 @@ unix:!macx {
     desktop.files = cliphist2.desktop
     INSTALLS += desktop
     icon.path = $${ICONDIR}
-    icon.files = cliphist2_64x64.png
+    icon.files = cliphist2_512x512.png
     INSTALLS += icon
 }
 
