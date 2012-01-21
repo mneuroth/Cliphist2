@@ -5,3 +5,9 @@ change history of cliphist2
 25. 4.2011  Version 1.0.0
 
     first public release of the Qt4 port of the cliphist application
+
+22. 1.2012  Version 1.0.1
+
+    improved binary distribution for Mac and Windows, increased icon for Windows,
+    added new menu item "Always move to first position if found"
+    
