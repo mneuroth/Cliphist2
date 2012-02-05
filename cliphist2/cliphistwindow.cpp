@@ -265,7 +265,8 @@ private:
 // ************************************************************************
 
 CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
-    : QMainWindow(parent), ui(new Ui::CliphistWindow)
+    : QMainWindow(parent),
+      ui(new Ui::CliphistWindow)
 {
     ui->setupUi(this);
     //setWindowFlags(windowFlags() | Qt::WindowStaysOnTopHint);
@@ -277,6 +278,8 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     QCoreApplication::setOrganizationDomain("mneuroth.de");
     QCoreApplication::setApplicationName("cliphist2");
     
+    m_pPixmap           = new QPixmap();
+
     m_pUndoStack        = new QUndoStack();
 
     m_pClipboard        = QApplication::clipboard();    
@@ -390,6 +393,7 @@ CliphistWindow::~CliphistWindow()
         SaveAndCheck();
     }
     SaveSettings();
+    delete m_pPixmap;
     delete m_pUndoStack;
     delete m_pTimer;
     delete ui;
@@ -571,21 +575,47 @@ void CliphistWindow::OnEditItem()
     if( ui->listWidget->currentItem() )
     {
         int iCurrentRow = GetAllIndicesOfActSelected()[0];      // we know that only one item is selected !
-        EditItem aDlg(this,ui->listWidget->font(),m_aTxtHistory[iCurrentRow]);
+        // set the color of the selected item as color for the text control
+        QBrush aBrush = GetColorForIndex(iCurrentRow+1);
+        if( m_iActivatedIndex==iCurrentRow )
+        {
+            aBrush.setColor(QColor(RED));
+        }
+        QPalette aPalette;
+        aPalette.setBrush(QPalette::Text,aBrush);
+        EditItem aDlg(this,ui->listWidget->font(),aPalette,m_aTxtHistory[iCurrentRow],*m_pPixmap);
         if( m_aEditDialogGeometry.count()>0 )
         {
             aDlg.restoreGeometry(m_aEditDialogGeometry);
         }
-        if( aDlg.exec()==QDialog::Accepted )
+        if( m_aTxtHistory[iCurrentRow]=="<IMAGE>" )
         {
-            // we know that only one item is selected !
-            if( aDlg.asNewEntry() )
+            aDlg.showOnlyText(false);
+            if( aDlg.exec()==QDialog::Accepted )
             {
-                m_pUndoStack->push(new InsertCommand(this,iCurrentRow,aDlg.text(),/*bUpdateSelection*/true));
+                if( aDlg.exportImage() )
+                {
+                    QString sFileName = QFileDialog::getSaveFileName(this,tr("Export image as"), m_sFileName, QString(tr("Image Files (%1)")).arg("*.png"));
+                    if( !sFileName.isEmpty() )
+                    {
+                        m_pPixmap->save(sFileName,"PNG");
+                    }
+                }
             }
-            else
+        }
+        else
+        {
+            if( aDlg.exec()==QDialog::Accepted )
             {
-                m_pUndoStack->push(new UpdateCommand(this,iCurrentRow,aDlg.text(),m_aTxtHistory[iCurrentRow]));
+                // we know that only one item is selected !
+                if( aDlg.asNewEntry() )
+                {
+                    m_pUndoStack->push(new InsertCommand(this,iCurrentRow,aDlg.text(),/*bUpdateSelection*/true));
+                }
+                else
+                {
+                    m_pUndoStack->push(new UpdateCommand(this,iCurrentRow,aDlg.text(),m_aTxtHistory[iCurrentRow]));
+                }
             }
         }
         // in any case --> save the new size of the window
@@ -647,6 +677,12 @@ void CliphistWindow::OnClipboardChanged(QClipboard::Mode /*aMode*/)
     // nothing to do yet...
 }
 
+static bool IsPixmapEqual(const QPixmap & aImg1, const QPixmap & aImg2)
+{
+// TODO working --> test some bytes also !
+    return aImg1.size()==aImg2.size();
+}
+
 void CliphistWindow::OnClipboardDataChanged()
 {
     if( !m_bMyClipboardCopy &&
@@ -671,6 +707,20 @@ void CliphistWindow::OnClipboardDataChanged()
     }
     else
     {
+// TODO --> handle more than one image...
+        QPixmap aClipboardImg = m_pClipboard->pixmap();
+        if( !aClipboardImg.isNull() )
+        {
+            if( m_pPixmap==0 || !IsPixmapEqual(aClipboardImg,*m_pPixmap) )
+            {
+                delete m_pPixmap;
+                m_pPixmap = new QPixmap(aClipboardImg);
+                m_pUndoStack->push(new InsertCommand(this,0,"<IMAGE>",ui->actionNew_clipboard_content_updates_selection->isChecked()));
+            }
+        }
+        else
+        {
+        }
         // update the view if the clipboard has no text and the application has a text selected
         if( IsActClipboardEntryEmpty() && IsAnyItemActivated() )
         {

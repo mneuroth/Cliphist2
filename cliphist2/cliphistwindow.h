@@ -128,6 +128,7 @@ private:   /*data*/
     QUndoStack *                m_pUndoStack;
     QClipboard *                m_pClipboard;           // temp
     QTimer *                    m_pTimer;               // temp
+    QPixmap *                   m_pPixmap;
     QList<int>                  m_aFindList;            // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
     bool                        m_bIfFoundMoveToFirstPos; // temp
