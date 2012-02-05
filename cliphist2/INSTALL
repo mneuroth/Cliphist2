@@ -38,6 +38,6 @@ Linux:
   SuSE and Fedora:
   >sudo ./make_dist_rpm.sh
   
-Windows (needs a installed Inno Setup application):
+Windows (needs an installed Inno Setup application):
   >make_dist_win 
   

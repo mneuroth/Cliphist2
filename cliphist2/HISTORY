@@ -6,8 +6,9 @@ change history of cliphist2
 
     first public release of the Qt4 port of the cliphist application
 
-22. 1.2012  Version 1.0.1
+ 5. 2.2012  Version 1.0.1
 
-    improved binary distribution for Mac and Windows, increased icon for Windows,
-    added new menu item "Always move to first position if found"
+    improved binary distribution for Mac and Windows, increased icon size for Windows,
+    added new menu item "Always move to first position if found", fixed find text in
+    items even when not showed in gui
     

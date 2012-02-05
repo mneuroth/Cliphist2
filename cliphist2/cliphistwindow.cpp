@@ -62,7 +62,7 @@
       build Qt from source:
         - modify in notepad %qtdir%\mkspecs\win32-g++\qmake.conf --> add -static
             --> QMAKE_LFLAGS = -static -enable-stdcall-fixup -Wl,-enable-auto-import -Wl,-enable-runtime-pseudo-reloc
-        >configure -static -release -no-exceptions
+        >configure -static -release -no-exceptions (ggf. -webkit)
 
       reduce size of exe file under Windows:
       - upx -9 cliphist2.exe
@@ -443,7 +443,7 @@ void CliphistWindow::OnToggleUseTimer(bool bChecked)
 
 void CliphistWindow::OnAbout()
 {
-    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2012 by %4</p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
+    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2012 by %4</p><p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
 }
 
 void CliphistWindow::OnAboutQt()
@@ -479,6 +479,21 @@ void CliphistWindow::OnDeleteItem()
     m_pUndoStack->push(new DeleteItemCommand(this,GetAllIndicesOfActSelected()));
 }
 
+QList<int> CliphistWindow::FindTextInHistory(const QString & sFindText) const
+{
+    QList<int> aRet;
+
+    for( int i=0; i<m_aTxtHistory.size(); i++ )
+    {
+        if( m_aTxtHistory[i].contains(sFindText,Qt::CaseInsensitive) )
+        {
+            aRet.push_back(i);
+        }
+    }
+
+    return aRet;
+}
+
 void CliphistWindow::OnFindItem()
 {
     bool ok;
@@ -487,11 +502,11 @@ void CliphistWindow::OnFindItem()
     {
         m_sLastSearchText = sFind;
         
-        m_aFindList = ui->listWidget->findItems(sFind,/*Qt::MatchFlags*/Qt::MatchContains);
+        m_aFindList = FindTextInHistory(sFind);
         if( m_aFindList.size()>0 )
         {
             m_iFindIndex = 0;
-            ActivateItem(m_aFindList[m_iFindIndex++]);
+            ActivateItemIdx(m_aFindList[m_iFindIndex++]);
         }
         else
         {
@@ -509,7 +524,7 @@ void CliphistWindow::OnFindNextItem()
     }
     else if( m_iFindIndex<m_aFindList.size() )
     {
-        ActivateItem(m_aFindList[m_iFindIndex++]);
+        ActivateItemIdx(m_aFindList[m_iFindIndex++]);
     }
     else
     {

@@ -108,6 +108,7 @@ private:
     QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
     QString GetNewLine() const;
     int FindItemIndex(const QString & sItemText) const;
+    QList<int> FindTextInHistory(const QString & sFindText) const;
 
 public:
     void LoadFileAndSync(const QString sFileName);
@@ -127,7 +128,7 @@ private:   /*data*/
     QUndoStack *                m_pUndoStack;
     QClipboard *                m_pClipboard;           // temp
     QTimer *                    m_pTimer;               // temp
-    QList<QListWidgetItem *>    m_aFindList;            // temp
+    QList<int>                  m_aFindList;            // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
     bool                        m_bIfFoundMoveToFirstPos; // temp
     bool                        m_bChangedData;         // temp
