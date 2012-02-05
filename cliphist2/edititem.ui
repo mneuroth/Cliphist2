@@ -6,40 +6,77 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>498</width>
+    <height>368</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Edit item</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="0" column="0" colspan="2">
-    <widget class="QFrame" name="frame">
-     <property name="frameShape">
-      <enum>QFrame::Box</enum>
+   <property name="leftMargin">
+    <number>6</number>
+   </property>
+   <property name="topMargin">
+    <number>3</number>
+   </property>
+   <property name="rightMargin">
+    <number>6</number>
+   </property>
+   <property name="bottomMargin">
+    <number>3</number>
+   </property>
+   <item row="0" column="0" colspan="3">
+    <widget class="QSplitter" name="splitter">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
      </property>
-     <property name="frameShadow">
-      <enum>QFrame::Raised</enum>
+     <property name="handleWidth">
+      <number>3</number>
      </property>
-     <layout class="QGridLayout" name="gridLayout_2">
-      <property name="margin">
-       <number>6</number>
+     <widget class="QGroupBox" name="groupBoxTxt">
+      <property name="title">
+       <string>Text</string>
       </property>
-      <item row="0" column="0">
-       <widget class="QTextEdit" name="textEdit">
-        <property name="lineWrapMode">
-         <enum>QTextEdit::NoWrap</enum>
-        </property>
-        <property name="acceptRichText">
-         <bool>false</bool>
-        </property>
-       </widget>
-      </item>
-     </layout>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <property name="margin">
+        <number>6</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QTextEdit" name="textEdit">
+         <property name="lineWrapMode">
+          <enum>QTextEdit::NoWrap</enum>
+         </property>
+         <property name="acceptRichText">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QGroupBox" name="groupBoxHtml">
+      <property name="title">
+       <string>Image</string>
+      </property>
+      <layout class="QGridLayout" name="gridLayout_3">
+       <property name="margin">
+        <number>6</number>
+       </property>
+       <item row="0" column="0">
+        <widget class="QGraphicsView" name="graphicsView"/>
+       </item>
+      </layout>
+     </widget>
     </widget>
    </item>
-   <item row="1" column="1">
+   <item row="1" column="0">
+    <widget class="QPushButton" name="btnAsNewEntry">
+     <property name="text">
+      <string>As new entry</string>
+     </property>
+    </widget>
+   </item>
+   <item row="1" column="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -49,10 +86,10 @@
      </property>
     </widget>
    </item>
-   <item row="1" column="0">
-    <widget class="QPushButton" name="btnAsNewEntry">
+   <item row="1" column="1">
+    <widget class="QPushButton" name="btnExportImage">
      <property name="text">
-      <string>As new entry</string>
+      <string>Export image...</string>
      </property>
     </widget>
    </item>
@@ -67,8 +104,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>347</x>
-     <y>293</y>
+     <x>473</x>
+     <y>367</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -83,8 +120,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>347</x>
-     <y>293</y>
+     <x>473</x>
+     <y>367</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -100,7 +137,7 @@
    <hints>
     <hint type="sourcelabel">
      <x>73</x>
-     <y>270</y>
+     <y>367</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -108,8 +145,25 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnExportImage</sender>
+   <signal>clicked()</signal>
+   <receiver>EditItem</receiver>
+   <slot>sltExportImage()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>208</x>
+     <y>351</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-1</x>
+     <y>214</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>sltAsNewEntry()</slot>
+  <slot>sltExportImage()</slot>
  </slots>
 </ui>
