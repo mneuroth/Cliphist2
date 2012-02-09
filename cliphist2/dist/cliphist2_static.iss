@@ -5,7 +5,7 @@
 
 [Setup]
 AppName=cliphist2
-AppVerName=cliphist2 Version 1.0.1
+AppVerName=cliphist2 Version 1.1.0
 DefaultDirName={pf}\cliphist2
 DefaultGroupName=cliphist2
 UninstallDisplayIcon={app}\cliphist2.exe
@@ -52,7 +52,7 @@ Root: HKCR; Subkey: "Cliphist2\shell\open\command"; ValueType: string; ValueName
 
 [Tasks]
 Name: desktopicon; Description: "create a desktop icon"; Languages: en;
-Name: desktopicon; Description: "Icon auf der Arbeitsfläche anlegen"; Languages: de;
+Name: desktopicon; Description: "Icon auf der Arbeitsflï¿½che anlegen"; Languages: de;
 Name: desktopicon; Description: "Icon op de desktop anlegen"; Languages: nl;
 ; GroupDescription: "Additional icons:"
 ;Name: startmenu; Description: "Create an &entry in the startmenu"; GroupDescription: "Additional icons:"
