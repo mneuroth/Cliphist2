@@ -33,9 +33,11 @@ class EditItem : public QDialog
     Q_OBJECT
 
 public:
-    EditItem(QWidget *parent = 0, const QFont & aFont = QFont(), const QPalette & aPalette = QPalette(), const QString & sText = "", const QPixmap & aImage = QPixmap());
+    EditItem(QWidget *parent = 0, const QFont & aFont = QFont(), const QPalette & aPalette = QPalette(), const QString & sText = "", const QPixmap * pImage = 0);
  
     QString text() const;
+
+    void setImage(const QPixmap & aPixmap);
 
     void showOnlyText(bool bValue);
     bool asNewEntry() const;

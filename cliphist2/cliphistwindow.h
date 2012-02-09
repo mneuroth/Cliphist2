@@ -109,6 +109,9 @@ private:
     QString GetNewLine() const;
     int FindItemIndex(const QString & sItemText) const;
     QList<int> FindTextInHistory(const QString & sFindText) const;
+    bool FindPixmap(const QPixmap & aPixmap, int * pIndex = 0) const;
+    bool FindPixmap(const QString & sHash, int * pIndex) const;
+    void RemovePixmapWithHash(const QString & sHash);
 
 public:
     void LoadFileAndSync(const QString sFileName);
@@ -128,7 +131,7 @@ private:   /*data*/
     QUndoStack *                m_pUndoStack;
     QClipboard *                m_pClipboard;           // temp
     QTimer *                    m_pTimer;               // temp
-    QPixmap *                   m_pPixmap;
+    QList<QPair<QString,QPixmap> > m_aPixmapList;
     QList<int>                  m_aFindList;            // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
     bool                        m_bIfFoundMoveToFirstPos; // temp

@@ -22,7 +22,7 @@
 
 #include <QtGui/QTextEdit>
 
-EditItem::EditItem(QWidget *parent, const QFont & aFont, const QPalette & aPalette, const QString & sText, const QPixmap & aImage)
+EditItem::EditItem(QWidget *parent, const QFont & aFont, const QPalette & aPalette, const QString & sText, const QPixmap * pImage)
     : QDialog(parent),
       m_bAsNewEntry(false),
       m_bExportImage(false)
@@ -31,7 +31,10 @@ EditItem::EditItem(QWidget *parent, const QFont & aFont, const QPalette & aPalet
     ui.textEdit->setText(sText);
     ui.textEdit->setFont(aFont);
     ui.textEdit->setPalette(aPalette);
-    m_aScene.addPixmap(aImage);
+    if( pImage )
+    {
+        m_aScene.addPixmap(*pImage);
+    }
     ui.graphicsView->setScene(&m_aScene);
     showOnlyText(true);
 }
@@ -39,6 +42,11 @@ EditItem::EditItem(QWidget *parent, const QFont & aFont, const QPalette & aPalet
 QString EditItem::text() const
 {
     return ui.textEdit->toPlainText();
+}
+
+void EditItem::setImage(const QPixmap & aPixmap)
+{
+    m_aScene.addPixmap(aPixmap);
 }
 
 void EditItem::sltAsNewEntry()

@@ -123,16 +123,17 @@
 #include <QUndoStack>
 #include <QUndoCommand>
 #include <QTimer>
+#include <QCryptographicHash>
 
 // ************************************************************************
 
-#define VERSION                     "1.0.1"
+#define VERSION                     "1.1.0"
 #define TITLE                       "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Clipboard History 2</a>"
 #define HOMEPAGE                    "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Homepage</a>"
 #define LICENSE                     "<a href=http://www.fsf.org/licensing/licenses/gpl.html>GPL</a>"
 #define AUTHORS                     "Michael Neuroth"
 
-#define FILE_VERSION                1
+#define FILE_VERSION                2   // 1 until 9.2.2012
 #define EXTENSIONS                  "*.clp"
 #define DEFAULT_FILE_NAME           "cliphist2.clp"
 #define DEFAULT_LINES_PER_ENTRY     3
@@ -140,6 +141,8 @@
 #define BLUE                        "#0000ff"   //"blue"
 #define GREEN                       "#008000"   //"green"
 #define RED                         "#ff0000"   //"red"
+
+#define IMAGE_TAG                   ":::IMAGE:::_"
 
 #if defined(Q_OS_MAC)
 #define DEFAULT_VALUE_USE_TIMER true
@@ -278,8 +281,6 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     QCoreApplication::setOrganizationDomain("mneuroth.de");
     QCoreApplication::setApplicationName("cliphist2");
     
-    m_pPixmap           = new QPixmap();
-
     m_pUndoStack        = new QUndoStack();
 
     m_pClipboard        = QApplication::clipboard();    
@@ -393,7 +394,6 @@ CliphistWindow::~CliphistWindow()
         SaveAndCheck();
     }
     SaveSettings();
-    delete m_pPixmap;
     delete m_pUndoStack;
     delete m_pTimer;
     delete ui;
@@ -570,6 +570,8 @@ void CliphistWindow::OnAddSelectedToNewEntry()
     m_pUndoStack->push(new InsertCommand(this,0,sNewItem,/*bUpdateSelection*/true));
 }
 
+#include <iostream>
+
 void CliphistWindow::OnEditItem()
 {
     if( ui->listWidget->currentItem() )
@@ -583,22 +585,31 @@ void CliphistWindow::OnEditItem()
         }
         QPalette aPalette;
         aPalette.setBrush(QPalette::Text,aBrush);
-        EditItem aDlg(this,ui->listWidget->font(),aPalette,m_aTxtHistory[iCurrentRow],*m_pPixmap);
+// TODO Pixmap Index aktualisieren
+        EditItem aDlg(this,ui->listWidget->font(),aPalette,m_aTxtHistory[iCurrentRow]);
         if( m_aEditDialogGeometry.count()>0 )
         {
             aDlg.restoreGeometry(m_aEditDialogGeometry);
         }
-        if( m_aTxtHistory[iCurrentRow]=="<IMAGE>" )
+        if( m_aTxtHistory[iCurrentRow].startsWith(IMAGE_TAG) )
         {
+            int iIndex;
+            QString sHash = m_aTxtHistory[iCurrentRow].mid(QString(IMAGE_TAG).length());
+            std::cout << "IMAGE_HASH " << sHash.toStdString() << std::endl;
+            if( FindPixmap(sHash,&iIndex) )
+            {
+                aDlg.setImage(m_aPixmapList[iIndex].second);
+            }
             aDlg.showOnlyText(false);
             if( aDlg.exec()==QDialog::Accepted )
             {
                 if( aDlg.exportImage() )
                 {
                     QString sFileName = QFileDialog::getSaveFileName(this,tr("Export image as"), m_sFileName, QString(tr("Image Files (%1)")).arg("*.png"));
-                    if( !sFileName.isEmpty() )
+                    if( !sFileName.isEmpty() && m_aPixmapList.size()>0 )
                     {
-                        m_pPixmap->save(sFileName,"PNG");
+// TODO Pixmap Index aktualisieren
+                        m_aPixmapList[iIndex].second.save(sFileName,"PNG");
                     }
                 }
             }
@@ -677,10 +688,56 @@ void CliphistWindow::OnClipboardChanged(QClipboard::Mode /*aMode*/)
     // nothing to do yet...
 }
 
+static QByteArray GetHashForImage(const QPixmap & aImg)
+{
+    QCryptographicHash aHash( QCryptographicHash::Md5 );
+    QImage aTempImg = aImg.toImage();
+    aHash.addData((const char *)aTempImg.bits(),aTempImg.byteCount());
+    return aHash.result();
+}
+
 static bool IsPixmapEqual(const QPixmap & aImg1, const QPixmap & aImg2)
 {
-// TODO working --> test some bytes also !
-    return aImg1.size()==aImg2.size();
+// TODO working gulp --> test some bytes also ! or use hash value for whole image ?
+    if( aImg1.size()==aImg2.size() )
+    {
+        QByteArray aResult1 = GetHashForImage(aImg1);
+        QByteArray aResult2 = GetHashForImage(aImg2);
+        return aResult1==aResult2;
+    }
+    return false;
+}
+
+bool CliphistWindow::FindPixmap(const QPixmap & aPixmap, int * pIndex) const
+{
+    QString sHash = GetHashForImage(aPixmap).toHex();
+    return FindPixmap(sHash,pIndex);
+}
+
+bool CliphistWindow::FindPixmap(const QString & sHash, int * pIndex) const
+{
+    for(int i=0; i<m_aPixmapList.size(); i++)
+    {
+        //if( IsPixmapEqual(aPixmap,m_aPixmapList[i].second) )
+        if( m_aPixmapList[i].first==sHash )
+        {
+            if( pIndex )
+            {
+                *pIndex = i;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+void CliphistWindow::RemovePixmapWithHash(const QString & sHash)
+{
+    int iIndex;
+    if( FindPixmap(sHash,&iIndex) )
+    {
+        m_aPixmapList.removeAt(iIndex);
+    }
 }
 
 void CliphistWindow::OnClipboardDataChanged()
@@ -707,25 +764,42 @@ void CliphistWindow::OnClipboardDataChanged()
     }
     else
     {
-// TODO --> handle more than one image...
+// TODO --> handle more than one image... gulp
         QPixmap aClipboardImg = m_pClipboard->pixmap();
         if( !aClipboardImg.isNull() )
         {
-            if( m_pPixmap==0 || !IsPixmapEqual(aClipboardImg,*m_pPixmap) )
+            int iIndex;
+            if( FindPixmap(aClipboardImg,&iIndex) )
             {
-                delete m_pPixmap;
-                m_pPixmap = new QPixmap(aClipboardImg);
-                m_pUndoStack->push(new InsertCommand(this,0,"<IMAGE>",ui->actionNew_clipboard_content_updates_selection->isChecked()));
+//(( TODO --> index feststellen
+                ActivateItemIdx(iIndex);
+                if( m_bIfFoundMoveToFirstPos )
+                {
+                    OnMoveSelectedEntryToTop();
+                    ActivateItemIdx(0);
+                }
+
+            }
+            else
+            {
+// TODO hashmark in image text aufnehmen
+                QByteArray aHash = GetHashForImage(aClipboardImg);
+                QString sHash = aHash.toHex();
+                QString sImgName = IMAGE_TAG+sHash;
+                QPair<QString,QPixmap> aItem(sHash,aClipboardImg);
+                m_aPixmapList.push_front(aItem);
+                std::cout << "NEW_IMAGE_HASH " << sHash.toStdString() << std::endl;
+                m_pUndoStack->push(new InsertCommand(this,0,sImgName,ui->actionNew_clipboard_content_updates_selection->isChecked()));
             }
         }
         else
         {
-        }
-        // update the view if the clipboard has no text and the application has a text selected
-        if( IsActClipboardEntryEmpty() && IsAnyItemActivated() )
-        {
-            m_iActivatedIndex = -1;
-            SyncListWithUi(GetAllIndicesOfActSelected());
+            // update the view if the clipboard has no text and the application has a text selected
+            if( IsActClipboardEntryEmpty() && IsAnyItemActivated() )
+            {
+                m_iActivatedIndex = -1;
+                SyncListWithUi(GetAllIndicesOfActSelected());
+            }
         }
     }
 }
@@ -891,12 +965,17 @@ QString CliphistWindow::FilterNumber(const QString & s, const QString & sNumber,
 bool CliphistWindow::SyncListWithUi(const QList<int> & aSelectIdx)
 {
     QString sActClipBoardText = m_pClipboard->text();
+    bool bIsImage = !m_pClipboard->pixmap().isNull();
     bool bActivatedNeedUpdate = true;
     int iFirstOccurance = -1;
     ui->listWidget->clear();
     ui->listWidgetLineNumbers->clear();
     for( int i=m_aTxtHistory.size()-1; i>=0; i-- )
     {
+        if( m_aTxtHistory[i].startsWith(IMAGE_TAG) )
+        {
+
+        }
         if( sActClipBoardText==m_aTxtHistory[i] && bActivatedNeedUpdate )
         {
             iFirstOccurance = i;        // always update variable because we loop from high indizes
@@ -912,6 +991,11 @@ bool CliphistWindow::SyncListWithUi(const QList<int> & aSelectIdx)
     {
         m_iActivatedIndex = iFirstOccurance;
     }
+// TODO --> Images behandeln
+//    if( bIsImage )
+//    {
+//        m_iActivatedIndex = 0;
+//    }
     if( IsAnyItemActivated() )
     {
         UpdateLastActivatedItemData(ui->listWidget->item(m_iActivatedIndex));
@@ -936,6 +1020,10 @@ void CliphistWindow::CheckHistoryMemory()
 {
     while( m_aTxtHistory.size()>m_iMaxEntries )
     {
+        if( m_aTxtHistory.last().startsWith(IMAGE_TAG) )
+        {
+            RemovePixmapWithHash(m_aTxtHistory.last().mid(QString(IMAGE_TAG).length()));
+        }
         m_aTxtHistory.removeLast();
     }
 }
@@ -996,6 +1084,7 @@ bool CliphistWindow::Save()
         out << "CLIPHIST2";
         out << "VERSION" << FILE_VERSION;
         out << m_aTxtHistory;
+        out << m_aPixmapList;
         SetDataChanged(false);
         return out.status()==QDataStream::Ok;
     }
@@ -1013,6 +1102,10 @@ bool CliphistWindow::Load(const QString sFileName)
             qint32 iVersion;
             QString s1,s2;
             in >> s1 >> s2 >> iVersion >> m_aTxtHistory;
+            if( iVersion>1 )
+            {
+                in >> m_aPixmapList;
+            }
             SetDataChanged(false);
             return in.status()==QDataStream::Ok;
         }
