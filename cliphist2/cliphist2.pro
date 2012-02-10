@@ -63,4 +63,9 @@ macx {
     ICON = cliphist2.icns
     QMAKE_INFO_PLIST = dist/Info.plist
 }
+os2 {
+    QMAKE_LFLAGS += -static-libgcc
+    RC_FILE = cliphist2_OS2.rc
+}
+
 RESOURCES += cliphist2.qrc

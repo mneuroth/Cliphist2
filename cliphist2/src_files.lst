@@ -12,6 +12,7 @@ cliphist2.png
 cliphist2.pro
 cliphist2.qrc
 cliphist2.rc
+cliphist2_OS2.rc
 cliphist2.xcf
 cliphist2_64x64.h
 cliphist2_64x64.png
@@ -19,6 +20,7 @@ cliphist2_64x64.ico
 cliphist2_256x256.ico
 cliphist2_512x512.png
 cliphist2_512x512.ico
+cliphist2a_OS2.ico
 cliphist2_de.ts
 cliphist2_nl.ts
 cliphist2_de.qm
