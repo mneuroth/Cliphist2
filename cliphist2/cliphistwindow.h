@@ -112,6 +112,7 @@ private:
     bool FindPixmap(const QPixmap & aPixmap, int * pIndex = 0) const;
     bool FindPixmap(const QString & sHash, int * pIndex) const;
     void RemovePixmapWithHash(const QString & sHash);
+    void CleanUpUnusedPixmaps();
 
 public:
     void LoadFileAndSync(const QString sFileName);
