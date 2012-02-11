@@ -153,6 +153,15 @@
 #endif
 
 // ************************************************************************
+static QByteArray GetHashForImage(const QPixmap & aImg)
+{
+    QCryptographicHash aHash( QCryptographicHash::Md5 );
+    QImage aTempImg = aImg.toImage();
+    aHash.addData((const char *)aTempImg.bits(),aTempImg.byteCount());
+    return aHash.result();
+}
+
+// ************************************************************************
 class UpdateCommand : public QUndoCommand
 {
 public:
@@ -374,8 +383,10 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     {
         m_pTimer->start(200);
     }
+#if !defined(Q_OS_MAC)
     connect(m_pClipboard, SIGNAL(changed(QClipboard::Mode)), this, SLOT(OnClipboardChanged(QClipboard::Mode)));
     connect(m_pClipboard, SIGNAL(dataChanged()), this, SLOT(OnClipboardDataChanged()));
+#endif
 // TODO findBufferChanged signal ?
 
     OnToggleUseTimer(ui->actionUse_timer_to_detect_clipboard_changes->isChecked());
@@ -641,6 +652,18 @@ bool CliphistWindow::IsActClipboardEntrySameAsActivatedItem() const
 {
     if( m_iActivatedIndex>=0 && m_iActivatedIndex<m_aTxtHistory.size() )
     {
+        QPixmap aActPixmap = m_pClipboard->pixmap();
+        if( !aActPixmap.isNull() )
+        {
+            if( m_aTxtHistory[m_iActivatedIndex].startsWith(IMAGE_TAG) )
+            {
+                return GetHashForImage(aActPixmap).toHex()==m_aTxtHistory[m_iActivatedIndex].mid(QString(IMAGE_TAG).length());
+            }
+            else
+            {
+                return false;
+            }
+        }
         return m_pClipboard->text()==m_aTxtHistory[m_iActivatedIndex];
     }
     else
@@ -659,6 +682,11 @@ int CliphistWindow::FindItemIndex(const QString & sItemText) const
         }
     }
     return -1;
+}
+
+bool CliphistWindow::IsActClipboardEntryPixmap() const
+{
+    return !m_pClipboard->pixmap().isNull();
 }
 
 bool CliphistWindow::IsActClipboardEntryEmpty() const
@@ -685,14 +713,6 @@ void CliphistWindow::OnClipboardChanged(QClipboard::Mode /*aMode*/)
     // nothing to do yet...
 }
 
-static QByteArray GetHashForImage(const QPixmap & aImg)
-{
-    QCryptographicHash aHash( QCryptographicHash::Md5 );
-    QImage aTempImg = aImg.toImage();
-    aHash.addData((const char *)aTempImg.bits(),aTempImg.byteCount());
-    return aHash.result();
-}
-
 //static bool IsPixmapEqual(const QPixmap & aImg1, const QPixmap & aImg2)
 //{
 //// TODO working gulp --> test some bytes also ! or use hash value for whole image ?
@@ -717,6 +737,22 @@ bool CliphistWindow::FindPixmap(const QString & sHash, int * pIndex) const
     {
         //if( IsPixmapEqual(aPixmap,m_aPixmapList[i].second) )
         if( m_aPixmapList[i].first==sHash )
+        {
+            if( pIndex )
+            {
+                *pIndex = i;
+            }
+            return true;
+        }
+    }
+    return false;
+}
+
+bool CliphistWindow::FindPixmapInTextHistory(const QString & sHash, int * pIndex)
+{
+    for( int i=0; i<m_aTxtHistory.size(); i++ )
+    {
+        if( m_aTxtHistory[i].startsWith(IMAGE_TAG) && m_aTxtHistory[i].mid(QString(IMAGE_TAG).length())==sHash )
         {
             if( pIndex )
             {
@@ -763,7 +799,8 @@ void CliphistWindow::OnClipboardDataChanged()
 {
     if( !m_bMyClipboardCopy && ui->action_Activate_cliphist->isChecked() )
     {
-        if( !IsActClipboardEntryEmpty() &&
+        if( !IsActClipboardEntryPixmap() &&
+            !IsActClipboardEntryEmpty() &&
             !IsActClipboardEntrySameAsActivatedItem() )
         {
             int iFoundIndex = FindItemIndex(m_pClipboard->text());
@@ -784,10 +821,10 @@ void CliphistWindow::OnClipboardDataChanged()
         else
         {
             QPixmap aClipboardImg = m_pClipboard->pixmap();
-            if( !aClipboardImg.isNull() )
+            if( !aClipboardImg.isNull() && !IsActClipboardEntrySameAsActivatedItem() )
             {
                 int iIndex;
-                if( FindPixmap(aClipboardImg,&iIndex) )
+                if( FindPixmapInTextHistory(GetHashForImage(aClipboardImg).toHex(),&iIndex) )
                 {
                     ActivateItemIdx(iIndex);
                     if( m_bIfFoundMoveToFirstPos )
@@ -795,7 +832,6 @@ void CliphistWindow::OnClipboardDataChanged()
                         OnMoveSelectedEntryToTop();
                         ActivateItemIdx(0);
                     }
-    
                 }
                 else
                 {

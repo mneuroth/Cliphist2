@@ -87,6 +87,7 @@ private:
     bool Save();
     bool Load(const QString sFileName);
     bool SyncListWithUi(const QList<int> & aSelectIdx);
+    bool IsActClipboardEntryPixmap() const;
     bool IsActClipboardEntrySameAsActivatedItem() const;
     bool IsActClipboardEntryEmpty() const;
     bool IsAnyItemActivated() const;
@@ -112,6 +113,7 @@ private:
     bool FindPixmap(const QPixmap & aPixmap, int * pIndex = 0) const;
     bool FindPixmap(const QString & sHash, int * pIndex) const;
     void RemovePixmapWithHash(const QString & sHash);
+    bool FindPixmapInTextHistory(const QString & sHash, int * pIndex);
     void CleanUpUnusedPixmaps();
 
 public:
