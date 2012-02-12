@@ -125,6 +125,7 @@
     <addaction name="actionAutoload_data"/>
     <addaction name="actionAutoload_window_position_and_size"/>
     <addaction name="actionNew_clipboard_content_updates_selection"/>
+    <addaction name="actionEnable_support_for_images"/>
     <addaction name="actionAlways_move_to_first_position_if_found"/>
     <addaction name="actionUse_timer_to_detect_clipboard_changes"/>
     <addaction name="actionAlways_on_top"/>
@@ -344,6 +345,17 @@
    </property>
    <property name="text">
     <string>Always move to first position if found</string>
+   </property>
+  </action>
+  <action name="actionEnable_support_for_images">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable support for images</string>
    </property>
   </action>
  </widget>
