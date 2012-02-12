@@ -88,7 +88,7 @@ private:
     bool Load(const QString sFileName);
     bool SyncListWithUi(const QList<int> & aSelectIdx);
     bool IsActClipboardEntryPixmap() const;
-    bool IsActClipboardEntrySameAsActivatedItem() const;
+    bool IsActClipboardEntrySameAsActivatedItem(QString & sHash) const;
     bool IsActClipboardEntryEmpty() const;
     bool IsAnyItemActivated() const;
     void LoadAndCheck();
@@ -115,6 +115,8 @@ private:
     void RemovePixmapWithHash(const QString & sHash);
     bool FindPixmapInTextHistory(const QString & sHash, int * pIndex);
     void CleanUpUnusedPixmaps();
+    QString GetHashFromTextImageItem(int iIndex) const;
+    bool IsTextImageItem(int iIndex) const;
 
 public:
     void LoadFileAndSync(const QString sFileName);

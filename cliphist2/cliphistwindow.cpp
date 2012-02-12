@@ -124,6 +124,7 @@
 #include <QUndoCommand>
 #include <QTimer>
 #include <QCryptographicHash>
+#include <QMimeData>
 
 //#include <iostream>                 // TODO for debugging only
 
@@ -140,6 +141,7 @@
 #define DEFAULT_FILE_NAME           "cliphist2.clp"
 #define DEFAULT_LINES_PER_ENTRY     3
 #define DEFAULT_MAX_ENTRIES         100
+#define TIMER_DELAY                 300 // ms
 #define BLUE                        "#0000ff"   //"blue"
 #define GREEN                       "#008000"   //"green"
 #define RED                         "#ff0000"   //"red"
@@ -381,7 +383,7 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(OnTimerUpdate()));
     if( ui->actionUse_timer_to_detect_clipboard_changes->isChecked() )
     {
-        m_pTimer->start(200);
+        m_pTimer->start(TIMER_DELAY);
     }
 #if !defined(Q_OS_MAC)
     connect(m_pClipboard, SIGNAL(changed(QClipboard::Mode)), this, SLOT(OnClipboardChanged(QClipboard::Mode)));
@@ -450,7 +452,7 @@ void CliphistWindow::OnToggleUseTimer(bool bChecked)
 {
     if( bChecked )
     {
-        m_pTimer->start(200);
+        m_pTimer->start(TIMER_DELAY);
     }
     else
     {
@@ -601,11 +603,10 @@ void CliphistWindow::OnEditItem()
         {
             aDlg.restoreGeometry(m_aEditDialogGeometry);
         }
-        if( m_aTxtHistory[iCurrentRow].startsWith(IMAGE_TAG) )
+        if( IsTextImageItem(iCurrentRow) )
         {
             int iIndex;
-            QString sHash = m_aTxtHistory[iCurrentRow].mid(QString(IMAGE_TAG).length());
-            if( FindPixmap(sHash,&iIndex) )
+            if( FindPixmap(GetHashFromTextImageItem(iCurrentRow),&iIndex) )
             {
                 aDlg.setImage(m_aPixmapList[iIndex].second);
             }
@@ -648,16 +649,17 @@ void CliphistWindow::UpdateSelection(const QList<int> & aCurrentRows)
         ui->listWidget->setCurrentRow(iRow,QItemSelectionModel::Select);
 }
 
-bool CliphistWindow::IsActClipboardEntrySameAsActivatedItem() const
+bool CliphistWindow::IsActClipboardEntrySameAsActivatedItem(QString & sHash) const
 {
     if( m_iActivatedIndex>=0 && m_iActivatedIndex<m_aTxtHistory.size() )
     {
-        QPixmap aActPixmap = m_pClipboard->pixmap();
-        if( !aActPixmap.isNull() )
+        if( ui->actionEnable_support_for_images->isChecked() && m_pClipboard->mimeData()->hasImage() )
         {
-            if( m_aTxtHistory[m_iActivatedIndex].startsWith(IMAGE_TAG) )
+            if( IsTextImageItem(m_iActivatedIndex) )
             {
-                return GetHashForImage(aActPixmap).toHex()==m_aTxtHistory[m_iActivatedIndex].mid(QString(IMAGE_TAG).length());
+                QPixmap aActPixmap = m_pClipboard->pixmap();
+                sHash = GetHashForImage(aActPixmap).toHex();
+                return sHash==GetHashFromTextImageItem(m_iActivatedIndex);
             }
             else
             {
@@ -686,7 +688,7 @@ int CliphistWindow::FindItemIndex(const QString & sItemText) const
 
 bool CliphistWindow::IsActClipboardEntryPixmap() const
 {
-    return !m_pClipboard->pixmap().isNull();
+    return m_pClipboard->mimeData()->hasImage(); //!m_pClipboard->pixmap().isNull();
 }
 
 bool CliphistWindow::IsActClipboardEntryEmpty() const
@@ -713,18 +715,6 @@ void CliphistWindow::OnClipboardChanged(QClipboard::Mode /*aMode*/)
     // nothing to do yet...
 }
 
-//static bool IsPixmapEqual(const QPixmap & aImg1, const QPixmap & aImg2)
-//{
-//// TODO working gulp --> test some bytes also ! or use hash value for whole image ?
-//    if( aImg1.size()==aImg2.size() )
-//    {
-//        QByteArray aResult1 = GetHashForImage(aImg1);
-//        QByteArray aResult2 = GetHashForImage(aImg2);
-//        return aResult1==aResult2;
-//    }
-//    return false;
-//}
-
 bool CliphistWindow::FindPixmap(const QPixmap & aPixmap, int * pIndex) const
 {
     QString sHash = GetHashForImage(aPixmap).toHex();
@@ -735,7 +725,6 @@ bool CliphistWindow::FindPixmap(const QString & sHash, int * pIndex) const
 {
     for(int i=0; i<m_aPixmapList.size(); i++)
     {
-        //if( IsPixmapEqual(aPixmap,m_aPixmapList[i].second) )
         if( m_aPixmapList[i].first==sHash )
         {
             if( pIndex )
@@ -752,7 +741,7 @@ bool CliphistWindow::FindPixmapInTextHistory(const QString & sHash, int * pIndex
 {
     for( int i=0; i<m_aTxtHistory.size(); i++ )
     {
-        if( m_aTxtHistory[i].startsWith(IMAGE_TAG) && m_aTxtHistory[i].mid(QString(IMAGE_TAG).length())==sHash )
+        if( IsTextImageItem(i) && GetHashFromTextImageItem(i)==sHash )
         {
             if( pIndex )
             {
@@ -780,9 +769,9 @@ void CliphistWindow::CleanUpUnusedPixmaps()
     // search for all images which are referenced in the actual text list
     for( i=0; i<m_aTxtHistory.size(); i++ )
     {
-        if( m_aTxtHistory[i].startsWith(IMAGE_TAG) ) 
+        if( IsTextImageItem(i) )
         {
-            aLstFound.push_back(m_aTxtHistory[i].mid(QString(IMAGE_TAG).length()));
+            aLstFound.push_back(GetHashFromTextImageItem(i));
         }
     }
     // remove all images not referenced from the actual text list
@@ -795,13 +784,26 @@ void CliphistWindow::CleanUpUnusedPixmaps()
     }
 }
 
+QString CliphistWindow::GetHashFromTextImageItem(int iIndex) const
+{
+    return m_aTxtHistory[iIndex].mid(QString(IMAGE_TAG).length());
+}
+
+bool CliphistWindow::IsTextImageItem(int iIndex) const
+{
+    return m_aTxtHistory[iIndex].startsWith(IMAGE_TAG);
+}
+
+// update text/image list if actual clipboard content is not already active item
 void CliphistWindow::OnClipboardDataChanged()
 {
     if( !m_bMyClipboardCopy && ui->action_Activate_cliphist->isChecked() )
     {
+        QString sHash;
+        bool bIsActTheSameAsActivated = IsActClipboardEntrySameAsActivatedItem(sHash);
         if( !IsActClipboardEntryPixmap() &&
             !IsActClipboardEntryEmpty() &&
-            !IsActClipboardEntrySameAsActivatedItem() )
+            !bIsActTheSameAsActivated )
         {
             int iFoundIndex = FindItemIndex(m_pClipboard->text());
             if( iFoundIndex>=0 )
@@ -820,39 +822,46 @@ void CliphistWindow::OnClipboardDataChanged()
         }
         else
         {
-            QPixmap aClipboardImg = m_pClipboard->pixmap();
-            if( !aClipboardImg.isNull() && !IsActClipboardEntrySameAsActivatedItem() )
+// TODO gulp working --> dies ist wohl ein performance problem !!! --> IsActClipboardEntrySameAsActivatedItem() kopiert pixmap, hash wird zu häufig berechnet !!!
+// --> problem mit timer aktualisierung und interferenz mit Selektion (wegen performance)
+            if( ui->actionEnable_support_for_images->isChecked() )
             {
-                int iIndex;
-                if( FindPixmapInTextHistory(GetHashForImage(aClipboardImg).toHex(),&iIndex) )
+                if( m_pClipboard->mimeData()->hasImage() && !bIsActTheSameAsActivated )
                 {
-                    ActivateItemIdx(iIndex);
-                    if( m_bIfFoundMoveToFirstPos )
+                    int iIndex;
+                    if( FindPixmapInTextHistory(sHash,&iIndex) )
                     {
-                        OnMoveSelectedEntryToTop();
-                        ActivateItemIdx(0);
+                        ActivateItemIdx(iIndex);
+                        if( m_bIfFoundMoveToFirstPos )
+                        {
+                            OnMoveSelectedEntryToTop();
+                            ActivateItemIdx(0);
+                        }
+                    }
+                    else
+                    {
+                        QPixmap aClipboardImg = m_pClipboard->pixmap();
+                        QByteArray aHash = GetHashForImage(aClipboardImg);
+                        QString sHash = aHash.toHex();
+                        QString sImgName = IMAGE_TAG+sHash;
+                        QPair<QString,QPixmap> aItem(sHash,aClipboardImg);
+                        m_aPixmapList.push_front(aItem);
+                        m_pUndoStack->push(new InsertCommand(this,0,sImgName,ui->actionNew_clipboard_content_updates_selection->isChecked()));
                     }
                 }
                 else
                 {
-                    QByteArray aHash = GetHashForImage(aClipboardImg);
-                    QString sHash = aHash.toHex();
-                    QString sImgName = IMAGE_TAG+sHash;
-                    QPair<QString,QPixmap> aItem(sHash,aClipboardImg);
-                    m_aPixmapList.push_front(aItem);
-                    m_pUndoStack->push(new InsertCommand(this,0,sImgName,ui->actionNew_clipboard_content_updates_selection->isChecked()));
                 }
-            }
-            else
-            {
-                // update the view if the clipboard has no text and the application has a text selected
-                if( IsActClipboardEntryEmpty() && IsAnyItemActivated() )
-                {
-                    m_iActivatedIndex = -1;
-                    SyncListWithUi(GetAllIndicesOfActSelected());
-                }
-            }
+             }
         }
+    }
+    // update the view if the clipboard has no text or image and the application has a text selected
+    if( IsActClipboardEntryEmpty() &&
+        (!m_pClipboard->mimeData()->hasImage() || !ui->actionEnable_support_for_images->isChecked()) &&
+        IsAnyItemActivated() )
+    {
+        m_iActivatedIndex = -1;
+        SyncListWithUi(GetAllIndicesOfActSelected());
     }
 }
 
@@ -866,7 +875,8 @@ void CliphistWindow::OnItemClicked(QListWidgetItem * current)
 
 void CliphistWindow::OnItemDoubleClicked(QListWidgetItem * current)
 {
-    if( !ui->action_Double_click_to_select->isChecked() )
+// TODO --> bugfix? original ! operator !!!
+    if( ui->action_Double_click_to_select->isChecked() )
     {    
         ActivateItem(current);
     }
@@ -1017,15 +1027,15 @@ QString CliphistWindow::FilterNumber(const QString & s, const QString & sNumber,
 bool CliphistWindow::SyncListWithUi(const QList<int> & aSelectIdx)
 {
     QString sActClipBoardText = m_pClipboard->text();
-    bool bIsImage = !m_pClipboard->pixmap().isNull();
-    QString sHash = GetHashForImage(m_pClipboard->pixmap()).toHex();
+    bool bIsImage = ui->actionEnable_support_for_images->isChecked() && m_pClipboard->mimeData()->hasImage();
+    QString sHash = bIsImage ? GetHashForImage(m_pClipboard->pixmap()).toHex() : "";
     bool bActivatedNeedUpdate = true;
     int iFirstOccurance = -1;
     ui->listWidget->clear();
     ui->listWidgetLineNumbers->clear();
     for( int i=m_aTxtHistory.size()-1; i>=0; i-- )
     {
-        if( (bIsImage && m_aTxtHistory[i].startsWith(IMAGE_TAG) && m_aTxtHistory[i].mid(QString(IMAGE_TAG).length())==sHash) ||
+        if( (bIsImage && IsTextImageItem(i) && GetHashFromTextImageItem(i)==sHash) ||
             (sActClipBoardText==m_aTxtHistory[i] && bActivatedNeedUpdate) )
         {
             iFirstOccurance = i;        // always update variable because we loop from high indizes
@@ -1065,9 +1075,9 @@ void CliphistWindow::CheckHistoryMemory()
 {
     while( m_aTxtHistory.size()>m_iMaxEntries )
     {
-        if( m_aTxtHistory.last().startsWith(IMAGE_TAG) )
+        if( IsTextImageItem(m_aTxtHistory.size()-1) )
         {
-            RemovePixmapWithHash(m_aTxtHistory.last().mid(QString(IMAGE_TAG).length()));
+            RemovePixmapWithHash(GetHashFromTextImageItem(m_aTxtHistory.size()-1));
         }
         m_aTxtHistory.removeLast();
     }
@@ -1173,11 +1183,10 @@ void CliphistWindow::ActivateItem(QListWidgetItem * current)
         UpdateColorOfLastActivatedItem();
         m_bMyClipboardCopy = true;
         UpdateLastActivatedItemData(current);
-        if( m_aTxtHistory[m_iActivatedIndex].startsWith(IMAGE_TAG) )
+        if( IsTextImageItem(m_iActivatedIndex) )
         {
             int iIndex;
-            QString sHash = m_aTxtHistory[m_iActivatedIndex].mid(QString(IMAGE_TAG).length());
-            if( FindPixmap(sHash,&iIndex) )
+            if( FindPixmap(GetHashFromTextImageItem(m_iActivatedIndex),&iIndex) )
             {
                 m_pClipboard->setPixmap(m_aPixmapList[iIndex].second);
             }
