@@ -68,11 +68,13 @@ void EditItem::showOnlyText(bool bValue)
     {
         aLst.push_back(10000);
         aLst.push_back(0);
+        ui.textEdit->setEnabled(true);
     }
     else
     {
         aLst.push_back(0);
         aLst.push_back(10000);
+        ui.textEdit->setEnabled(false);
     }
     ui.splitter->setSizes(aLst);
     ui.btnAsNewEntry->setEnabled(bValue);
