@@ -20,7 +20,7 @@
 
 #include "edititem.h"
 
-#include <QtGui/QTextEdit>
+#include <QTextEdit>
 
 EditItem::EditItem(QWidget *parent, const QFont & aFont, const QPalette & aPalette, const QString & sText, const QPixmap * pImage)
     : QDialog(parent),

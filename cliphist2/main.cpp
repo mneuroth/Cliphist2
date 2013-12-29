@@ -20,7 +20,7 @@
 
 #include "cliphistwindow.h"
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
