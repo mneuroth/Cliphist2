@@ -25,7 +25,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
     <key>CFBundleGetInfoString</key>
-	<string>Copyright (c) 2010, Michael Neuroth</string>
+	<string>Copyright (c) 2012, Michael Neuroth</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleExecutable</key>
