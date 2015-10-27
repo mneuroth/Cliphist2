@@ -2,13 +2,18 @@ change history of cliphist2
 ===========================
 
 ------------------------------------------------------------------------------
-25. 4.2011  Version 1.0.0
+     .2012  Version 1.1.0
 
-    first public release of the Qt4 port of the cliphist application
-
+    added support for handling images in clipboard
+    
  5. 2.2012  Version 1.0.1
 
     improved binary distribution for Mac and Windows, increased icon size for Windows,
     added new menu item "Always move to first position if found", fixed find text in
     items even when not showed in gui
+
+25. 4.2011  Version 1.0.0
+
+    first public release of the Qt4 port of the cliphist application
+
     

@@ -253,6 +253,32 @@ private:
 };
 
 // ************************************************************************
+class ActivateItemCommand : public QUndoCommand
+ {
+ public:
+     ActivateItemCommand(CliphistWindow * pApp, int iActivateNo, int iOldActivateNo, QUndoCommand *parent = 0)
+         : QUndoCommand(parent),
+           m_pApp(pApp),
+           m_iActivateNo(iActivateNo),
+           m_iOldActivateNo(iOldActivateNo)
+     {}
+
+     void undo()
+     {
+         m_pApp->ActivateItemIdx(m_iOldActivateNo);
+     }
+     void redo()
+     {
+         m_pApp->ActivateItemIdx(m_iActivateNo);
+     }
+
+private:
+     CliphistWindow *   m_pApp;
+     int                m_iActivateNo;
+     int                m_iOldActivateNo;
+};
+
+// ************************************************************************
 class DeleteAllCommand : public QUndoCommand
 {
 public:
@@ -561,11 +587,18 @@ void CliphistWindow::OnMoveSelectedEntryToTop()
     // this is a combined undo/redo command (macro)
     m_pUndoStack->beginMacro("Move to top");
     // save actual value
-    QString sTemp = m_aTxtHistory[GetAllIndicesOfActSelected()[0]];     // we know that only one item is selected !
+    int iSelectedIndex = GetAllIndicesOfActSelected()[0];
+    QString sTemp = m_aTxtHistory[iSelectedIndex];     // we know that only one item is selected !
     // delete actual vaule
     m_pUndoStack->push(new DeleteItemCommand(this,GetAllIndicesOfActSelected()));
     // restore saved value as entry on top of the saved entries
     m_pUndoStack->push(new InsertCommand(this,0,sTemp,/*bUpdateSelection*/true));
+    // activate entry if it was activated before
+// TODO --> bug, aktivierung des eintrags passt nicht mehr da danach delete und insert durchgefuehrt wird !!!
+    if( iSelectedIndex==m_iActivatedIndex )
+    {
+        m_pUndoStack->push(new ActivateItemCommand(this,0,m_iActivatedIndex));
+    }
     // finish macro
     m_pUndoStack->endMacro();
 }
@@ -964,7 +997,7 @@ void CliphistWindow::OnMaxItems()
 {
     bool ok;
     // for Qt >= 4.4.x use QInputDialog::getInt(...)
-    int i = QInputDialog::getInteger(this,tr("Input"),tr("Maximal number of entries:"),m_iMaxEntries,1,2147483647,1,&ok );
+    int i = QInputDialog::getInt(this,tr("Input"),tr("Maximal number of entries:"),m_iMaxEntries,1,2147483647,1,&ok );
     if( ok )
     {
         m_iMaxEntries = i;
@@ -975,7 +1008,7 @@ void CliphistWindow::OnLinesPerItem()
 {
     bool ok;
     // for Qt >= 4.4.x use QInputDialog::getInt(...)
-    int i = QInputDialog::getInteger(this,tr("Input"),tr("Lines per entry:"),m_iMaxLinesPerEntry,1,2147483647,1,&ok );
+    int i = QInputDialog::getInt(this,tr("Input"),tr("Lines per entry:"),m_iMaxLinesPerEntry,1,2147483647,1,&ok );
     if( ok )
     {
         m_iMaxLinesPerEntry = i;
@@ -983,10 +1016,12 @@ void CliphistWindow::OnLinesPerItem()
     }
 }    
 
-QListWidgetItem * CliphistWindow::CreateNewItem(const QString & s, const QBrush & aBrush)
+QListWidgetItem * CliphistWindow::CreateNewItem(const QString & s, const QBrush & aBrush, QPixmap * pPixmap)
 {
     QPair<QString,bool> aResult = FilterForDisplay(s);
-    QListWidgetItem * pItem = new QListWidgetItem(aResult.first,/*parent*/0,aResult.second ? 1 : 0);
+    QListWidgetItem * pItem = pPixmap==0 ?
+                            new QListWidgetItem(aResult.first,/*parent*/0,aResult.second ? 1 : 0) :
+                            new QListWidgetItem(*pPixmap, aResult.first,/*parent*/0,aResult.second ? 1 : 0);
     pItem->setForeground(aBrush);
     //pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEditable|Qt::ItemIsEnabled);
     pItem->setToolTip(s);
@@ -1045,7 +1080,18 @@ bool CliphistWindow::SyncListWithUi(const QList<int> & aSelectIdx)
                 bActivatedNeedUpdate = false;
             }
         }
-        InsertNewUiData(m_aTxtHistory[i],i+1);
+        // handle icons for images in list item
+        QPixmap * pPixmap = 0;
+        if( IsTextImageItem(i) )
+        {
+            int iIndex;
+            if( FindPixmap(GetHashFromTextImageItem(i),&iIndex) )
+            {
+                pPixmap = &m_aPixmapList[iIndex].second;
+            }
+        }
+// TODO --> QIcons veraendern die Hoehe der Zeilen --> anpassen + Behandlung von Icons konfigurierbar machen (via Menu Eintrag)
+        InsertNewUiData(m_aTxtHistory[i],i+1,pPixmap);
     }
     if( bActivatedNeedUpdate && iFirstOccurance!=-1 )
     {
@@ -1059,11 +1105,11 @@ bool CliphistWindow::SyncListWithUi(const QList<int> & aSelectIdx)
     return true;
 }
 
-void CliphistWindow::InsertNewUiData(const QString & sText, int iNumber)
+void CliphistWindow::InsertNewUiData(const QString & sText, int iNumber, QPixmap * pPixmap)
 {
-    QListWidgetItem * pNewItem = CreateNewItem(sText,GetColorForIndex(iNumber));
+    QListWidgetItem * pNewItem = CreateNewItem(sText,GetColorForIndex(iNumber),pPixmap);
     ui->listWidget->insertItem(0,pNewItem);
-    QListWidgetItem * pNewNumberItem = pNewItem->clone();
+    QListWidgetItem * pNewNumberItem = CreateNewItem(sText,GetColorForIndex(iNumber),0); //pNewItem->clone();
     QString s = pNewNumberItem->text();
     pNewNumberItem->setText(FilterNumber(s,QString::number(iNumber),(bool)pNewItem->type()));
     pNewNumberItem->setToolTip("");
@@ -1167,6 +1213,11 @@ bool CliphistWindow::Load(const QString sFileName)
         }
     }
     return false;
+}
+
+int CliphistWindow::GetActivateItemIdx() const
+{
+    return ui->listWidget->currentRow();
 }
 
 void CliphistWindow::ActivateItemIdx(int iIndex)

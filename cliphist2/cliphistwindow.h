@@ -21,7 +21,7 @@
 #ifndef CLIPHISTWINDOW_H
 #define CLIPHISTWINDOW_H
 
-#include <QtGui/QMainWindow>
+#include <QMainWindow>
 #include <QString>
 #include <QStringList>
 #include <QList>
@@ -93,18 +93,17 @@ private:
     bool IsAnyItemActivated() const;
     void LoadAndCheck();
     void SaveAndCheck();
-    void ActivateItemIdx(int iIndex);
     void ActivateItem(QListWidgetItem * current);
     void UpdateColorOfLastActivatedItem();
     void UpdateLastActivatedItemData(QListWidgetItem * current);
     void SetFont(const QFont & aFont);
-    void InsertNewUiData(const QString & sText, int iNumber);
+    void InsertNewUiData(const QString & sText, int iNumber, QPixmap * pPixmap);
     void CheckHistoryMemory();
     void SetDataChanged(bool bValue);
     QBrush GetColorOfNeighbour(int iMyIndex) const;
     QBrush GetNextColor(const QBrush & aActColor) const;
     QBrush GetColorForIndex(int iIndex) const;
-    QListWidgetItem * CreateNewItem(const QString & s, const QBrush & aBrush);
+    QListWidgetItem * CreateNewItem(const QString & s, const QBrush & aBrush, QPixmap * pPixmap);
     QPair<QString,bool> FilterForDisplay(const QString & s) const;
     QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
     QString GetNewLine() const;
@@ -129,6 +128,8 @@ public:
     void UpdateSelection(const QList<int> & aCurrentRows);
     void DoDeleteAllItems();
     void UndoDeleteAllItems(const QStringList & aHistory, const QList<int> & aActSelected);
+    void ActivateItemIdx(int iIndex);
+    int GetActivateItemIdx() const;
 
 private:   /*data*/
     Ui::CliphistWindow *        ui;
