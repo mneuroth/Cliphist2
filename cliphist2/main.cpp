@@ -112,6 +112,13 @@ bool CliphistApp::event( QEvent * event )
 
 int main(int argc, char *argv[])
 {
+#if QT_VERSION >= 0x050600
+    // QT_SCALE_FACTOR=2
+    // see: https://blog.qt.io/blog/2016/01/26/high-dpi-support-in-qt-5-6/
+    // see: http://stackoverflow.com/questions/24367355/automatic-rescaling-of-an-application-on-high-dpi-windows-platform
+    QApplication::setAttribute(Qt::AA_EnableHighDpiScaling);
+#endif
+
     CliphistApp a(argc, argv);
     
     QTranslator qtTranslator;

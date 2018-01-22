@@ -18,7 +18,9 @@ HEADERS += cliphistwindow.h \
 FORMS += cliphistwindow.ui \
     edititem.ui
 TRANSLATIONS = cliphist2_de.ts \
-    cliphist2_nl.ts
+    cliphist2_nl.ts 
+#\
+#    qt_de.qm
 unix:!macx { 
     isEmpty( PREFIX ):PREFIX = /usr
     isEmpty( DESKTOPDIR ):DESKTOPDIR = /usr/share/applications
@@ -28,8 +30,9 @@ unix:!macx {
     INSTALLS += target
     language.path = $${PREFIX}/share/cliphist2
     language.files += cliphist2_de.qm \
-        cliphist2_nl.qm \
-        qt_de.qm
+        cliphist2_nl.qm 
+#\
+#        qt_de.qm
     INSTALLS += language
     desktop.path = $${DESKTOPDIR}
     desktop.files = cliphist2.desktop

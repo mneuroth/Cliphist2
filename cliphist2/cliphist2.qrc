@@ -1,6 +1,5 @@
 <RCC>
     <qresource prefix="/translations">
-        <file>qt_de.qm</file>
         <file>cliphist2_de.qm</file>
         <file>cliphist2_nl.qm</file>
     </qresource>
