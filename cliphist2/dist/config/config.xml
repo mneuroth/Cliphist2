@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Cliphist2</Name>
+    <Version>1.1.0</Version>
+    <Title>Clipboard History Application</Title>
+    <Publisher>Michael Neuroth</Publisher>
+    <StartMenuDir>Cliphist2</StartMenuDir>
+    <TargetDir>@HomeDir@/cliphist2</TargetDir>
+</Installer>
