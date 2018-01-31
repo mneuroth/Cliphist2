@@ -3,13 +3,13 @@
     <DisplayName>Cliphist2</DisplayName>
     <Description>Install cliphist2 application.</Description>
     <Version>1.1.0-1</Version>
-    <ReleaseDate>2010-09-21</ReleaseDate>
+    <ReleaseDate>2018-01-31</ReleaseDate>
     <Licenses>
         <License name="GPL" file="license.txt" />
     </Licenses>
     <Default>script</Default>
-    <!--
     <Script>installscript.qs</Script>
+    <!--
     <UserInterfaces>
         <UserInterface>page.ui</UserInterface>
     </UserInterfaces>
