@@ -5,12 +5,13 @@ function Component()
 
 Component.prototype.createOperations = function()
 {
-    // call default implementation to actually install README.txt!
     component.createOperations();
 
     if (systemInfo.productType === "windows") {
-        component.addOperation("CreateShortcut", "@TargetDir@/cliphist2.exe", "@StartMenuDir@/README.lnk",
+        component.addOperation("CreateShortcut", "@TargetDir@/cliphist2.exe", "@StartMenuDir@/Cliphist2.lnk",
             "workingDirectory=@TargetDir@", "iconPath=%SystemRoot%/system32/SHELL32.dll",
             "iconId=2", "description=Cliphist 2");
+        component.addOperation("CreateShortcut", "@TargetDir@/cliphist2.exe", "@DesktopDir@/Cliphist2.lnk",
+            "workingDirectory=@TargetDir@");
     }
 }
