@@ -1244,7 +1244,10 @@ void CliphistWindow::ActivateItem(QListWidgetItem * current)
         }
         else
         {
-            m_pClipboard->setText(m_aTxtHistory[m_iActivatedIndex]);
+			if (m_pClipboard->text() != m_aTxtHistory[m_iActivatedIndex])
+			{
+				m_pClipboard->setText(m_aTxtHistory[m_iActivatedIndex]);
+			}
         }
         m_bMyClipboardCopy = false;
     }
