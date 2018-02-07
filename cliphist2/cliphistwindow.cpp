@@ -125,6 +125,7 @@
 #include <QTimer>
 #include <QCryptographicHash>
 #include <QMimeData>
+#include <QBuffer>
 
 //#include <iostream>                 // TODO for debugging only
 
@@ -1022,9 +1023,24 @@ QListWidgetItem * CliphistWindow::CreateNewItem(const QString & s, const QBrush 
     QListWidgetItem * pItem = pPixmap==0 ?
                             new QListWidgetItem(aResult.first,/*parent*/0,aResult.second ? 1 : 0) :
                             new QListWidgetItem(*pPixmap, aResult.first,/*parent*/0,aResult.second ? 1 : 0);
+
+	if (pPixmap != 0)
+	{
+		// https://stackoverflow.com/questions/21211909/how-to-add-bold-text-to-rich-text-box
+		QImage aIcon(pPixmap->toImage().scaledToWidth(100));
+		QByteArray aData;
+		QBuffer aBuffer(&aData);
+		aIcon.save(&aBuffer, "PNG", 100);
+		QString html = QString("<img src='data:image/png;base64, %0'>").arg(QString(aData.toBase64()));
+		pItem->setToolTip(html);
+	}
+	else
+	{
+		pItem->setToolTip(s);
+	}
+
     pItem->setForeground(aBrush);
     //pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEditable|Qt::ItemIsEnabled);
-    pItem->setToolTip(s);
     return pItem;
 }
 
