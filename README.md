@@ -1,9 +1,9 @@
-## Cliphist2
+## Cliphist2 - A clipboard history application
 
 ### Decription
 Cliphist2 is an application to show the history of the text content of the clipboard and to select old entries again.
 
-<img src="docu/cliphist2_linux.png" alt="Cliphis2 screenshot" height="128" >
+<img src="docu/cliphist2_linux.png" alt="Cliphis2 screenshot" >
 
 The application was inspired by the clipboard support of the 
 Borland IDE's (Turbo Pascal, Turbo C++) in the 1980ies.
