@@ -29,6 +29,8 @@
 #include <QPair>
 #include <QClipboard>
 
+#include <UGlobalHotkey-master/uglobalhotkeys.h>
+
 class QUndoStack;
 class QTimer;
 class QListWidgetItem;
@@ -80,6 +82,7 @@ private slots:
     void OnItemDoubleClicked(QListWidgetItem * current);
     void OnItemActivated(QListWidgetItem * current);    
     void OnSelectionChanged();
+    void OnEnableGlobalHotkeys(bool bChecked);
 
 private:
     bool SaveSettings();
@@ -150,6 +153,8 @@ private:   /*data*/
     QString                     m_sFileName;
     QString                     m_sLastSearchText;
     QStringList                 m_aTxtHistory;
+
+    UGlobalHotkeys *            m_aHotkeyManager;
 };
 
 #endif // CLIPHISTWINDOW_H

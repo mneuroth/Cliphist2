@@ -2,8 +2,11 @@ change history of cliphist2
 ===========================
 
 ------------------------------------------------------------------------------
-     .2012  Version 1.1.0
+18. 1.2019  Version 1.1.0
 
+    uploaded source code to github.com
+    used project UGlobalHotkey from github (https://github.com/falceeffect/UGlobalHotkey)
+    added support for global hotkeys: Shift+Ctrl+F11, Shift+Ctrl+F12, Shift+Ctrl+V
     added support for handling images in clipboard
     
  5. 2.2012  Version 1.0.1

@@ -15,7 +15,16 @@
   </property>
   <widget class="QWidget" name="centralWidget">
    <layout class="QGridLayout" name="gridLayout">
-    <property name="margin">
+    <property name="leftMargin">
+     <number>2</number>
+    </property>
+    <property name="topMargin">
+     <number>2</number>
+    </property>
+    <property name="rightMargin">
+     <number>2</number>
+    </property>
+    <property name="bottomMargin">
      <number>2</number>
     </property>
     <property name="spacing">
@@ -73,7 +82,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>22</height>
+     <height>19</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -126,6 +135,8 @@
     <addaction name="actionAutoload_window_position_and_size"/>
     <addaction name="actionNew_clipboard_content_updates_selection"/>
     <addaction name="actionEnable_support_for_images"/>
+    <addaction name="actionEnable_global_hot_keys"/>
+    <addaction name="actionMove_position_down_Shift_Ctrl_V"/>
     <addaction name="actionAlways_move_to_first_position_if_found"/>
     <addaction name="actionUse_timer_to_detect_clipboard_changes"/>
     <addaction name="actionAlways_on_top"/>
@@ -356,6 +367,28 @@
    </property>
    <property name="text">
     <string>Enable support for images</string>
+   </property>
+  </action>
+  <action name="actionEnable_global_hot_keys">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Enable global hot keys (Ctrl+Shift+F11, Ctrl+Shift+F12, Shift+Ctrl+V)</string>
+   </property>
+   <property name="toolTip">
+    <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Enable global hot keys: Ctrl+Shift+F11, Ctrl+Shift+F12, Shift+Ctrl+V&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+   </property>
+  </action>
+  <action name="actionMove_position_down_Shift_Ctrl_V">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Move position down (Shift+Ctrl+V))</string>
    </property>
   </action>
  </widget>

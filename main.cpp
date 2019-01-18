@@ -123,6 +123,7 @@ int main(int argc, char *argv[])
     
     QTranslator qtTranslator;
     QString sLocale = GetLocaleName(a.arguments());
+    // load translations for qt modules
     bool bOk = qtTranslator.load(":/translations/qt_" + sLocale,QLibraryInfo::location(QLibraryInfo::TranslationsPath));
     if( !bOk )
     {
@@ -142,6 +143,7 @@ int main(int argc, char *argv[])
     }
     a.installTranslator(&qtTranslator);
 
+    // load translations for cliphist2 appliction
     QTranslator myappTranslator;
     bOk = myappTranslator.load(":/translations/cliphist2_" + sLocale);
 #if defined(Q_OS_MAC)

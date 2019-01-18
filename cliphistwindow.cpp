@@ -127,8 +127,6 @@
 #include <QMimeData>
 #include <QBuffer>
 
-//#include <iostream>                 // TODO for debugging only
-
 // ************************************************************************
 
 #define VERSION                     "1.1.0"
@@ -307,6 +305,8 @@ private:
 
 // ************************************************************************
 
+#include <windows.h>
+
 CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     : QMainWindow(parent),
       ui(new Ui::CliphistWindow)
@@ -397,6 +397,7 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     connect(ui->actionAlways_on_top, SIGNAL(triggered(bool)), this, SLOT(OnToggleAlwaysOnTop(bool)));
     connect(ui->actionUse_timer_to_detect_clipboard_changes, SIGNAL(triggered(bool)), this, SLOT(OnToggleUseTimer(bool)));
     connect(ui->actionAlways_move_to_first_position_if_found, SIGNAL(triggered(bool)), this, SLOT(OnAlwaysMoveToTopIfFound(bool)) );
+    connect(ui->actionEnable_global_hot_keys, SIGNAL(triggered(bool)), this, SLOT(OnEnableGlobalHotkeys(bool)) );
 
 #if defined(Q_OS_MAC)
     // Mac only supports all detection of changes via timer
@@ -426,11 +427,17 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
 //    aPalette.setColor(QPalette::Highlight,QColor("#FF00FF"));
 //    ui->listWidget->setPalette(aPalette);
 
+    m_aHotkeyManager = new UGlobalHotkeys();
+
+    OnEnableGlobalHotkeys(ui->actionEnable_global_hot_keys->isChecked());
+
     OnSelectionChanged();
 }
 
 CliphistWindow::~CliphistWindow()
 {
+    delete m_aHotkeyManager;
+
     if( ui->actionAutoload_data->isChecked() )
     {
         SaveAndCheck();
@@ -489,7 +496,7 @@ void CliphistWindow::OnToggleUseTimer(bool bChecked)
 
 void CliphistWindow::OnAbout()
 {
-    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2012 by %4</p><p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
+    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2019 by %4</p><p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
 }
 
 void CliphistWindow::OnAboutQt()
@@ -929,6 +936,46 @@ void CliphistWindow::OnSelectionChanged()
     emit MoreThanOneSelected(iCount>1);
 }
 
+void CliphistWindow::OnEnableGlobalHotkeys(bool bChecked)
+{
+    if( bChecked )
+    {
+        m_aHotkeyManager->registerHotkey("Ctrl+Shift+F12", 1);
+        m_aHotkeyManager->registerHotkey("Ctrl+Shift+F11", 2);
+        m_aHotkeyManager->registerHotkey("Shift+Ctrl+V", 3);
+        connect(m_aHotkeyManager, &UGlobalHotkeys::activated, [this](size_t id)
+        {
+            if(id==1)
+            {
+                // show cliphist2 application
+                this->show();
+                this->showNormal();
+                this->raise();
+                this->activateWindow();
+            }
+            if(id==2)
+            {
+                // minimize cliphist2 application
+                this->showMinimized();
+            }
+            if(id==3)
+            {
+                int iIndex = GetActivateItemIdx();
+                int iShift = ui->actionMove_position_down_Shift_Ctrl_V->isChecked() ? 1 : -1;
+                iIndex = iIndex + iShift;
+                if( iIndex >= 0 && iIndex < ui->listWidget->count() )
+                {
+                    ActivateItemIdx(iIndex);
+                }
+            }
+        });
+    }
+    else
+    {
+        m_aHotkeyManager->unregisterAllHotkeys();
+    }
+}
+
 void CliphistWindow::LoadAndCheck()
 {
     if( !Load(m_sFileName) )
@@ -1163,6 +1210,8 @@ bool CliphistWindow::SaveSettings()
     aSettings.setValue("App/AlwaysOnTop",ui->actionAlways_on_top->isChecked()); 
     aSettings.setValue("App/UseTimer",ui->actionUse_timer_to_detect_clipboard_changes->isChecked());
     aSettings.setValue("App/GeometryEditDlg",m_aEditDialogGeometry);
+    aSettings.setValue("App/UseGlobalKeys",ui->actionEnable_global_hot_keys->isChecked());
+    aSettings.setValue("App/MovePositionDown",ui->actionMove_position_down_Shift_Ctrl_V->isChecked());
     return true;
 }
 
@@ -1189,6 +1238,8 @@ bool CliphistWindow::LoadSettings()
     aFont.fromString(aSettings.value("App/Font",QString("Courier")).toString());
     SetFont(aFont);
     m_aEditDialogGeometry = aSettings.value("App/GeometryEditDlg",QVariant(QByteArray())).toByteArray();
+    ui->actionEnable_global_hot_keys->setChecked(aSettings.value("App/UseGlobalKeys").toBool());
+    ui->actionMove_position_down_Shift_Ctrl_V->setChecked(aSettings.value("App/MovePositionDown",true).toBool());
     return true;
 }
 

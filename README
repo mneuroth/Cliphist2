@@ -18,6 +18,9 @@ details).
 See the INSTALL documentation to build the program from
 the sources.
 
+Cliphis2 uses the library UGlobalHotkey (https://github.com/falceeffect/UGlobalHotkey)
+
 Homepage: 
 
   http://www.mneuroth.de/projects/Cliphist2.html
+  https://github.com/mneuroth/Cliphist2
