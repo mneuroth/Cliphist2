@@ -65,7 +65,7 @@ Version %1 vom %2
     <message>
         <location filename="cliphistwindow.cpp" line="499"/>
         <source>&lt;b&gt;%1&lt;/b&gt;&lt;small&gt;&lt;p&gt;Version %2 from %3&lt;/p&gt;&lt;p&gt;(c) 2019 by %4&lt;/p&gt;&lt;p&gt;License: %5&lt;/p&gt;&lt;small&gt;</source>
-        <translation>&lt;b&gt;%1&lt;/b&gt;&lt;small&gt;&lt;p&gt;Version %2 vom %3&lt;/p&gt;&lt;p&gt;(c) 2019 von %4&lt;/p&gt;&lt;p&gt;Lizenz: %5&lt;/p&gt;&lt;small&gt; {1&lt;?} {2 ?} {3&lt;?} {2019 ?} {4&lt;?} {5&lt;?}</translation>
+        <translation type="unfinished">&lt;b&gt;%1&lt;/b&gt;&lt;small&gt;&lt;p&gt;Version %2 vom %3&lt;/p&gt;&lt;p&gt;(c) 2019 von %4&lt;/p&gt;&lt;p&gt;Lizenz: %5&lt;/p&gt;&lt;small&gt;</translation>
     </message>
     <message>
         <location filename="cliphistwindow.cpp" line="509"/>
