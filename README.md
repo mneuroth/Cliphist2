@@ -17,6 +17,8 @@ supported by Qt4/Qt5.
 
 See [Homepage](http://www.mneuroth.de/projects/Cliphist2.html) for more details.
 
+Since Version 1.1 the Cliphist2 appliction uses the [UGlobalHotkey library](https://github.com/falceeffect/UGlobalHotkey).
+
 ### Building from source  
 * You can either open project with QtCreator and press the Build button
 * Or build it using a terminal:
