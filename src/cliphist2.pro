@@ -62,12 +62,12 @@ macx {
     INSTALLS = target
     utilities.path = Contents/Resources
     utilities.files += cliphist2_de.qm \
-        cliphist2_nl.qm \
-        qt_de.qm 
+        cliphist2_nl.qm #\
+        #qt_de.qm
     QMAKE_BUNDLE_DATA += utilities
     INSTALLS += utilities
     ICON = cliphist2.icns
-    QMAKE_INFO_PLIST = dist/Info.plist
+    QMAKE_INFO_PLIST = ../dist/Info.plist
 }
 os2 {
     QMAKE_LFLAGS += -static-libgcc

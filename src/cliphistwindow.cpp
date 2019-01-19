@@ -305,8 +305,6 @@ private:
 
 // ************************************************************************
 
-#include <windows.h>
-
 CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     : QMainWindow(parent),
       ui(new Ui::CliphistWindow)
