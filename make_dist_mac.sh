@@ -1,6 +1,7 @@
 #!/bin/sh
 echo "make distribution of cliphist2 for Mac OS X (*.app and *.dmg):"
 echo "using QT distribution in directory: " $QT_DIR
+cd src
 cp $QT_DIR/translations/qt_de.qm .
 echo "call qmake"
 qmake -spec macx-g++ cliphist2.pro CONFIG+=release CONFIG-=debug
