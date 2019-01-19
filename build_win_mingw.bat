@@ -1,8 +1,8 @@
 rem call c:\users\micha\setqtmsc.bat
 cd src
 qmake -r cliphist2.pro
-nmake clean
-nmake release
+mingw32-make clean
+mingw32-make release
 cd release
 mkdir ..\..\dist\packages\de.mneuroth.cliphist2\data
 copy cliphist2.exe ..\..\dist\packages\de.mneuroth.cliphist2\data

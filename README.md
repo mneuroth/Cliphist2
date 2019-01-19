@@ -21,6 +21,7 @@ See [Homepage](http://www.mneuroth.de/projects/Cliphist2.html) for more details.
 * You can either open project with QtCreator and press the Build button
 * Or build it using a terminal:
 ``` 
+cd src
 qmake -r cliphis2.pro
 make
 ```

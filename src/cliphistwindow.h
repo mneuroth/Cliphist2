@@ -29,7 +29,7 @@
 #include <QPair>
 #include <QClipboard>
 
-#include <UGlobalHotkey-master/uglobalhotkeys.h>
+#include <../UGlobalHotkey-master/uglobalhotkeys.h>
 
 class QUndoStack;
 class QTimer;

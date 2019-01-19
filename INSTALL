@@ -18,6 +18,7 @@ Build with qmake:
 -----------------
 Unpack the source code into a directory, enter this directory and run:
 
+  >cd src
   >qmake -r cliphist2.pro
   >make                      # for linux and Mac
   >make install
