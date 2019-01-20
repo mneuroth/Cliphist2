@@ -2,12 +2,15 @@ export PATH=$PATH:/Users/min/Qt55/5.9.5/clang_64/bin:/Users/min/Qt55/Tools/QtIns
 cd src
 qmake -r cliphist2.pro
 rm -rf cliphist2.app/
+rm -rf cliphist2_installer/
+rm -rf ../dist/packages/de.mneuroth.cliphist2/data/
 make clean
 make -j 4
 macdeployqt cliphist2.app/
 mkdir ../dist/packages/de.mneuroth.cliphist2/data
 cp -R cliphist2.app ../dist/packages/de.mneuroth.cliphist2/data/
-binarycreator --offline-only -c ../dist/config/config.xml -p ../dist/packages Cliphist2Installer
+binarycreator --offline-only -c ../dist/config/config.xml -p ../dist/packages cliphist2_installer
+macdeployqt cliphist2.app/ -dmg
 # TODO --> version und datum in package.xml anpassen
 # TODO --> version an build und artifakte uebergeben
 # TODO --> make source package...
