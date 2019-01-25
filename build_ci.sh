@@ -4,8 +4,8 @@ if [[ $CXX == clang* ]]; then
 else
     qmake cliphist2.pro
 fi
-cat Makefile
-ls .. -lrt
 make 
+ls -lrta
+cd .obj
 ls -lrt
-# 
+ 
