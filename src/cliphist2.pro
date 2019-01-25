@@ -3,6 +3,7 @@
 # -------------------------------------------------
 TARGET = cliphist2
 TEMPLATE = app
+QT += gui-private
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets gui
 win32:RC_FILE = cliphist2.rc
 win32:QMAKE_LFLAGS += -static-libgcc # remove dependency to libgcc_s_dw2-1.dll
