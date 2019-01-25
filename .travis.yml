@@ -3,6 +3,7 @@
 matrix:
   include:    
     - os: linux
+      dist: xenial
       language: cpp
       compiler: gcc
       addons:
