@@ -6,6 +6,8 @@ else
 fi
 make 
 ls -lrta
-cd .obj
-ls -lrt
+which cliphist2
+ls -lrt cliphist2
+#cd .obj
+#ls -lrt
  

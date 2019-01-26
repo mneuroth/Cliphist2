@@ -1,9 +1,8 @@
-# Multi language build script for cshaarp and c++
 
 matrix:
   include:    
     - os: linux
-      #dist: xenial
+      dist: xenial
       language: cpp
       compiler: gcc
       addons:
@@ -17,20 +16,18 @@ matrix:
           - qttools5-dev-tools
           - libxcb-keysyms1-dev
       script:
-      - gcc -v
       - ./build_ci.sh
     
     - os: osx
       language: cpp
       compiler: clang
+      before_install:
+      - brew update
+      - brew install qt
+      - export PATH=/usr/local/opt/qt/bin:$PATH
       script:
       - ./build_ci.sh
-    
-before_install:
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew update    ; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then brew install qt; fi
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then export PATH=/usr/local/opt/qt/bin:$PATH; fi
-  
+      
 install:
 - "[ $CXX = g++ ] && export CXX=g++-6 || true"
 - "[ $CXX = clang++ ] && export CXX=clang++-3.8 || true"
