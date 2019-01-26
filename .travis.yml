@@ -18,7 +18,8 @@ matrix:
       script:
       - ./build_ci.sh
       - cd src
-      - ./cliphist2 --selftest
+      - ls -lrt 
+      #- ./cliphist2 --selftest
     
     - os: osx
       language: cpp
@@ -32,7 +33,7 @@ matrix:
       - cd src
       - ls -lrt cliphist2.app
       - ls -lrt cliphist2.app/Contents
-      - ./cliphist2.app --selftest
+      #- ./cliphist2.app --selftest
       
 install:
 - "[ $CXX = g++ ] && export CXX=g++-6 || true"
