@@ -33,6 +33,7 @@ matrix:
       - cd src
       - ls -lrt cliphist2.app
       - ls -lrt cliphist2.app/Contents
+      - ls -lrt cliphist2.app/Contents/MacOS
       #- ./cliphist2.app --selftest
       
 install:
