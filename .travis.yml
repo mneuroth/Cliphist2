@@ -15,6 +15,7 @@ matrix:
           - qt5-default
           - qtbase5-private-dev
           - qttools5-dev-tools
+          - libxcb-keysyms1-dev
       script:
       - ./build_ci.sh
     
