@@ -45,7 +45,7 @@ class CliphistWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    CliphistWindow(const QString sFileName = QString::null, QWidget *parent = 0);
+    CliphistWindow(bool bIsSelfTest, const QString sFileName = QString::null, QWidget *parent = 0);
     ~CliphistWindow();
 
 signals:
@@ -155,6 +155,7 @@ private:   /*data*/
     QStringList                 m_aTxtHistory;
 
     UGlobalHotkeys *            m_aHotkeyManager;
+    bool                        m_bSelfTest;
 };
 
 #endif // CLIPHISTWINDOW_H

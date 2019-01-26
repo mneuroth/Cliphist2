@@ -26,8 +26,9 @@
 #include <QLibraryInfo>
 #include <QDir>
 #include <QFileOpenEvent>
+#include <QTimer>
 
-QString GetLocaleName(QStringList aArgs)
+QString GetLocaleName(const QStringList & aArgs)
 {
     if( aArgs.size()>1 )
     {
@@ -50,13 +51,44 @@ QString GetLocaleName(QStringList aArgs)
     return QLocale::system().name();
 }
 
+QStringList GetFileNames(const QStringList & aArgs)
+{
+    QStringList result;
+    if( aArgs.size()>1 )
+    {
+        for( int i=1; i<aArgs.size(); i++ )
+        {
+            if( aArgs.at(i).indexOf("-")<0 )
+            {
+                result.append(aArgs.at(i));
+            }
+        }
+    }
+    return result;
+}
+
+bool IsSelfTest(const QStringList & aArgs)
+{
+    if( aArgs.size()>1 )
+    {
+        for( int i=1; i<aArgs.size(); i++ )
+        {
+            if( aArgs.at(i)=="--selftest" )
+            {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 class CliphistApp : public QApplication
 {
 public:
     CliphistApp(int & argc, char ** argv);
     ~CliphistApp();
 
-    void init(const QString & sFileName);
+    void init(bool bIsSelfTest, const QString & sFileName);
 
 #if defined( Q_WS_MACX )
 protected:
@@ -66,23 +98,34 @@ protected:
 private:
     CliphistWindow *    m_pMainWindow;
     QString             m_sMacFile;
+    QTimer *            m_pTimer;
 };
 
 CliphistApp::CliphistApp(int & argc, char ** argv)
 : QApplication(argc,argv),
-  m_pMainWindow(0)
+  m_pMainWindow(0),
+  m_pTimer(0)
 {
 }
 
 CliphistApp::~CliphistApp()
 {
+    delete m_pTimer;
     delete m_pMainWindow;
 }
 
-void CliphistApp::init(const QString & sFileName)
+void CliphistApp::init(bool bIsSelfTest, const QString & sFileName)
 {
-    m_pMainWindow = new CliphistWindow(sFileName);
+    m_pMainWindow = new CliphistWindow(bIsSelfTest, sFileName);
     m_pMainWindow->show();
+
+    if( bIsSelfTest)
+    {
+        m_pTimer = new QTimer(this);
+        connect(m_pTimer, SIGNAL(timeout()), this, SLOT(quit()));
+        m_pTimer->start(1000);
+    }
+
     if( !m_sMacFile.isEmpty() )
     {
         m_pMainWindow->LoadFileAndSync(m_sMacFile);
@@ -121,6 +164,8 @@ int main(int argc, char *argv[])
 
     CliphistApp a(argc, argv);
     
+    bool bIsSelfTest = IsSelfTest(a.arguments());
+
     QTranslator qtTranslator;
     QString sLocale = GetLocaleName(a.arguments());
     // load translations for qt modules
@@ -163,13 +208,10 @@ int main(int argc, char *argv[])
 #endif
     a.installTranslator(&myappTranslator);
     
-    QString sFileName = QString::null;
-    if( argc>1 )
-    {
-        sFileName = argv[1];
-    }
+    QStringList allFileNames = GetFileNames(a.arguments());
+    QString sFileName = allFileNames.count()>0 ? allFileNames.at(0) : "";
 
-    a.init(sFileName);
+    a.init(bIsSelfTest, sFileName);
     
     return a.exec();
 }

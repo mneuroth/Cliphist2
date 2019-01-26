@@ -305,7 +305,7 @@ private:
 
 // ************************************************************************
 
-CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
+CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidget *parent)
     : QMainWindow(parent),
       ui(new Ui::CliphistWindow)
 {
@@ -321,6 +321,7 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
     
     m_pUndoStack        = new QUndoStack();
 
+    m_bSelfTest         = bIsSelfTest;
     m_pClipboard        = QApplication::clipboard();    
     m_iFindIndex        = -1;
     m_bChangedData      = false;
@@ -337,7 +338,7 @@ CliphistWindow::CliphistWindow(const QString sFileName, QWidget *parent)
 #endif
 
     LoadSettings();
-    if( !sFileName.isNull() )
+    if( !(sFileName.isNull() || sFileName.isEmpty()) )
     {
         m_sFileName = sFileName;
     }
@@ -976,7 +977,7 @@ void CliphistWindow::OnEnableGlobalHotkeys(bool bChecked)
 
 void CliphistWindow::LoadAndCheck()
 {
-    if( !Load(m_sFileName) )
+    if( !Load(m_sFileName) && !m_bSelfTest )
     {
         QMessageBox::warning(this,tr("Warning"),QString(tr("Can not read data file %1")).arg(m_sFileName),QMessageBox::Ok);
     }
@@ -984,7 +985,7 @@ void CliphistWindow::LoadAndCheck()
 
 void CliphistWindow::SaveAndCheck()
 {
-    if( !Save() )
+    if( !Save() && !m_bSelfTest )
     {
         if( QMessageBox::Retry == QMessageBox::warning(this,tr("Warning"),QString(tr("Can not save data file %1\nDiscard changes or retry with other name?")).arg(m_sFileName),QMessageBox::Discard|QMessageBox::Retry) )
         {
