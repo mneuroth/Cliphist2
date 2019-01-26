@@ -17,6 +17,9 @@ matrix:
           - libxcb-keysyms1-dev
       script:
       - ./build_ci.sh
+      - ls -lrt
+      - echo ================
+      - ls -lrt cliphist2
     
     - os: osx
       language: cpp
@@ -27,6 +30,9 @@ matrix:
       - export PATH=/usr/local/opt/qt/bin:$PATH
       script:
       - ./build_ci.sh
+      - ls -lrt
+      - echo ================
+      - ls -lrt cliphist2.app
       
 install:
 - "[ $CXX = g++ ] && export CXX=g++-6 || true"

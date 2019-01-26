@@ -5,9 +5,4 @@ else
     qmake cliphist2.pro
 fi
 make 
-ls -lrta
-which cliphist2
-ls -lrt cliphist2
-#cd .obj
-#ls -lrt
  
