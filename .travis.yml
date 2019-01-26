@@ -3,7 +3,7 @@
 matrix:
   include:    
     - os: linux
-      dist: xenial
+      #dist: xenial
       language: cpp
       compiler: gcc
       addons:
@@ -17,6 +17,7 @@ matrix:
           - qttools5-dev-tools
           - libxcb-keysyms1-dev
       script:
+      - gcc -v
       - ./build_ci.sh
     
     - os: osx
