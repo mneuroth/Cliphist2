@@ -13,6 +13,7 @@ matrix:
           packages:
           - g++-6
           - qt5-default
+          - qtbase5-private-dev
           - qttools5-dev-tools
       script:
       - ./build_ci.sh
