@@ -28,5 +28,12 @@ qmake -r cliphis2.pro
 make
 ```
 
+If you have problems to compile this application on Linux you may have to
+install some additional libraries which are needed by the UGlobalHotkey library:
+``` 
+sudo apt-get install libxcb-keysyms1-dev
+sudo apt-get install qtbase5-private-dev
+```
+
 ### License  
 Cliphist2 is released under the GPL

@@ -35,6 +35,11 @@ matrix:
       - ls -lrt cliphist2.app/Contents
       - ls -lrt cliphist2.app/Contents/MacOS
       #- ./cliphist2.app --selftest
+      - macdeployqt cliphist2.app/
+      - mkdir ../dist/packages/de.mneuroth.cliphist2/data
+      - cp -R cliphist2.app ../dist/packages/de.mneuroth.cliphist2/data/
+      - binarycreator --offline-only -c ../dist/config/config.xml -p ../dist/packages cliphist2_installer
+      - macdeployqt cliphist2.app/ -dmg
       
 install:
 - "[ $CXX = g++ ] && export CXX=g++-6 || true"
