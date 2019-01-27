@@ -21,9 +21,11 @@ matrix:
       - ./build_ci.sh
       - cd src
       - ls -lrt 
-      - which xvfb 
       - which xvfb-run
-      - xvfb-run cliphist2 --selftest
+      - echo $DISPLAY
+      - export DISPLAY=:99.0
+      - echo $DISPLAY
+      - xvfb-run ./cliphist2 --selftest
     
     - os: osx
       language: cpp
