@@ -25,7 +25,7 @@ matrix:
       - echo $DISPLAY
       - export DISPLAY=:99.0
       - echo $DISPLAY
-      - xvfb-run -e /dev/stdout ./cliphist2 --selftest
+      - sudo xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
     
     - os: osx
       language: cpp
