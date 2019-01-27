@@ -21,7 +21,9 @@ matrix:
       - ./build_ci.sh
       - cd src
       - ls -lrt 
-      - xvfb-run ./cliphist2 --selftest
+      - which xvfb 
+      - which xvfb-run
+      - xvfb-run cliphist2 --selftest
     
     - os: osx
       language: cpp
