@@ -15,11 +15,13 @@ matrix:
           - qtbase5-private-dev
           - qttools5-dev-tools
           - libxcb-keysyms1-dev
+      services:
+      - xvfb
       script:
       - ./build_ci.sh
       - cd src
       - ls -lrt 
-      #- ./cliphist2 --selftest
+      - xvfb-run ./cliphist2 --selftest
     
     - os: osx
       language: cpp
