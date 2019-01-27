@@ -21,11 +21,7 @@ matrix:
       - ./build_ci.sh
       - cd src
       - ls -lrt 
-      - which xvfb-run
-      - echo $DISPLAY
-      - export DISPLAY=:99.0
-      - echo $DISPLAY
-      - sudo xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
+      - xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
     
     - os: osx
       language: cpp
