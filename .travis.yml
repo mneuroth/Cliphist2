@@ -43,7 +43,8 @@ matrix:
       #- binarycreator --offline-only -c ../dist/config/config.xml -p ../dist/packages cliphist2_installer
       #- macdeployqt cliphist2.app/ -dmg
       - ls -lrt
-      - ./cliphist2.app/Contents/MacOS/cliphist2 --selftest
+      - which xvfb-run
+      - ./cliphist2.app/Contents/MacOS/cliphist2 --selftest 
       
 install:
 - "[ $CXX = g++ ] && export CXX=g++-6 || true"
