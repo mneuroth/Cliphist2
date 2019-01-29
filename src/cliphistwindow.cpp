@@ -126,6 +126,7 @@
 #include <QCryptographicHash>
 #include <QMimeData>
 #include <QBuffer>
+#include <QCursor>
 
 // ************************************************************************
 
@@ -942,6 +943,7 @@ void CliphistWindow::OnEnableGlobalHotkeys(bool bChecked)
         m_aHotkeyManager->registerHotkey("Ctrl+Shift+F12", 1);
         m_aHotkeyManager->registerHotkey("Ctrl+Shift+F11", 2);
         m_aHotkeyManager->registerHotkey("Shift+Ctrl+V", 3);
+        m_aHotkeyManager->registerHotkey("Alt+Y", 4);
         connect(m_aHotkeyManager, &UGlobalHotkeys::activated, [this](size_t id)
         {
             if(id==1)
@@ -966,6 +968,12 @@ void CliphistWindow::OnEnableGlobalHotkeys(bool bChecked)
                 {
                     ActivateItemIdx(iIndex);
                 }
+            }
+            if(id==4)
+            {
+                // move application window to the current mouse position
+                QPoint aPos = QCursor::pos();
+                move(aPos+QPoint(0,-size().height()));
             }
         });
     }
