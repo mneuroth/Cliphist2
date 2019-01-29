@@ -1,6 +1,4 @@
-[![Build Status](https://travis-ci.org/mneuroth/Cliphist2.svg?branch=master)](https://travis-ci.org/mneuroth/Cliphist2) 
-
-## <img align="center" src="src/cliphist2_64x64.png"> Cliphist2 - A clipboard history application 
+## <img align="center" width="32" height="32" src="src/cliphist2_64x64.png"> Cliphist2 - A clipboard history application 
 
 ### Decription
 Cliphist2 is an application to show the history of the text content of the clipboard and to select old entries again.
@@ -20,6 +18,10 @@ supported by Qt4/Qt5.
 See [Cliphist2 Homepage](http://www.mneuroth.de/projects/Cliphist2.html) for more details.
 
 Since Version 1.1 the Cliphist2 application uses the [UGlobalHotkey library](https://github.com/falceeffect/UGlobalHotkey).
+
+### Supported platforms 
+* Windows 
+* MacOS and Linux [![Build Status](https://travis-ci.org/mneuroth/Cliphist2.svg?branch=master)](https://travis-ci.org/mneuroth/Cliphist2) 
 
 ### Building from source  
 * You can either open project with QtCreator and press the Build button
