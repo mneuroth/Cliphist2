@@ -1,8 +1,6 @@
-<div align="center"><a title="Go to homepage" href="#"><img align="center" src="src/cliphist2_64x64.png"></a>Cliphist2</div> 
-
 [![Build Status](https://travis-ci.org/mneuroth/Cliphist2.svg?branch=master)](https://travis-ci.org/mneuroth/Cliphist2) 
 
-## Cliphist2 - A clipboard history application 
+## <img align="center" src="src/cliphist2_64x64.png"> Cliphist2 - A clipboard history application 
 
 ### Decription
 Cliphist2 is an application to show the history of the text content of the clipboard and to select old entries again.
