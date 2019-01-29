@@ -83,6 +83,7 @@ private slots:
     void OnItemActivated(QListWidgetItem * current);    
     void OnSelectionChanged();
     void OnEnableGlobalHotkeys(bool bChecked);
+    void OnMoveToCurrentMousePosition();
 
 private:
     bool SaveSettings();

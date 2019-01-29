@@ -398,6 +398,7 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     connect(ui->actionUse_timer_to_detect_clipboard_changes, SIGNAL(triggered(bool)), this, SLOT(OnToggleUseTimer(bool)));
     connect(ui->actionAlways_move_to_first_position_if_found, SIGNAL(triggered(bool)), this, SLOT(OnAlwaysMoveToTopIfFound(bool)) );
     connect(ui->actionEnable_global_hot_keys, SIGNAL(triggered(bool)), this, SLOT(OnEnableGlobalHotkeys(bool)) );
+    connect(ui->actionMove_to_current_mouse_position, SIGNAL(triggered()), this, SLOT(OnMoveToCurrentMousePosition()) );
 
 #if defined(Q_OS_MAC)
     // Mac only supports all detection of changes via timer
@@ -971,9 +972,7 @@ void CliphistWindow::OnEnableGlobalHotkeys(bool bChecked)
             }
             if(id==4)
             {
-                // move application window to the current mouse position
-                QPoint aPos = QCursor::pos();
-                move(aPos+QPoint(0,-size().height()));
+                OnMoveToCurrentMousePosition();
             }
         });
     }
@@ -981,6 +980,13 @@ void CliphistWindow::OnEnableGlobalHotkeys(bool bChecked)
     {
         m_aHotkeyManager->unregisterAllHotkeys();
     }
+}
+
+void CliphistWindow::OnMoveToCurrentMousePosition()
+{
+    // move application window to the current mouse position
+    QPoint aPos = QCursor::pos();
+    move(aPos+QPoint(0,-size().height()));
 }
 
 void CliphistWindow::LoadAndCheck()

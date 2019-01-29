@@ -142,6 +142,7 @@
     <addaction name="actionAlways_on_top"/>
     <addaction name="separator"/>
     <addaction name="actionSet_to_default_position_and_size"/>
+    <addaction name="actionMove_to_current_mouse_position"/>
    </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_Edit"/>
@@ -389,6 +390,14 @@
    </property>
    <property name="text">
     <string>Move position down (Shift+Ctrl+V))</string>
+   </property>
+  </action>
+  <action name="actionMove_to_current_mouse_position">
+   <property name="text">
+    <string>Move to current mouse position</string>
+   </property>
+   <property name="shortcut">
+    <string>Alt+Y</string>
    </property>
   </action>
  </widget>
