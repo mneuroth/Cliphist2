@@ -1,0 +1,1 @@
+build_script:- cd src- qmake cliphist2.pro- mingw32-make- dir- qmake -v 
