@@ -1,51 +1,51 @@
-
-matrix:
-  include:    
-    - os: linux
-      dist: xenial
-      language: cpp
-      compiler: gcc
-      addons:
-        apt:
-          sources:
-          - ubuntu-toolchain-r-test
-          packages:
-          - g++-6
-          - qt5-default
-          - qtbase5-private-dev
-          - qttools5-dev-tools
-          - libxcb-keysyms1-dev
-      services:
-      - xvfb
-      script:
-      - ./build_ci.sh
-      - cd src
-      - ls -lrt 
-      - xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
-    
-    - os: osx
-      language: cpp
-      compiler: clang
-      before_install:
-      - brew update
-      - brew install qt
-      - export PATH=/usr/local/opt/qt/bin:$PATH
-      script:
-      - ./build_ci.sh
-      - cd src
-      - ls -lrt
-      - ./cliphist2.app/Contents/MacOS/cliphist2 --selftest 
-      #- ls -lrt cliphist2.app
-      #- ls -lrt cliphist2.app/Contents
-      #- ls -lrt cliphist2.app/Contents/MacOS
-      #- ./cliphist2.app --selftest
-      - macdeployqt cliphist2.app/ -dmg
-      #- mkdir ../dist/packages/de.mneuroth.cliphist2/data
-      #- cp -R cliphist2.app ../dist/packages/de.mneuroth.cliphist2/data/
-      #- binarycreator --offline-only -c ../dist/config/config.xml -p ../dist/packages cliphist2_installer
-      #- macdeployqt cliphist2.app/ -dmg
-      - ls -lrt
-      
-install:
-- "[ $CXX = g++ ] && export CXX=g++-6 || true"
-- "[ $CXX = clang++ ] && export CXX=clang++-3.8 || true"
+#
+#matrix:
+#  include:    
+#    - os: linux
+#      dist: xenial
+#      language: cpp
+#      compiler: gcc
+#      addons:
+#        apt:
+#          sources:
+#          - ubuntu-toolchain-r-test
+#          packages:
+#          - g++-6
+#          - qt5-default
+#          - qtbase5-private-dev
+#          - qttools5-dev-tools
+#          - libxcb-keysyms1-dev
+#      services:
+#      - xvfb
+#      script:
+#      - ./build_ci.sh
+#      - cd src
+#      - ls -lrt 
+#      - xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
+#    
+#    - os: osx
+#      language: cpp
+#      compiler: clang
+#      before_install:
+#      - brew update
+#      - brew install qt
+#      - export PATH=/usr/local/opt/qt/bin:$PATH
+#      script:
+#      - ./build_ci.sh
+#      - cd src
+#      - ls -lrt
+#      - ./cliphist2.app/Contents/MacOS/cliphist2 --selftest 
+#      #- ls -lrt cliphist2.app
+#      #- ls -lrt cliphist2.app/Contents
+#      #- ls -lrt cliphist2.app/Contents/MacOS
+#      #- ./cliphist2.app --selftest
+#      - macdeployqt cliphist2.app/ -dmg
+#      #- mkdir ../dist/packages/de.mneuroth.cliphist2/data
+#      #- cp -R cliphist2.app ../dist/packages/de.mneuroth.cliphist2/data/
+#      #- binarycreator --offline-only -c ../dist/config/config.xml -p ../dist/packages cliphist2_installer
+#      #- macdeployqt cliphist2.app/ -dmg
+#      - ls -lrt
+#      
+#install:
+#- "[ $CXX = g++ ] && export CXX=g++-6 || true"
+#- "[ $CXX = clang++ ] && export CXX=clang++-3.8 || true"
