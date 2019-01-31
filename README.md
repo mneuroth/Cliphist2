@@ -20,7 +20,7 @@ See [Cliphist2 Homepage](http://www.mneuroth.de/projects/Cliphist2.html) for mor
 Since Version 1.1 the Cliphist2 application uses the [UGlobalHotkey library](https://github.com/falceeffect/UGlobalHotkey).
 
 ### Supported platforms 
-* Windows 
+* Windows [![Build status](https://ci.appveyor.com/api/projects/status/x3dp73ir9gcu82v4?svg=true)](https://ci.appveyor.com/project/mneuroth/cliphist2)
 * MacOS and Linux [![Build Status](https://travis-ci.org/mneuroth/Cliphist2.svg?branch=master)](https://travis-ci.org/mneuroth/Cliphist2) 
 
 ### Building from source  
