@@ -71,10 +71,18 @@ build_script:
   - cd ..\..\dist\packages\de.mneuroth.cliphist2\data
   - windeployqt --release --no-system-d3d-compiler cliphist2.exe
   - cd ..\..\..\..\dist
-  - binarycreator -c config\config.xml -p packages Cliphist2Installer_%cname%_%qtver%.exe
-  - appveyor PushArtifact Cliphist2Installer_%cname%_%qtver%.exe
+  - binarycreator -c config\config.xml -p packages Cliphist2Installer_%cname%_qt%qtver%.exe
+  - appveyor PushArtifact Cliphist2Installer_%cname%_qt%qtver%.exe
   - dir 
  
-#after_build:
-#  - dir
+deploy:
+  provider: GitHub
+  auth_token:
+    secure: wDEI4YGtqf1MiuNbtiv/zZ+rfuEmfO/PxfRfZC5gjtFDez3qDk6Vv9+auWwTstyZ
+  artifact: Cliphist2Installer_%cname%_qt%qtver%.exe 
+  draft: false
+  prerelease: false
+  on:
+    APPVEYOR_REPO_TAG: true        
+
   
