@@ -98,7 +98,7 @@ build_script:
   - dir
   - cd ..\..\..\..\dist
   - path
-  - set PATH=%PATH%;c:\Qt\Tools\4.2\bin
+  - set PATH=%PATH%;c:\Qt\Tools\QtInstallerFramework\4.2\bin
   - path
   - dir c:\Qt\Tools\
   - if exist c:\Qt\Tools\QtInstallerFramework\4.2\bin\ ( dir c:\Qt\Tools\QtInstallerFramework\4.2\bin )
