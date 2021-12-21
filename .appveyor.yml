@@ -98,6 +98,7 @@ build_script:
   - dir
   - cd ..\..\..\..\dist
   - path
+  - set PATH=%PATH%;c:\Qt\Tools\4.2\bin
   - dir c:\Qt\Tools\
   - dir c:\Qt\Tools\QtInstallerFramework
   - where binarycreator
