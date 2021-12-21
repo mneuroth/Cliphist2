@@ -1,12 +1,12 @@
 
 environment:
   matrix:
-  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
-    platform: x64
-    qtver: 5.6
-    qtbin: msvc2015_64
-    cname: win64_vs2015
-    msvcname: Visual Studio 14 2015 Win64
+#  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+#    platform: x64
+#    qtver: 5.6
+#    qtbin: msvc2015_64
+#    cname: win64_vs2015
+#    msvcname: Visual Studio 14 2015 Win64
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     platform: x64
     qtver: 5.9
@@ -25,12 +25,12 @@ environment:
     qtbin: msvc2017_64
     cname: win64_vs2017
     msvcname: Visual Studio 15 2017 Win64
-  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
-    platform: x64
-    qtver: 5.14
-    qtbin: msvc2019_64
-    cname: win64_vs2019
-    msvcname: Visual Studio 16 2019 Win64
+#  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+#    platform: x64
+#    qtver: 5.14
+#    qtbin: msvc2019_64
+#    cname: win64_vs2019
+#    msvcname: Visual Studio 16 2019 Win64
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
     platform: x64
     qtver: 5.15
@@ -69,7 +69,6 @@ install:
   - if %cname%==mingw64 set PATH=c:\qt\tools\mingw730_64\bin;%PATH%
   - if %cname%==mingw set make=mingw32-make.exe
   - if %cname%==mingw64 set make=mingw32-make.exe
-  - if %cname%==win64_vs2015 call "C:\Program Files (x86)\Microsoft Visual Studio\2015\Community\VC\Auxiliary\Build\vcvars64.bat"
   - if %cname%==win64_vs2017 call "C:\Program Files (x86)\Microsoft Visual Studio\2017\Community\VC\Auxiliary\Build\vcvars64.bat"
   - if %cname%==win64_vs2019 call "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Auxiliary\Build\vcvars64.bat"
   - if not %cname%==mingw set make=nmake.exe
@@ -92,11 +91,13 @@ build_script:
   - copy ..\cliphist2_512x512.ico ..\..\dist\packages\de.mneuroth.cliphist2\data
   - copy ..\cliphist2_512x512.png ..\..\dist\packages\de.mneuroth.cliphist2\data
   - cd ..\..\dist\packages\de.mneuroth.cliphist2\data
+  - dir c:\Qt
   - dir
   - where windeployqt
   - windeployqt --release --no-system-d3d-compiler cliphist2.exe
   - dir
   - cd ..\..\..\..\dist
+  - dir c:\Qt\Tools\
   - where binarycreator
   - binarycreator -c config\config.xml -p packages Cliphist2_Installer_%cname%_qt%qtver%.exe
   - appveyor PushArtifact Cliphist2_Installer_%cname%_qt%qtver%.exe
