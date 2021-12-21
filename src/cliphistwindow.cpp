@@ -161,7 +161,7 @@ static QByteArray GetHashForImage(const QPixmap & aImg)
 {
     QCryptographicHash aHash( QCryptographicHash::Md5 );
     QImage aTempImg = aImg.toImage();
-#if QT_VERSION > 0x050900
+#if QT_VERSION >= 0x060000
     aHash.addData((const char *)aTempImg.bits(),aTempImg.sizeInBytes());
 #else
     aHash.addData((const char *)aTempImg.bits(),aTempImg.byteCount());
