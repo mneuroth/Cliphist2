@@ -6,4 +6,7 @@
     <Publisher>Michael Neuroth</Publisher>
     <StartMenuDir>Cliphist2</StartMenuDir>
     <TargetDir>@HomeDir@/cliphist2</TargetDir>
+    <InstallerWindowIcon>cliphist2_256x256</InstallerWindowIcon>
+    <InstallerApplicationIcon>cliphist2_512x512</InstallerApplicationIcon>
+    <Logo>cliphist2_512x512.png</Logo>
 </Installer>

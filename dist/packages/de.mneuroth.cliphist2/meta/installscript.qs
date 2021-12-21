@@ -9,9 +9,9 @@ Component.prototype.createOperations = function()
 
     if (systemInfo.productType === "windows") {
         component.addOperation("CreateShortcut", "@TargetDir@/cliphist2.exe", "@StartMenuDir@/Cliphist2.lnk",
-            "workingDirectory=@TargetDir@", "iconPath=%SystemRoot%/system32/SHELL32.dll",
-            "iconId=2", "description=Cliphist 2");
+            "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/cliphist2_256x256.ico",
+            "description=Cliphist 2");
         component.addOperation("CreateShortcut", "@TargetDir@/cliphist2.exe", "@DesktopDir@/Cliphist2.lnk",
-            "workingDirectory=@TargetDir@");
+            "workingDirectory=@TargetDir@", "iconPath=@TargetDir@/cliphist2_256x256.ico");
     }
 }
