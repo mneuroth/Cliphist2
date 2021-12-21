@@ -20,6 +20,18 @@ environment:
     cname: win64_vs2017
     msvcname: Visual Studio 15 2017 Win64
   - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
+    platform: x64
+    qtver: 5.12
+    qtbin: msvc2017_64
+    cname: win64_vs2017
+    msvcname: Visual Studio 15 2017 Win64
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    platform: x64
+    qtver: 5.15
+    qtbin: msvc2019_64
+    cname: win64_vs2019
+    msvcname: Visual Studio 16 2019 Win64
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
     platform: x86
     qtver: 5.6
     qtbin: mingw49_32
@@ -72,6 +84,7 @@ build_script:
   - copy ..\cliphist2_512x512.ico ..\..\dist\packages\de.mneuroth.cliphist2\data
   - copy ..\cliphist2_512x512.png ..\..\dist\packages\de.mneuroth.cliphist2\data
   - cd ..\..\dist\packages\de.mneuroth.cliphist2\data
+  - dir
   - windeployqt --release --no-system-d3d-compiler cliphist2.exe
   - cd ..\..\..\..\dist
   - binarycreator -c config\config.xml -p packages Cliphist2_Installer_%cname%_qt%qtver%.exe
