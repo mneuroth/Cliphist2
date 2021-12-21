@@ -130,7 +130,9 @@
 
 // ************************************************************************
 
+#ifndef VERSION
 #define VERSION                     "1.1.0"
+#endif
 #define TITLE                       "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Clipboard History 2</a>"
 #define HOMEPAGE                    "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Homepage</a>"
 #define LICENSE                     "<a href=http://www.fsf.org/licensing/licenses/gpl.html>GPL</a>"
@@ -159,7 +161,7 @@ static QByteArray GetHashForImage(const QPixmap & aImg)
 {
     QCryptographicHash aHash( QCryptographicHash::Md5 );
     QImage aTempImg = aImg.toImage();
-    aHash.addData((const char *)aTempImg.bits(),aTempImg.byteCount());
+    aHash.addData((const char *)aTempImg.bits(),aTempImg.sizeInBytes());
     return aHash.result();
 }
 
@@ -400,6 +402,9 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     connect(ui->actionEnable_global_hot_keys, SIGNAL(triggered(bool)), this, SLOT(OnEnableGlobalHotkeys(bool)) );
     connect(ui->actionMove_to_current_mouse_position, SIGNAL(triggered()), this, SLOT(OnMoveToCurrentMousePosition()) );
 
+    connect(qApp, SIGNAL(screenAdded(QScreen *)), this, SLOT(OnScreenAdded()));
+    connect(qApp, SIGNAL(screenRemoved(QScreen *)), this, SLOT(OnScreenRemoved()));
+
 #if defined(Q_OS_MAC)
     // Mac only supports all detection of changes via timer
     ui->actionUse_timer_to_detect_clipboard_changes->setEnabled(false);
@@ -551,7 +556,7 @@ QList<int> CliphistWindow::FindTextInHistory(const QString & sFindText) const
 void CliphistWindow::OnFindItem()
 {
     bool ok;
-    QString sFind = QInputDialog::getText(this,tr("Input"),tr("Find text:"),/*QLineEdit::EchoMode mode=*/QLineEdit::Normal,/*text=*/m_sLastSearchText,&ok,/*Qt::WindowFlags flags =*/0);
+    QString sFind = QInputDialog::getText(this,tr("Input"),tr("Find text:"),/*QLineEdit::EchoMode mode=*/QLineEdit::Normal,/*text=*/m_sLastSearchText,&ok); //,/*Qt::WindowFlags flags =*/0);
     if( ok && !sFind.isEmpty() )
     {
         m_sLastSearchText = sFind;
@@ -989,6 +994,16 @@ void CliphistWindow::OnMoveToCurrentMousePosition()
     move(aPos+QPoint(0,-size().height()));
 }
 
+void CliphistWindow::OnScreenAdded(QScreen * pScreen)
+{
+
+}
+
+void CliphistWindow::OnScreenRemoved(QScreen * pScreen)
+{
+
+}
+
 void CliphistWindow::LoadAndCheck()
 {
     if( !Load(m_sFileName) && !m_bSelfTest )
@@ -1139,7 +1154,7 @@ bool CliphistWindow::SyncListWithUi(const QList<int> & aSelectIdx)
 {
     QString sActClipBoardText = m_pClipboard->text();
     bool bIsImage = ui->actionEnable_support_for_images->isChecked() && m_pClipboard->mimeData()->hasImage();
-    QString sHash = bIsImage ? GetHashForImage(m_pClipboard->pixmap()).toHex() : "";
+    QString sHash = bIsImage ? QString(GetHashForImage(m_pClipboard->pixmap()).toHex()) : "";
     bool bActivatedNeedUpdate = true;
     int iFirstOccurance = -1;
     ui->listWidget->clear();
@@ -1412,6 +1427,7 @@ QString CliphistWindow::GetNewLine() const
 //    qSort(aIndexLst);
 //    return i;
 //}
+#include <algorithm>
 
 QList<int> CliphistWindow::GetAllIndicesOfActSelected(bool bSort) const
 {
@@ -1420,14 +1436,15 @@ QList<int> CliphistWindow::GetAllIndicesOfActSelected(bool bSort) const
         aIndexLst.append(ui->listWidget->row(pItem));
     if( bSort )
     {
-        qSort(aIndexLst);
+        //qSort(aIndexLst);
+        std::sort(aIndexLst.begin(), aIndexLst.end());
     }
     return aIndexLst;
 }
 
 QString CliphistWindow::RemoveGiven(int iIndexOfDeletedItem)
 {
-    QString sItem = QString::null;
+    QString sItem = QString();
     if( iIndexOfDeletedItem>=0 && iIndexOfDeletedItem<m_aTxtHistory.size() )
     {
         QList<int> aSelectedItems = GetAllIndicesOfActSelected();

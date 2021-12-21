@@ -37,6 +37,12 @@ environment:
     qtbin: msvc2019_64
     cname: win64_vs2019
     msvcname: Visual Studio 16 2019 Win64
+  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2019
+    platform: x64
+    qtver: 6.2
+    qtbin: msvc2019_64
+    cname: win64_vs2019
+    msvcname: Visual Studio 16 2019 Win64
 #  - APPVEYOR_BUILD_WORKER_IMAGE: Visual Studio 2017
 #    platform: x86
 #    qtver: 5.6

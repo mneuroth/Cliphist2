@@ -20,6 +20,7 @@
 
 #include "cliphistwindow.h"
 
+//#include <QGuiApplication>
 #include <QApplication>
 #include <QTranslator>
 #include <QLocale>
@@ -82,6 +83,7 @@ bool IsSelfTest(const QStringList & aArgs)
     return false;
 }
 
+//#ifndef _test
 class CliphistApp : public QApplication
 {
 public:
@@ -151,7 +153,7 @@ bool CliphistApp::event( QEvent * event )
 }
 #endif
 
-
+//#endif
 
 int main(int argc, char *argv[])
 {
@@ -163,6 +165,7 @@ int main(int argc, char *argv[])
 #endif
 
     CliphistApp a(argc, argv);
+    //QApplication a(argc, argv);
     
     bool bIsSelfTest = IsSelfTest(a.arguments());
 
@@ -212,6 +215,8 @@ int main(int argc, char *argv[])
     QString sFileName = allFileNames.count()>0 ? allFileNames.at(0) : "";
 
     a.init(bIsSelfTest, sFileName);
-    
+    //CliphistWindow * m_pMainWindow = new CliphistWindow(bIsSelfTest, sFileName);
+    //m_pMainWindow->show();
+
     return a.exec();
 }

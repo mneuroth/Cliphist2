@@ -45,7 +45,7 @@ class CliphistWindow : public QMainWindow
     Q_OBJECT
 
 public:
-    CliphistWindow(bool bIsSelfTest, const QString sFileName = QString::null, QWidget *parent = 0);
+    CliphistWindow(bool bIsSelfTest, const QString sFileName = QString(), QWidget *parent = 0);
     ~CliphistWindow();
 
 signals:
@@ -84,6 +84,8 @@ private slots:
     void OnSelectionChanged();
     void OnEnableGlobalHotkeys(bool bChecked);
     void OnMoveToCurrentMousePosition();
+    void OnScreenAdded(QScreen * pScreen);
+    void OnScreenRemoved(QScreen * pScreen);
 
 private:
     bool SaveSettings();
