@@ -131,7 +131,7 @@
 // ************************************************************************
 
 #ifndef VERSION
-#define VERSION                     "1.1.0"
+#define VERSION                     "1.1.1"
 #endif
 #define TITLE                       "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Clipboard History 2</a>"
 #define HOMEPAGE                    "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Homepage</a>"
@@ -406,8 +406,9 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     connect(ui->actionEnable_global_hot_keys, SIGNAL(triggered(bool)), this, SLOT(OnEnableGlobalHotkeys(bool)) );
     connect(ui->actionMove_to_current_mouse_position, SIGNAL(triggered()), this, SLOT(OnMoveToCurrentMousePosition()) );
 
-    connect(qApp, SIGNAL(screenAdded(QScreen *)), this, SLOT(OnScreenAdded()));
-    connect(qApp, SIGNAL(screenRemoved(QScreen *)), this, SLOT(OnScreenRemoved()));
+    //connect(dynamic_cast<QApplication *>(qApp), SIGNAL(screenAdded(QScreen *)), this, SLOT(OnScreenAdded(QScreen *)));
+    //connect(dynamic_cast<QApplication *>(qApp), SIGNAL(screenRemoved(QScreen *)), this, SLOT(OnScreenRemoved(QScreen *)));
+    //connect(dynamic_cast<QApplication *>(qApp), SIGNAL(primaryScreenChanged(QScreen *)), this, SLOT(OnPrimaryScreenChanged(QScreen *)));
 
 #if defined(Q_OS_MAC)
     // Mac only supports all detection of changes via timer
@@ -437,7 +438,7 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
 //    aPalette.setColor(QPalette::Highlight,QColor("#FF00FF"));
 //    ui->listWidget->setPalette(aPalette);
 
-    m_aHotkeyManager = new UGlobalHotkeys();
+    m_aHotkeyManager = new UGlobalHotkeys(this);
 
     OnEnableGlobalHotkeys(ui->actionEnable_global_hot_keys->isChecked());
 
@@ -998,15 +999,24 @@ void CliphistWindow::OnMoveToCurrentMousePosition()
     move(aPos+QPoint(0,-size().height()));
 }
 
+/*
+#include <QDebug>
+
 void CliphistWindow::OnScreenAdded(QScreen * pScreen)
 {
-
+    qDebug() << "SLOT screenAdded() " << pScreen << Qt::endl;
 }
 
 void CliphistWindow::OnScreenRemoved(QScreen * pScreen)
 {
-
+    qDebug() << "SLOT screenRemoved() " << pScreen << Qt::endl;
 }
+
+void CliphistWindow::OnPrimaryScreenChanged(QScreen * pScreen)
+{
+    qDebug() << "SLOT primaryScreenChanged() " << pScreen << Qt::endl;
+}
+*/
 
 void CliphistWindow::LoadAndCheck()
 {

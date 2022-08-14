@@ -157,11 +157,16 @@ bool UGlobalHotkeys::winEvent(MSG * message, long * result) {
     return false;
 }
 
+#if QT_VERSION >= 0x060000
+bool UGlobalHotkeys::nativeEvent(const QByteArray &eventType,
+                                       void *message, qintptr *result)
+#else
 bool UGlobalHotkeys::nativeEvent(const QByteArray &eventType,
                                        void *message, long *result)
+#endif
 {
     Q_UNUSED(eventType);
-    return winEvent((MSG*)message, result);
+    return winEvent((MSG*)message, (long *)result);
 }
 
 #elif defined(Q_OS_LINUX)

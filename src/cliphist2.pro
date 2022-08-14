@@ -5,19 +5,23 @@ TARGET = cliphist2
 TEMPLATE = app
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets gui
 win32:RC_FILE = cliphist2.rc
+#win32:RC_ICONS = cliphist2_512x512.ico
 win32:QMAKE_LFLAGS += -static-libgcc # remove dependency to libgcc_s_dw2-1.dll
 
 CONFIG += c++11
 
+# see: https://github.com/falceeffect/UGlobalHotkey
 include(../UGlobalHotkey-master/uglobalhotkey.pri)
 
 # win32:QMAKE_CXX_FLAGS+= -static-libgcc
 # CONFIG = qt warn_on debug thread static
 #CONFIG = qt release thread static 
 SOURCES += main.cpp \
+    app.cpp \
     cliphistwindow.cpp \
     edititem.cpp
 HEADERS += cliphistwindow.h \
+    app.h \
     edititem.h
 FORMS += cliphistwindow.ui \
     edititem.ui

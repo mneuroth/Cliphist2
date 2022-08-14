@@ -84,8 +84,10 @@ private slots:
     void OnSelectionChanged();
     void OnEnableGlobalHotkeys(bool bChecked);
     void OnMoveToCurrentMousePosition();
-    void OnScreenAdded(QScreen * pScreen);
-    void OnScreenRemoved(QScreen * pScreen);
+    // this signals are not needed if the methods save/restoreState() and save/restoreGeometry() are used
+    //void OnScreenAdded(QScreen * pScreen);
+    //void OnScreenRemoved(QScreen * pScreen);
+    //void OnPrimaryScreenChanged(QScreen * pScreen);
 
 private:
     bool SaveSettings();

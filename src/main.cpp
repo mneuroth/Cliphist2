@@ -18,8 +18,6 @@
  *                                                                               *
  ********************************************************************************/
 
-#include "cliphistwindow.h"
-
 //#include <QGuiApplication>
 #include <QApplication>
 #include <QTranslator>
@@ -28,6 +26,8 @@
 #include <QDir>
 #include <QFileOpenEvent>
 #include <QTimer>
+
+#include "app.h"
 
 QString GetLocaleName(const QStringList & aArgs)
 {
@@ -82,78 +82,6 @@ bool IsSelfTest(const QStringList & aArgs)
     }
     return false;
 }
-
-//#ifndef _test
-class CliphistApp : public QApplication
-{
-public:
-    CliphistApp(int & argc, char ** argv);
-    ~CliphistApp();
-
-    void init(bool bIsSelfTest, const QString & sFileName);
-
-#if defined( Q_WS_MACX )
-protected:
-    bool event(QEvent *event);
-#endif
-
-private:
-    CliphistWindow *    m_pMainWindow;
-    QString             m_sMacFile;
-    QTimer *            m_pTimer;
-};
-
-CliphistApp::CliphistApp(int & argc, char ** argv)
-: QApplication(argc,argv),
-  m_pMainWindow(0),
-  m_pTimer(0)
-{
-}
-
-CliphistApp::~CliphistApp()
-{
-    delete m_pTimer;
-    delete m_pMainWindow;
-}
-
-void CliphistApp::init(bool bIsSelfTest, const QString & sFileName)
-{
-    m_pMainWindow = new CliphistWindow(bIsSelfTest, sFileName);
-    m_pMainWindow->show();
-
-    if( bIsSelfTest)
-    {
-        m_pTimer = new QTimer(this);
-        connect(m_pTimer, SIGNAL(timeout()), this, SLOT(quit()));
-        m_pTimer->start(1000);
-    }
-
-    if( !m_sMacFile.isEmpty() )
-    {
-        m_pMainWindow->LoadFileAndSync(m_sMacFile);
-    }
-}
-
-#if defined( Q_WS_MACX )
-bool CliphistApp::event( QEvent * event )
-{
-    if( event->type() == QEvent::FileOpen )
-    {
-        QFileOpenEvent *oe = static_cast<QFileOpenEvent *>(event);
-        if ( m_pMainWindow )
-        {
-            m_pMainWindow->LoadFileAndSync(oe->file());
-        }
-        else
-        {
-            m_sMacFile = oe->file();
-        }
-    }
-    return QApplication::event(event);
-}
-#endif
-
-//#endif
 
 int main(int argc, char *argv[])
 {
