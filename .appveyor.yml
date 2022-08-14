@@ -105,10 +105,12 @@ build_script:
   - cd ..\..\..\..\dist
   - path
   - set PATH=%PATH%;c:\Qt\Tools\QtInstallerFramework\4.2\bin
+  - set PATH=%PATH%;c:\Qt\Tools\QtInstallerFramework\4.4\bin
   - path
   - dir c:\Qt\Tools\
   - dir c:\Qt\Tools\QtInstallerFramework
   - if exist c:\Qt\Tools\QtInstallerFramework\4.2\bin\ ( dir c:\Qt\Tools\QtInstallerFramework\4.2\bin )
+  - if exist c:\Qt\Tools\QtInstallerFramework\4.4\bin\ ( dir c:\Qt\Tools\QtInstallerFramework\4.4\bin )
   - where binarycreator
   - binarycreator -c config\config.xml -p packages Cliphist2_Installer_%cname%_qt%qtver%.exe
   - appveyor PushArtifact Cliphist2_Installer_%cname%_qt%qtver%.exe
