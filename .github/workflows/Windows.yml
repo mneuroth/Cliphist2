@@ -64,7 +64,6 @@ jobs:
         dir debug
         cd release
         dir
-        rem cliphist2 --selftest
         mkdir ..\..\dist\packages\de.mneuroth.cliphist2\data
         copy cliphist2.exe ..\..\dist\packages\de.mneuroth.cliphist2\data
         copy ..\cliphist2_256x256.ico ..\..\dist\packages\de.mneuroth.cliphist2\data
@@ -142,7 +141,6 @@ jobs:
         dir debug
         cd release
         dir
-        rem cliphist2 --selftest
         mkdir ..\..\dist\packages\de.mneuroth.cliphist2\data
         copy cliphist2.exe ..\..\dist\packages\de.mneuroth.cliphist2\data
         copy ..\cliphist2_256x256.ico ..\..\dist\packages\de.mneuroth.cliphist2\data
