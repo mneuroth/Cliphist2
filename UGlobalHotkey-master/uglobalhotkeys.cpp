@@ -158,7 +158,7 @@ bool UGlobalHotkeys::winEvent(MSG * message, long * result) {
 }
 
 #if QT_VERSION >= 0x060000
-bool UGlobalHotkeys::nativeEvent(const QByteArray &eventType,
+bool UGlobalHotkeys::nativeEventFilter(const QByteArray &eventType,
                                        void *message, qintptr *result)
 #else
 bool UGlobalHotkeys::nativeEvent(const QByteArray &eventType,
