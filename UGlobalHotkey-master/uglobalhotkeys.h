@@ -42,12 +42,16 @@ protected:
     #if defined(Q_OS_WIN)
     bool winEvent (MSG * message, long * result);
 #if QT_VERSION >= 0x060000
-    bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result);
+    bool nativeEvent(const QByteArray &eventType, void *message, qintptr *result);
 #else
     bool nativeEvent(const QByteArray &eventType, void *message, long *result);
 #endif
     #elif defined(Q_OS_LINUX)
+#if QT_VERSION >= 0x060000
+    bool nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result);
+#else
     bool nativeEventFilter(const QByteArray &eventType, void *message, long *result);
+#endif
     bool linuxEvent(xcb_generic_event_t *message);
     void regLinuxHotkey(const UKeySequence& keySeq, size_t id);
     void unregLinuxHotkey(size_t id);

@@ -158,7 +158,7 @@ bool UGlobalHotkeys::winEvent(MSG * message, long * result) {
 }
 
 #if QT_VERSION >= 0x060000
-bool UGlobalHotkeys::nativeEventFilter(const QByteArray &eventType,
+bool UGlobalHotkeys::nativeEvent(const QByteArray &eventType,
                                        void *message, qintptr *result)
 #else
 bool UGlobalHotkeys::nativeEvent(const QByteArray &eventType,
@@ -171,7 +171,12 @@ bool UGlobalHotkeys::nativeEvent(const QByteArray &eventType,
 
 #elif defined(Q_OS_LINUX)
 
-bool UGlobalHotkeys::nativeEventFilter(const QByteArray &eventType, void *message, long *result) {
+#if QT_VERSION >= 0x060000
+bool UGlobalHotkeys::nativeEventFilter(const QByteArray &eventType, void *message, qintptr *result)
+#else
+bool UGlobalHotkeys::nativeEventFilter(const QByteArray &eventType, void *message, long *result)
+#endif
+{
     Q_UNUSED(eventType);
     Q_UNUSED(result);
     return linuxEvent(static_cast<xcb_generic_event_t*>(message));
