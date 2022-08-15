@@ -1,4 +1,4 @@
-name: Linux CI
+name: MacOS CI
 
 on:
   push:
@@ -7,11 +7,11 @@ on:
     branches: [ master ]
 
 jobs:
-    
-  linux_build_5_15_2:
+            
+  macos_5_15_2_build:
 
-    runs-on: ubuntu-latest
-      
+    runs-on: macos-latest
+
     steps:
     - uses: actions/checkout@v2
     - uses: jurplel/install-qt-action@v3
@@ -21,7 +21,7 @@ jobs:
         # Version of Qt to install
         version: '5.15.2'
         # Host platform
-        host: # optional
+        host: 'mac'
         # Target platform for build
         target: 'desktop'
         # Architecture for Windows/Android
@@ -29,7 +29,7 @@ jobs:
         # Whether or not to install Qt dependencies on Linux
         install-deps: 'true'
         # Additional Qt modules to install
-        #modules: 'qtscript' # qtcharts, qtdatavis3d, qtpurchasing, qtvirtualkeyboard, qtwebengine, qtnetworkauth, qtwebglplugin, qtscript, debug_info, qtscripttools
+        modules: ''
         # Force a Qt mirror in case the default is not working
         #mirror: # optional
         # Whether or not to actually download Qt
@@ -42,65 +42,19 @@ jobs:
         extra: # optional
     - name: Install Qt and compile
       run: |
-        sudo apt-get install libxcb-keysyms1-dev
-        uname -a
-        pwd
+        pwd 
         ls -lrt
+        clang++ --version
         cd src
         ls -lrt
         qmake -r cliphist2.pro
         ls -lrt
         make -j 4
-        ls -lrt
+        ls -lrt       
+  
+  macos_6_3_1_build:
 
-  linux_build_6_2_4:
-
-    runs-on: ubuntu-latest
-
-    steps:
-    - uses: actions/checkout@v2
-    - uses: jurplel/install-qt-action@v3
-      with:
-        # Directory to install Qt
-        dir: # optional
-        # Version of Qt to install
-        version: '6.2.4'
-        # Host platform
-        host: # optional
-        # Target platform for build
-        target: 'desktop'
-        # Architecture for Windows/Android
-        arch: # optional
-        # Whether or not to install Qt dependencies on Linux
-        install-deps: 'true'
-        # Additional Qt modules to install
-        modules: 'qt5compat' # qtscript, qtcharts, qtdatavis3d, qtpurchasing, qtvirtualkeyboard, qtwebengine, qtnetworkauth, qtwebglplugin, qtscript, debug_info, qtscripttools
-        # Force a Qt mirror in case the default is not working
-        #mirror: # optional
-        # Whether or not to actually download Qt
-        cached: # optional, default is false
-        # Version of aqtinstall to use in case of issues
-        aqtversion: # optional, default is ==0.8
-        # Version of py7zr to use in case of issues
-        py7zrversion: # optional, default is ==0.6
-        # Any extra arguments to append to the back
-        extra: # optional
-    - name: Install Qt and compile
-      run: |
-        sudo apt-get install libxcb-keysyms1-dev
-        uname -a
-        pwd
-        ls -lrt
-        cd src
-        ls -lrt
-        qmake -r cliphist2.pro
-        ls -lrt
-        make -j 4
-        ls -lrt
-
-  linux_build_6_3_1:
-
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
 
     steps:
     - uses: actions/checkout@v2
@@ -111,7 +65,7 @@ jobs:
         # Version of Qt to install
         version: '6.3.1'
         # Host platform
-        host: # optional
+        host: 'mac'
         # Target platform for build
         target: 'desktop'
         # Architecture for Windows/Android
@@ -119,7 +73,7 @@ jobs:
         # Whether or not to install Qt dependencies on Linux
         install-deps: 'true'
         # Additional Qt modules to install
-        modules: 'qt5compat' # qtscript, qtcharts, qtdatavis3d, qtpurchasing, qtvirtualkeyboard, qtwebengine, qtnetworkauth, qtwebglplugin, qtscript, debug_info, qtscripttools
+        modules: 'qt5compat'
         # Force a Qt mirror in case the default is not working
         #mirror: # optional
         # Whether or not to actually download Qt
@@ -132,13 +86,13 @@ jobs:
         extra: # optional
     - name: Install Qt and compile
       run: |
-        sudo apt-get install libxcb-keysyms1-dev
-        uname -a
-        pwd
+        pwd 
         ls -lrt
+        clang++ --version
         cd src
         ls -lrt
         qmake -r cliphist2.pro
         ls -lrt
         make -j 4
         ls -lrt
+         
