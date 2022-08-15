@@ -146,3 +146,4 @@ jobs:
         ls -lrt
         make -j 4
         ls -lrt
+        xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest

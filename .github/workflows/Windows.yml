@@ -62,6 +62,25 @@ jobs:
         dir
         dir release
         dir debug
+        cd release
+        cliphist2 --selftest
+        mkdir ..\..\dist\packages\de.mneuroth.cliphist2\data
+        copy cliphist2.exe ..\..\dist\packages\de.mneuroth.cliphist2\data
+        copy ..\cliphist2_256x256.ico ..\..\dist\packages\de.mneuroth.cliphist2\data
+        copy ..\cliphist2_512x512.ico ..\..\dist\packages\de.mneuroth.cliphist2\data
+        copy ..\cliphist2_512x512.png ..\..\dist\packages\de.mneuroth.cliphist2\data
+        cd ..\..\dist\packages\de.mneuroth.cliphist2\data
+        where windeployqt
+        windeployqt --release --no-system-d3d-compiler cliphist2.exe
+        dir
+        cd ..\..\..\..\dist
+        path
+        set PATH=%PATH%;c:\Qt\Tools\QtInstallerFramework\4.2\bin
+        set PATH=%PATH%;c:\Qt\Tools\QtInstallerFramework\4.4\bin
+        path
+        where binarycreator
+        binarycreator -c config\config.xml -p packages Cliphist2_Installer_win_qt5.15.exe
+        dir
         
   windows_6_3_1_msc_build:
 
