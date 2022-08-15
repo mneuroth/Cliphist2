@@ -42,7 +42,8 @@ jobs:
         extra: # optional
     - name: Install Qt and compile
       run: |
-        sudo apt-get install libxcb-keysyms1-dev
+        sudo apt-get install -y libxcb-keysyms1-dev
+        sudo apt-get install -y libxkbcommon-dev
         uname -a
         pwd
         ls -lrt
@@ -88,7 +89,8 @@ jobs:
         extra: # optional
     - name: Install Qt and compile
       run: |
-        sudo apt-get install libxcb-keysyms1-dev
+        sudo apt-get install -y libxcb-keysyms1-dev
+        sudo apt-get install -y libxkbcommon-dev
         uname -a
         pwd
         ls -lrt
@@ -133,7 +135,8 @@ jobs:
         extra: # optional
     - name: Install Qt and compile
       run: |
-        sudo apt-get install libxcb-keysyms1-dev
+        sudo apt-get install -y libxcb-keysyms1-dev
+        sudo apt-get install -y libxkbcommon-dev
         uname -a
         pwd
         ls -lrt
