@@ -21,11 +21,14 @@
 #include "edititem.h"
 
 #include <QTextEdit>
+#include <QGraphicsPixmapItem>
 
 EditItem::EditItem(QWidget *parent, const QFont & aFont, const QPalette & aPalette, const QString & sText, const QPixmap * pImage)
     : QDialog(parent),
       m_bAsNewEntry(false),
-      m_bExportImage(false)
+      m_bExportImage(false),
+      m_pImage(0),
+      m_dScaleFactor(1.0)
 {
     ui.setupUi(this);
     ui.textEdit->setText(sText);
@@ -33,7 +36,8 @@ EditItem::EditItem(QWidget *parent, const QFont & aFont, const QPalette & aPalet
     ui.textEdit->setPalette(aPalette);
     if( pImage )
     {
-        m_aScene.addPixmap(*pImage);
+        m_pImage = m_aScene.addPixmap(*pImage);
+        m_aPixmap = *pImage;
     }
     ui.graphicsView->setScene(&m_aScene);
     showOnlyText(true);
@@ -46,7 +50,8 @@ QString EditItem::text() const
 
 void EditItem::setImage(const QPixmap & aPixmap)
 {
-    m_aScene.addPixmap(aPixmap);
+    m_pImage = m_aScene.addPixmap(aPixmap);
+    m_aPixmap = aPixmap;
 }
 
 void EditItem::sltAsNewEntry()
@@ -59,6 +64,35 @@ void EditItem::sltExportImage()
 {
     m_bExportImage = true;
     accept();
+}
+
+void EditItem::sltZoomPlus()
+{
+    if( m_pImage != 0 )
+    {
+        m_dScaleFactor = m_dScaleFactor*1.333333333333333;
+        QPixmap aPixmap = m_aPixmap.scaled( m_aPixmap.size()*m_dScaleFactor );
+        m_pImage->setPixmap(aPixmap);
+    }
+}
+
+void EditItem::sltZoomMinus()
+{
+    if( m_pImage != 0 )
+    {
+        m_dScaleFactor = m_dScaleFactor*0.75;
+        QPixmap aPixmap = m_aPixmap.scaled( m_aPixmap.size()*m_dScaleFactor );
+        m_pImage->setPixmap(aPixmap);
+    }
+}
+
+void EditItem::sltZoom100()
+{
+    if( m_pImage != 0 )
+    {
+        m_dScaleFactor = 1.0;
+        m_pImage->setPixmap(m_aPixmap);
+    }
 }
 
 void EditItem::showOnlyText(bool bValue)

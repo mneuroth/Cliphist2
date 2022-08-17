@@ -39,7 +39,7 @@
        <string>Text</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_2">
-       <property name="margin">
+       <property name="margin" stdset="0">
         <number>6</number>
        </property>
        <item row="0" column="0">
@@ -59,11 +59,33 @@
        <string>Image</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <property name="margin">
-        <number>6</number>
-       </property>
-       <item row="0" column="0">
+       <item row="1" column="0">
         <widget class="QGraphicsView" name="graphicsView"/>
+       </item>
+       <item row="0" column="0">
+        <layout class="QHBoxLayout" name="horizontalLayout">
+         <item>
+          <widget class="QPushButton" name="btnZoomMinus">
+           <property name="text">
+            <string>Zoom +</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnZoomPlus">
+           <property name="text">
+            <string>Zoom -</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnZoom100">
+           <property name="text">
+            <string>100%</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
@@ -104,8 +126,8 @@
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>473</x>
-     <y>367</y>
+     <x>491</x>
+     <y>364</y>
     </hint>
     <hint type="destinationlabel">
      <x>157</x>
@@ -120,8 +142,8 @@
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>473</x>
-     <y>367</y>
+     <x>491</x>
+     <y>364</y>
     </hint>
     <hint type="destinationlabel">
      <x>286</x>
@@ -136,8 +158,8 @@
    <slot>sltAsNewEntry()</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>73</x>
-     <y>367</y>
+     <x>79</x>
+     <y>364</y>
     </hint>
     <hint type="destinationlabel">
      <x>6</x>
@@ -161,9 +183,60 @@
     </hint>
    </hints>
   </connection>
+  <connection>
+   <sender>btnZoomMinus</sender>
+   <signal>clicked()</signal>
+   <receiver>EditItem</receiver>
+   <slot>sltZoomPlus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>273</x>
+     <y>51</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>499</x>
+     <y>32</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnZoomPlus</sender>
+   <signal>clicked()</signal>
+   <receiver>EditItem</receiver>
+   <slot>sltZoomMinus()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>344</x>
+     <y>49</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>495</x>
+     <y>111</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>btnZoom100</sender>
+   <signal>clicked()</signal>
+   <receiver>EditItem</receiver>
+   <slot>sltZoom100()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>455</x>
+     <y>48</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>497</x>
+     <y>76</y>
+    </hint>
+   </hints>
+  </connection>
  </connections>
  <slots>
   <slot>sltAsNewEntry()</slot>
   <slot>sltExportImage()</slot>
+  <slot>sltZoomPlus()</slot>
+  <slot>sltZoomMinus()</slot>
+  <slot>sltZoom100()</slot>
  </slots>
 </ui>
