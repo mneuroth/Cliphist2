@@ -213,7 +213,7 @@ QVariant SimpleSketch::itemToVariant(QGraphicsItem * pItem) const
     return data;
 }
 
-#include <QDebug>
+//#include <QDebug>
 
 QVariantList SimpleSketch::SaveState() const
 {
@@ -222,7 +222,7 @@ QVariantList SimpleSketch::SaveState() const
   {
       aList << itemToVariant(item);
   }
-  qDebug() << "SAVE STATE " << aList << endl;
+//  qDebug() << "SAVE STATE " << aList << endl;
   return aList;
 }
 
