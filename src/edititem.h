@@ -26,7 +26,8 @@
 #include <QString>
 #include <QFont>
 #include <QPalette>
-#include <QPixmap>
+
+#include "simplesketch.h"
 
 class EditItem : public QDialog
 {
@@ -46,6 +47,7 @@ public:
 public slots:
     void sltAsNewEntry();
     void sltExportImage();
+
     void sltZoomPlus();
     void sltZoomMinus();
     void sltZoom100();
@@ -54,10 +56,8 @@ private:
     Ui::EditItem ui;
     bool m_bAsNewEntry;
     bool m_bExportImage;
-    QGraphicsScene m_aScene;
-    QGraphicsPixmapItem * m_pImage;
-    QPixmap m_aPixmap;
-    double m_dScaleFactor;
+
+    SimpleSketch m_aSimpleSketch;
 };
 
 #endif // EDITITEM_H

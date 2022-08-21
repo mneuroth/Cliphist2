@@ -59,11 +59,8 @@
        <string>Image</string>
       </property>
       <layout class="QGridLayout" name="gridLayout_3">
-       <item row="1" column="0">
-        <widget class="QGraphicsView" name="graphicsView"/>
-       </item>
        <item row="0" column="0">
-        <layout class="QHBoxLayout" name="horizontalLayout">
+        <layout class="QHBoxLayout" name="zoomLayout">
          <item>
           <widget class="QPushButton" name="btnZoomMinus">
            <property name="text">
@@ -86,6 +83,41 @@
           </widget>
          </item>
         </layout>
+       </item>
+       <item row="2" column="0">
+        <layout class="QHBoxLayout" name="formLayout">
+         <item>
+          <widget class="QPushButton" name="btnForm">
+           <property name="text">
+            <string>Form</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnWidth">
+           <property name="text">
+            <string>Width</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnColor">
+           <property name="text">
+            <string>Color</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="btnOperations">
+           <property name="text">
+            <string>Operations</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <widget class="QGraphicsView" name="graphicsView"/>
        </item>
       </layout>
      </widget>

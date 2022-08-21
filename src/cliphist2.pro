@@ -19,10 +19,14 @@ include(../UGlobalHotkey-master/uglobalhotkey.pri)
 SOURCES += main.cpp \
     app.cpp \
     cliphistwindow.cpp \
-    edititem.cpp
+    graphicsitemresizeablerect.cpp \
+    edititem.cpp \
+    simplesketch.cpp
 HEADERS += cliphistwindow.h \
     app.h \
-    edititem.h
+    graphicsitemresizeablerect.h \
+    edititem.h \
+    simplesketch.h
 FORMS += cliphistwindow.ui \
     edititem.ui
 TRANSLATIONS = cliphist2_de.ts \

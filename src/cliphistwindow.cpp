@@ -507,7 +507,7 @@ void CliphistWindow::OnToggleUseTimer(bool bChecked)
 
 void CliphistWindow::OnAbout()
 {
-    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2019 by %4</p><p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
+    QMessageBox::about(this,tr("About Application"),QString(tr("<b>%1</b><small><p>Version %2 from %3</p><p>(c) 2022 by %4</p><p>License: %5</p><small>")).arg(TITLE,VERSION,__DATE__,AUTHORS,LICENSE));
 }
 
 void CliphistWindow::OnAboutQt()
