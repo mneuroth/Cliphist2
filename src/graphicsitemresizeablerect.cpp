@@ -225,15 +225,15 @@ void GraphicsItemResizeableRect::hoverMoveEvent( QGraphicsSceneHoverEvent * even
     QGraphicsRectItem::hoverMoveEvent( event );
 }
 
-#include <QDebug>
+//#include <QDebug>
 
 void GraphicsItemResizeableRect::keyPressEvent( QKeyEvent * event )
 {
-    qDebug() << "KEY " << event->key() << endl;
+    //qDebug() << "KEY " << event->key() << endl;
     if( event->key() == 8 )
     {
 
-        qDebug() << "delete! "<< endl;
+        //qDebug() << "delete! "<< endl;
     }
 
     QGraphicsRectItem::keyPressEvent( event );
