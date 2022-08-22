@@ -77,6 +77,7 @@ public slots:
     void sltZoomMinus();
     void sltZoom100();
     void sltAddRectangle();
+    void sltAddEllipse();
     void sltSetWidth(int widthInPixel, QAction * pAction);
     void sltSetColor(const QColor & aColor, QAction * pAction);
     void sltClearAll();
@@ -111,6 +112,7 @@ private:
     QAction * m_pSaveStateAction;
     QAction * m_pRestoreStateAction;
     QAction * m_pAddRectAction;
+    QAction * m_pAddEllipseAction;
     QAction * m_pWidth1PxAction;
     QAction * m_pWidth3PxAction;
     QAction * m_pWidth5PxAction;

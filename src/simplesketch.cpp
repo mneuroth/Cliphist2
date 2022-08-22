@@ -57,7 +57,9 @@ SimpleSketch::SimpleSketch(const QPixmap * pBackgroundImage, QObject *parent)
     m_pMenuOperations->addAction(m_pRestoreStateAction);
 
     m_pAddRectAction = new QAction(tr("Rectangle"));
+    m_pAddEllipseAction = new QAction(tr("Ellipse"));
     m_pMenuForm->addAction(m_pAddRectAction);
+    m_pMenuForm->addAction(m_pAddEllipseAction);
 
     m_pWidth1PxAction = new QAction(tr("1 Pixel"));
     m_pWidth1PxAction->setCheckable(true);
@@ -100,6 +102,7 @@ SimpleSketch::SimpleSketch(const QPixmap * pBackgroundImage, QObject *parent)
     m_pMenuColor->addAction(m_pColorMagentaAction);
 
     connect(m_pAddRectAction, SIGNAL(triggered()), this, SLOT(sltAddRectangle()));
+    connect(m_pAddEllipseAction, SIGNAL(triggered()), this, SLOT(sltAddEllipse()));
     connect(m_pZoomPlusAction, &QAction::triggered, this, &SimpleSketch::sltZoomPlus);
     connect(m_pZoomMinusAction, &QAction::triggered, this, &SimpleSketch::sltZoomMinus);
     connect(m_pZoom100Action, &QAction::triggered, this, &SimpleSketch::sltZoom100);
@@ -141,6 +144,7 @@ SimpleSketch::~SimpleSketch()
     delete m_pSaveStateAction;
     delete m_pRestoreStateAction;
     delete m_pAddRectAction;
+    delete m_pAddEllipseAction;
     delete m_pMenuForm;
     delete m_pMenuWidth;
     delete m_pMenuColor;
@@ -292,6 +296,23 @@ void SimpleSketch::sltAddRectangle()
     // -> resizeable item -> see mindia project: GraphicsItemResizeableRect
     //QGraphicsRectItem * item = m_aScene.addRect(10, 10, 100, 200);
     GraphicsItemResizeableRect * pNewItem = new GraphicsItemResizeableRect();
+    pNewItem->Rescale(m_aPixmap.size());
+    pNewItem->SetClippingData(RATIO_VARIABLE, 0, 0, 0.2, 0.2);
+    QPen aPen(m_aCurrentColor);
+    aPen.setWidth(m_iCurrentWidth);
+    pNewItem->setPen(aPen);
+    m_aScene.addItem(pNewItem);
+    //pNewItem->setFlags(QGraphicsItem::ItemIsMovable | QGraphicsItem::ItemIsSelectable);
+    m_aScene.setFocusItem(pNewItem);
+    pNewItem->setFocus();
+    pNewItem->setSelected(true);
+    pNewItem->update();
+}
+
+void SimpleSketch::sltAddEllipse()
+{
+    GraphicsItemResizeableEllipse * pNewItem = new GraphicsItemResizeableEllipse();
+    pNewItem->setRect(0.0, 0.0, 30, 40);
     pNewItem->Rescale(m_aPixmap.size());
     pNewItem->SetClippingData(RATIO_VARIABLE, 0, 0, 0.2, 0.2);
     QPen aPen(m_aCurrentColor);

@@ -37,15 +37,12 @@ inline int Calc( double factor, int value )
     return (int)(factor*(double)value);
 }
 
+// **************************************************************************
+
 GraphicsItemResizeableRect::GraphicsItemResizeableRect( GraphicsItemChangedCallback * pCallback )
-    : m_Ratio( RATIO_UNDEFINED ),
-      m_relX( 0.0 ),
-      m_relY( 0.0 ),
-      m_relDX( 1.0 ),
-      m_relDY( 1.0 ),
-      m_aResizeState( NONE ),
-      m_pCallback( pCallback )
+    : GraphicsItemResizeableBase( pCallback )
 {
+    m_pGraphicsItem = this;
     setAcceptHoverEvents( true );
     setFlag( QGraphicsItem::ItemIsMovable );
     setFlag( QGraphicsItem::ItemSendsGeometryChanges );
@@ -53,7 +50,68 @@ GraphicsItemResizeableRect::GraphicsItemResizeableRect( GraphicsItemChangedCallb
     setFlag( QGraphicsItem::ItemIsFocusable );
 }
 
-void GraphicsItemResizeableRect::serializeToVariantHash(QVariantHash & data) const
+void GraphicsItemResizeableRect::mouseMoveEvent( QGraphicsSceneMouseEvent * event )
+{
+    mouseMoveEventImpl( event );
+}
+
+void GraphicsItemResizeableRect::hoverMoveEvent( QGraphicsSceneHoverEvent * event )
+{
+    hoverMoveEventImpl( event );
+    QGraphicsRectItem::hoverMoveEvent( event );
+}
+
+void GraphicsItemResizeableRect::keyPressEvent( QKeyEvent * event )
+{
+    keyPressEventImpl( event );
+    QGraphicsRectItem::keyPressEvent( event );
+}
+
+// **************************************************************************
+
+GraphicsItemResizeableEllipse::GraphicsItemResizeableEllipse( GraphicsItemChangedCallback * pCallback )
+    : GraphicsItemResizeableBase( pCallback )
+{
+    m_pGraphicsItem = this;
+    setAcceptHoverEvents( true );
+    setFlag( QGraphicsItem::ItemIsMovable );
+    setFlag( QGraphicsItem::ItemSendsGeometryChanges );
+    setFlag( QGraphicsItem::ItemIsSelectable );
+    setFlag( QGraphicsItem::ItemIsFocusable );
+}
+
+void GraphicsItemResizeableEllipse::mouseMoveEvent( QGraphicsSceneMouseEvent * event )
+{
+    mouseMoveEventImpl( event );
+}
+
+void GraphicsItemResizeableEllipse::hoverMoveEvent( QGraphicsSceneHoverEvent * event )
+{
+    hoverMoveEventImpl( event );
+    QGraphicsEllipseItem::hoverMoveEvent( event );
+}
+
+void GraphicsItemResizeableEllipse::keyPressEvent( QKeyEvent * event )
+{
+    keyPressEventImpl( event );
+    QGraphicsEllipseItem::keyPressEvent( event );
+}
+
+// **************************************************************************
+
+GraphicsItemResizeableBase::GraphicsItemResizeableBase( GraphicsItemChangedCallback * pCallback )
+    : m_Ratio( RATIO_UNDEFINED ),
+      m_relX( 0.0 ),
+      m_relY( 0.0 ),
+      m_relDX( 1.0 ),
+      m_relDY( 1.0 ),
+      m_aResizeState( NONE ),
+      m_pCallback( pCallback ),
+      m_pGraphicsItem( 0 )
+{
+}
+
+void GraphicsItemResizeableBase::serializeToVariantHash(QVariantHash & data) const
 {
     data["ratio"] = (int)m_Ratio;
     data["image_size"] = m_aImageSize;
@@ -63,7 +121,7 @@ void GraphicsItemResizeableRect::serializeToVariantHash(QVariantHash & data) con
     data["rel_DY"] = m_relDY;
 }
 
-void GraphicsItemResizeableRect::unserializeFromVariantHash(const QVariantHash & data)
+void GraphicsItemResizeableBase::unserializeFromVariantHash(const QVariantHash & data)
 {
     m_Ratio = (ImageRatio)data["ratio"].toInt();
     m_aImageSize = data["image_size"].toSize();
@@ -73,14 +131,14 @@ void GraphicsItemResizeableRect::unserializeFromVariantHash(const QVariantHash &
     m_relDY = data["rel_DY"].toDouble();
 }
 
-void GraphicsItemResizeableRect::Rescale( QSize aImageSize )
+void GraphicsItemResizeableBase::Rescale( QSize aImageSize )
 {
     m_aImageSize = aImageSize;
 
     UpdateGeometry();
 }
 
-void GraphicsItemResizeableRect::SetClippingData( ImageRatio ratio, double relX, double relY, double relDX, double relDY )
+void GraphicsItemResizeableBase::SetClippingData( ImageRatio ratio, double relX, double relY, double relDX, double relDY )
 {
     m_Ratio = ratio;
     m_relX = relX;
@@ -91,17 +149,26 @@ void GraphicsItemResizeableRect::SetClippingData( ImageRatio ratio, double relX,
     UpdateGeometry();
 }
 
-void GraphicsItemResizeableRect::UpdateGeometry()
+void GraphicsItemResizeableBase::UpdateGeometry()
 {
     QSize aRatioSize = GetRatioSize();
     int dx = aRatioSize.width();
     int dy = aRatioSize.height();
 
-    setRect( 0, 0, Calc(m_relDX, dx), Calc(m_relDY, dy) );
-    setPos( Calc(m_relX, dx), Calc(m_relY, dy) );
+    QGraphicsRectItem * pRect = dynamic_cast<QGraphicsRectItem *>(m_pGraphicsItem);
+    if( pRect != 0 )
+    {
+        pRect->setRect( 0, 0, Calc(m_relDX, dx), Calc(m_relDY, dy) );
+    }
+    QGraphicsEllipseItem * pEllipse = dynamic_cast<QGraphicsEllipseItem *>(m_pGraphicsItem);
+    if( pEllipse != 0 )
+    {
+        pEllipse->setRect( 0, 0, Calc(m_relDX, dx), Calc(m_relDY, dy) );
+    }
+    m_pGraphicsItem->setPos( Calc(m_relX, dx), Calc(m_relY, dy) );
 }
 
-void GraphicsItemResizeableRect::GetClippingData( double & relX, double & relY, double & relDX, double & relDY )
+void GraphicsItemResizeableBase::GetClippingData( double & relX, double & relY, double & relDX, double & relDY )
 {
     relX = m_relX;
     relY = m_relY;
@@ -109,7 +176,7 @@ void GraphicsItemResizeableRect::GetClippingData( double & relX, double & relY, 
     relDY = m_relDY;
 }
 
-void GraphicsItemResizeableRect::CheckRectForClipping()
+void GraphicsItemResizeableBase::CheckRectForClipping()
 {
     const double MIN_REL_SIZE = 0.05;
 
@@ -151,7 +218,7 @@ void GraphicsItemResizeableRect::CheckRectForClipping()
     }
 }
 
-void GraphicsItemResizeableRect::mouseMoveEvent( QGraphicsSceneMouseEvent * event )
+void GraphicsItemResizeableBase::mouseMoveEventImpl( QGraphicsSceneMouseEvent * event )
 {
     int deltaX = event->pos().x()-event->lastPos().x();     // -1 <--     +1 -->
     int deltaY = event->pos().y()-event->lastPos().y();
@@ -191,43 +258,55 @@ void GraphicsItemResizeableRect::mouseMoveEvent( QGraphicsSceneMouseEvent * even
     Rescale(m_aImageSize);  // move item myself and do not let the library move the item
                             // in the later case the logical and physical coodinates will
                             // differ because of rounding errors !!!
-
+/*
     if( m_pCallback )
     {
         m_pCallback->ItemModified( this );
     }
-
+*/
     //not used: QGraphicsRectItem::mouseMoveEvent( event );
 }
 
-void GraphicsItemResizeableRect::hoverMoveEvent( QGraphicsSceneHoverEvent * event )
+void GraphicsItemResizeableBase::hoverMoveEventImpl( QGraphicsSceneHoverEvent * event )
 {
     const double DELTA = 5.0;
 
     QPointF pos = event->pos();
     bool bWest = IsInRange( pos.x(), 0, DELTA );
     bool bNorth = IsInRange( pos.y(), 0, DELTA );
-    if(  bWest || IsInRange( pos.x(), rect().width(), DELTA ) )
+    QRectF aRect;
+    QGraphicsRectItem * pRect = dynamic_cast<QGraphicsRectItem *>(m_pGraphicsItem);
+    if( pRect != 0 )
+    {
+        aRect = pRect->rect();
+    }
+    QGraphicsEllipseItem * pEllipse = dynamic_cast<QGraphicsEllipseItem *>(m_pGraphicsItem);
+    if( pEllipse != 0 )
+    {
+        aRect = pEllipse->rect();
+    }
+
+    if(  bWest || IsInRange( pos.x(), aRect.width(), DELTA ) )
     {
         m_aResizeState = bWest ? WEST : EAST;
-        setCursor( Qt::SizeHorCursor );
+        m_pGraphicsItem->setCursor( Qt::SizeHorCursor );
     }
-    else if( bNorth || IsInRange( pos.y(), rect().height(), DELTA ) )
+    else if( bNorth || IsInRange( pos.y(), aRect.height(), DELTA ) )
     {
         m_aResizeState = bNorth ? NORTH : SOUTH;
-        setCursor( Qt::SizeVerCursor );
+        m_pGraphicsItem->setCursor( Qt::SizeVerCursor );
     }
     else
     {
         m_aResizeState = NONE;
-        setCursor( Qt::ArrowCursor );
+        m_pGraphicsItem->setCursor( Qt::ArrowCursor );
     }
-    QGraphicsRectItem::hoverMoveEvent( event );
+    //QGraphicsRectItem::hoverMoveEvent( event );
 }
 
 //#include <QDebug>
 
-void GraphicsItemResizeableRect::keyPressEvent( QKeyEvent * event )
+void GraphicsItemResizeableBase::keyPressEventImpl( QKeyEvent * event )
 {
     //qDebug() << "KEY " << event->key() << endl;
     if( event->key() == 8 )
@@ -236,11 +315,11 @@ void GraphicsItemResizeableRect::keyPressEvent( QKeyEvent * event )
         //qDebug() << "delete! "<< endl;
     }
 
-    QGraphicsRectItem::keyPressEvent( event );
+    //QGraphicsRectItem::keyPressEvent( event );
 }
 
 /*
-QVariant GraphicsItemResizeableRect::itemChange( GraphicsItemChange change, const QVariant & value )
+QVariant GraphicsItemResizeableBase::itemChange( GraphicsItemChange change, const QVariant & value )
 {
     if( change==QGraphicsItem::ItemPositionChange )
     {
@@ -293,7 +372,7 @@ QSize GetRatioSizeForAvailableSize( QSize aAvailableSize, ImageRatio ratio )
     return aRet;
 }
 
-QSize GraphicsItemResizeableRect::GetRatioSize() const
+QSize GraphicsItemResizeableBase::GetRatioSize() const
 {
     return GetRatioSizeForAvailableSize( m_aImageSize, m_Ratio );
 }

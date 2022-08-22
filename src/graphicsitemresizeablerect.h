@@ -69,10 +69,10 @@ public:
 
 // TODO: Interface/BaseClass for ResizableObjects -> save, load Support
 
-class GraphicsItemResizeableRect : public QGraphicsRectItem
+class GraphicsItemResizeableBase
 {
 public:
-    GraphicsItemResizeableRect( GraphicsItemChangedCallback * pCallback = 0 );
+    GraphicsItemResizeableBase( GraphicsItemChangedCallback * pCallback = 0 );
 
     virtual void serializeToVariantHash(QVariantHash & data) const;
     virtual void unserializeFromVariantHash(const QVariantHash & data);
@@ -81,9 +81,9 @@ public:
     void SetClippingData( ImageRatio ratio, double relX, double relY, double relDX, double relDY );
     void GetClippingData( double & relX, double & relY, double & relDX, double & relDY );
 
-    virtual void mouseMoveEvent( QGraphicsSceneMouseEvent * event );
-    virtual void hoverMoveEvent( QGraphicsSceneHoverEvent * event );
-    virtual void keyPressEvent( QKeyEvent * event );
+    void mouseMoveEventImpl( QGraphicsSceneMouseEvent * event );
+    void hoverMoveEventImpl( QGraphicsSceneHoverEvent * event );
+    void keyPressEventImpl( QKeyEvent * event );
 
     //virtual QVariant itemChange( GraphicsItemChange change, const QVariant & value );
 
@@ -102,6 +102,29 @@ private:
     ResizeState                     m_aResizeState;
 
     GraphicsItemChangedCallback *   m_pCallback;
+
+protected:
+    QGraphicsItem *                 m_pGraphicsItem;
+};
+
+class GraphicsItemResizeableRect : public GraphicsItemResizeableBase, public QGraphicsRectItem
+{
+public:
+    GraphicsItemResizeableRect( GraphicsItemChangedCallback * pCallback = 0 );
+
+    virtual void mouseMoveEvent( QGraphicsSceneMouseEvent * event );
+    virtual void hoverMoveEvent( QGraphicsSceneHoverEvent * event );
+    virtual void keyPressEvent( QKeyEvent * event );
+};
+
+class GraphicsItemResizeableEllipse : public GraphicsItemResizeableBase, public QGraphicsEllipseItem
+{
+public:
+    GraphicsItemResizeableEllipse( GraphicsItemChangedCallback * pCallback = 0 );
+
+    virtual void mouseMoveEvent( QGraphicsSceneMouseEvent * event );
+    virtual void hoverMoveEvent( QGraphicsSceneHoverEvent * event );
+    virtual void keyPressEvent( QKeyEvent * event );
 };
 
 #endif // GRAPHICSITEMRESIZEABLERECT_H
