@@ -112,7 +112,7 @@ private:
     QBrush GetNextColor(const QBrush & aActColor) const;
     QBrush GetColorForIndex(int iIndex) const;
     QListWidgetItem * CreateNewItem(const QString & s, const QBrush & aBrush, QPixmap * pPixmap);
-    QPair<QString,bool> FilterForDisplay(const QString & s) const;
+    QPair<QString,bool> FilterForDisplay(const QString & s, int & noOfLines) const;
     QString FilterNumber(const QString & s, const QString & sNumber, bool bMoreLines) const;
     QString GetNewLine() const;
     int FindItemIndex(const QString & sItemText) const;
@@ -161,6 +161,9 @@ private:   /*data*/
 
     UGlobalHotkeys *            m_aHotkeyManager;
     bool                        m_bSelfTest;
+
+    int                         m_iFontWidth;
+    int                         m_iFontHeight;
 };
 
 #endif // CLIPHISTWINDOW_H

@@ -128,6 +128,8 @@
 #include <QBuffer>
 #include <QCursor>
 
+//#include <QDebug>
+
 // ************************************************************************
 
 #ifndef VERSION
@@ -144,9 +146,9 @@
 #define DEFAULT_LINES_PER_ENTRY     3
 #define DEFAULT_MAX_ENTRIES         100
 #define TIMER_DELAY                 300 // ms
-#define BLUE                        "#0000ff"   //"blue"
-#define GREEN                       "#008000"   //"green"
-#define RED                         "#ff0000"   //"red"
+#define BLUE                        "blue"  //"#0000ff"   //"blue"
+#define GREEN                       "green" //"#008000"   //"green"
+#define RED                         "red"   //"#ff0000"   //"red"
 
 #define IMAGE_TAG                   ":::IMAGE:::_"
 
@@ -1108,7 +1110,8 @@ void CliphistWindow::OnLinesPerItem()
 
 QListWidgetItem * CliphistWindow::CreateNewItem(const QString & s, const QBrush & aBrush, QPixmap * pPixmap)
 {
-    QPair<QString,bool> aResult = FilterForDisplay(s);
+    int noOfLines;
+    QPair<QString,bool> aResult = FilterForDisplay(s, noOfLines);
     QListWidgetItem * pItem = pPixmap==0 ?
                             new QListWidgetItem(aResult.first,/*parent*/0,aResult.second ? 1 : 0) :
                             new QListWidgetItem(*pPixmap, aResult.first,/*parent*/0,aResult.second ? 1 : 0);
@@ -1125,15 +1128,18 @@ QListWidgetItem * CliphistWindow::CreateNewItem(const QString & s, const QBrush 
 	}
 	else
 	{
-		pItem->setToolTip(s);
+        pItem->setToolTip(s);
 	}
+
+    // Bugfix 22.9.2025 -> set height for list items for text and icon entries to the same value
+    pItem->setSizeHint(QSize(m_iFontWidth, m_iFontHeight*noOfLines));
 
     pItem->setForeground(aBrush);
     //pItem->setFlags(Qt::ItemIsSelectable|Qt::ItemIsEditable|Qt::ItemIsEnabled);
     return pItem;
 }
 
-QPair<QString,bool> CliphistWindow::FilterForDisplay(const QString & s) const
+QPair<QString,bool> CliphistWindow::FilterForDisplay(const QString & s, int & noOfLines) const
 {
     QString sRet;
     QStringList aList = s.split(GetNewLine());
@@ -1143,6 +1149,7 @@ QPair<QString,bool> CliphistWindow::FilterForDisplay(const QString & s) const
     {
         sRet += aList[i]+GetNewLine();
     }
+    noOfLines = iMax;
     return QPair<QString,bool>(sRet.mid(0,sRet.size()-GetNewLine().size()),bMoreLines);   // remove last \n from return string;
 }
 
@@ -1364,12 +1371,12 @@ void CliphistWindow::ActivateItem(QListWidgetItem * current)
 
 QBrush CliphistWindow::GetNextColor(const QBrush & aActColor) const
 {
-    return aActColor.color().name()==GREEN ? QBrush(BLUE) : QBrush(GREEN);
+    return aActColor.color().name()==GREEN ? QBrush(QColor(BLUE)) : QBrush(QColor(GREEN));
 }
 
 QBrush CliphistWindow::GetColorForIndex(int iIndex) const
 {
-    return (iIndex % 2)==1 ? QBrush(BLUE) : QBrush(GREEN);
+    return (iIndex % 2)==1 ? QBrush(QColor(BLUE)) : QBrush(QColor(GREEN));
 }
 
 QBrush CliphistWindow::GetColorOfNeighbour(int iMyIndex) const
@@ -1387,7 +1394,7 @@ QBrush CliphistWindow::GetColorOfNeighbour(int iMyIndex) const
     {
         return GetNextColor(ui->listWidget->item( iNeighbourIndex )->foreground());
     }
-    return QBrush(BLUE);
+    return QBrush(QColor(BLUE));
 }
 
 void CliphistWindow::UpdateColorOfLastActivatedItem()
@@ -1405,10 +1412,10 @@ void CliphistWindow::UpdateLastActivatedItemData(QListWidgetItem * current)
     m_iActivatedIndex = ui->listWidget->row(current);
     if( current )
     {
-        current->setForeground(QBrush(RED));
+        current->setForeground(QBrush(QColor(RED)));
         // create also a number entry
         QListWidgetItem * pNumber = ui->listWidgetLineNumbers->item(m_iActivatedIndex);
-        pNumber->setForeground(QBrush(RED));
+        pNumber->setForeground(QBrush(QColor(RED)));
     }
 }
 
@@ -1418,7 +1425,10 @@ void CliphistWindow::SetFont(const QFont & aFont)
     ui->listWidgetLineNumbers->setFont(aFont);
     // update width of the number list widget
     QFontMetrics aMetrics(aFont);
-    ui->listWidgetLineNumbers->setMaximumWidth(aMetrics.boundingRect(QString("XXXXX")).width());
+    m_iFontWidth = aMetrics.boundingRect(QString("XXXXX")).width();
+    m_iFontHeight = aMetrics.boundingRect(QString("XXXXX")).height();
+    ui->listWidgetLineNumbers->setMaximumWidth(m_iFontWidth);
+    ui->listWidgetLineNumbers->setMaximumWidth(m_iFontHeight*m_iMaxLinesPerEntry);
 }
 
 void CliphistWindow::SetDataChanged(bool bValue)
