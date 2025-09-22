@@ -10,9 +10,42 @@ on:
 
 jobs:
 
+  create_release:
+
+    name: Prepare release
+    runs-on: windows-latest
+    outputs:
+      upload_url: ${{ steps.create_release.outputs.upload_url }}
+
+    steps:
+    - name: Checkout code
+      if: contains(github.ref, 'release')
+      uses: actions/checkout@v3
+    - name: Create Release
+      if: contains(github.ref, 'release')
+      id: create_release
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: ${{ github.ref }}
+        release_name: Release ${{ github.ref }}
+        draft: false
+        prerelease: false
+    - name: Output Release URL File
+      if: contains(github.ref, 'release')
+      run: echo "${{ steps.create_release.outputs.upload_url }}" > release_url.txt
+    - name: Save Release URL File for publish
+      if: contains(github.ref, 'release')
+      uses: actions/upload-artifact@v4
+      with:
+        name: release_url
+        path: release_url.txt
+
   windows_5_15_2_msc_build:
 
     runs-on: windows-latest
+    needs: create_release
 
     steps:
     - uses: actions/checkout@v3
@@ -80,6 +113,7 @@ jobs:
   windows_6_3_1_msc_build:
 
     runs-on: windows-latest
+    needs: create_release
 
     steps:
     - uses: actions/checkout@v3
@@ -149,3 +183,15 @@ jobs:
         cd ..\..\..\..\dist
         binarycreator --offline-only  -c config\config.xml -p packages Cliphist2_Installer_win_qt6.3.1.exe
         dir
+
+    - name: Upload Release Asset
+      if: contains(github.ref, 'release')
+      id: upload-release-asset
+      uses: actions/upload-release-asset@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        upload_url: ${{ needs.create_release.outputs.upload_url }} # This pulls from the CREATE RELEASE step above, referencing it's ID to get its outputs object, which include a `upload_url`. See this blog post for more info: https://jasonet.co/posts/new-features-of-github-actions/#passing-data-to-future-steps
+        asset_path: Cliphist2_Installer_win_qt6.3.1.exe
+        asset_name: Cliphist2_Installer_win_qt6.3.1.exe
+        asset_content_type: application/exe
