@@ -15,9 +15,9 @@ jobs:
     runs-on: windows-latest
 
     steps:
-    - uses: actions/checkout@v2
+    - uses: actions/checkout@v3
     - uses: ilammy/msvc-dev-cmd@v1
-    - uses: jurplel/install-qt-action@v2
+    - uses: jurplel/install-qt-action@v4
       with:
         # Directory to install Qt
         dir: # optional
@@ -43,7 +43,8 @@ jobs:
         py7zrversion: # optional, default is ==0.6
         # Any extra arguments to append to the back
         extra: # optional
-        tools: 'tools_ifw,4.4.1-0-202206210642,qt.tools.ifw.44'
+        #tools: 'tools_ifw,4.4.1-0-202206210642,qt.tools.ifw.44'
+        tools: 'tools_ifw'
     - name: Install 7Zip PowerShell Module
       shell: powershell
       run: Install-Module 7Zip4PowerShell -Force -Verbose
