@@ -157,6 +157,7 @@ private:   /*data*/
     int                         m_iMaxLinesPerEntry;    
     QString                     m_sFileName;
     QString                     m_sLastSearchText;
+    QString                     m_sLastImageSavePath;
     QStringList                 m_aTxtHistory;
 
     UGlobalHotkeys *            m_aHotkeyManager;

@@ -128,12 +128,12 @@
 #include <QBuffer>
 #include <QCursor>
 
-//#include <QDebug>
+#include <QDebug>
 
 // ************************************************************************
 
 #ifndef VERSION
-#define VERSION                     "1.1.1"
+#define VERSION                     "1.1.2"
 #endif
 #define TITLE                       "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Clipboard History 2</a>"
 #define HOMEPAGE                    "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Homepage</a>"
@@ -143,6 +143,7 @@
 #define FILE_VERSION                2   // 1 until 9.2.2012
 #define EXTENSIONS                  "*.clp"
 #define DEFAULT_FILE_NAME           "cliphist2.clp"
+#define DEFAULT_IMAGE_FILE_NAME     "cliphist_image.png"
 #define DEFAULT_LINES_PER_ENTRY     3
 #define DEFAULT_MAX_ENTRIES         100
 #define TIMER_DELAY                 300 // ms
@@ -151,6 +152,8 @@
 #define RED                         "red"   //"#ff0000"   //"red"
 
 #define IMAGE_TAG                   ":::IMAGE:::_"
+
+#define _DEFAULT_TEXT               "XXX"
 
 #if defined(Q_OS_MAC)
 #define DEFAULT_VALUE_USE_TIMER true
@@ -339,6 +342,7 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     m_iActivatedIndex   = -1;
     m_iMaxEntries       = DEFAULT_MAX_ENTRIES;
     m_iMaxLinesPerEntry = DEFAULT_LINES_PER_ENTRY;
+    m_sLastImageSavePath= QCoreApplication::applicationDirPath()+QDir::separator()+DEFAULT_IMAGE_FILE_NAME;
 #if defined( Q_WS_MACX )
     m_sFileName         = QCoreApplication::applicationDirPath()+QDir::separator()+".."+QDir::separator()+"Resources"+QDir::separator()+QString(DEFAULT_FILE_NAME);
 #else
@@ -669,9 +673,12 @@ void CliphistWindow::OnEditItem()
             {
                 if( aDlg.exportImage() )
                 {
-                    QString sFileName = QFileDialog::getSaveFileName(this,tr("Export image as"), m_sFileName, QString(tr("Image Files (%1)")).arg("*.png"));
+                    QString sFileName = QFileDialog::getSaveFileName(this, tr("Export image as"), m_sLastImageSavePath, QString(tr("Image Files (%1)")).arg("*.png"));
+
                     if( !sFileName.isEmpty() && m_aPixmapList.size()>0 )
                     {
+                        m_sLastImageSavePath = sFileName;
+
                         m_aPixmapList[iIndex].second.save(sFileName,"PNG");
                     }
                 }
@@ -1246,6 +1253,7 @@ bool CliphistWindow::SaveSettings()
     QSettings aSettings;
     
     aSettings.setValue("App/DataFileName",m_sFileName);
+    aSettings.setValue("App/LastImageFileName",m_sLastImageSavePath);
     aSettings.setValue("App/LastSearchText",m_sLastSearchText);
     aSettings.setValue("App/MaxLinesPerEntry",m_iMaxLinesPerEntry);    
     aSettings.setValue("App/MaxEntries",m_iMaxEntries);
@@ -1270,6 +1278,7 @@ bool CliphistWindow::LoadSettings()
     QFont aFont;
     
     m_sFileName = aSettings.value("App/DataFileName",m_sFileName).toString();
+    m_sLastImageSavePath = aSettings.value("App/LastImageFileName",m_sLastImageSavePath).toString();
     m_sLastSearchText = aSettings.value("App/LastSearchText").toString();
     m_iMaxLinesPerEntry = aSettings.value("App/MaxLinesPerEntry",DEFAULT_LINES_PER_ENTRY).toInt();    
     m_iMaxEntries = aSettings.value("App/MaxEntries",DEFAULT_MAX_ENTRIES).toInt();
@@ -1425,8 +1434,8 @@ void CliphistWindow::SetFont(const QFont & aFont)
     ui->listWidgetLineNumbers->setFont(aFont);
     // update width of the number list widget
     QFontMetrics aMetrics(aFont);
-    m_iFontWidth = aMetrics.boundingRect(QString("XXXXX")).width();
-    m_iFontHeight = aMetrics.boundingRect(QString("XXXXX")).height();
+    m_iFontWidth = aMetrics.boundingRect(QString(_DEFAULT_TEXT)).width();
+    m_iFontHeight = aMetrics.boundingRect(QString(_DEFAULT_TEXT)).height();
     ui->listWidgetLineNumbers->setMaximumWidth(m_iFontWidth);
     ui->listWidgetLineNumbers->setMaximumWidth(m_iFontHeight*m_iMaxLinesPerEntry);
 }
