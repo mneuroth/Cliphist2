@@ -82,7 +82,7 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>19</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -139,6 +139,7 @@
     <addaction name="actionMove_position_down_Shift_Ctrl_V"/>
     <addaction name="actionAlways_move_to_first_position_if_found"/>
     <addaction name="actionUse_timer_to_detect_clipboard_changes"/>
+    <addaction name="actionAutosave"/>
     <addaction name="actionAlways_on_top"/>
     <addaction name="separator"/>
     <addaction name="actionSet_to_default_position_and_size"/>
@@ -398,6 +399,17 @@
    </property>
    <property name="shortcut">
     <string>Alt+Y</string>
+   </property>
+  </action>
+  <action name="actionAutosave">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Autosave</string>
    </property>
   </action>
  </widget>

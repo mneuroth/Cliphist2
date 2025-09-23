@@ -128,7 +128,7 @@
 #include <QBuffer>
 #include <QCursor>
 
-#include <QDebug>
+//#include <QDebug>
 
 // ************************************************************************
 
@@ -147,6 +147,7 @@
 #define DEFAULT_LINES_PER_ENTRY     3
 #define DEFAULT_MAX_ENTRIES         100
 #define TIMER_DELAY                 300 // ms
+#define AUTOSAVE_TIMER_DELAY        60000 // ms
 #define BLUE                        "blue"  //"#0000ff"   //"blue"
 #define GREEN                       "green" //"#008000"   //"green"
 #define RED                         "red"   //"#ff0000"   //"red"
@@ -154,6 +155,7 @@
 #define IMAGE_TAG                   ":::IMAGE:::_"
 
 #define _DEFAULT_TEXT               "XXX"
+#define _UNSAVED_MARKER             " *"
 
 #if defined(Q_OS_MAC)
 #define DEFAULT_VALUE_USE_TIMER true
@@ -440,7 +442,17 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
 #endif
 // TODO findBufferChanged signal ?
 
+    m_pAutoSaveTimer = new QTimer(this);
+    connect(m_pAutoSaveTimer, SIGNAL(timeout()), this, SLOT(OnAutoSaveTimeout()));
+    if( ui->actionAutosave->isChecked() )
+    {
+        m_pAutoSaveTimer->start(AUTOSAVE_TIMER_DELAY);     // save every 60 seconds
+    }
+
     OnToggleUseTimer(ui->actionUse_timer_to_detect_clipboard_changes->isChecked());
+    OnToggleAutoSaveTimer(ui->actionAutosave->isChecked());
+    connect(ui->actionUse_timer_to_detect_clipboard_changes, SIGNAL(toggled(bool)), this, SLOT(OnToggleUseTimer(bool)));
+    connect(ui->actionAutosave, SIGNAL(toggled(bool)), this, SLOT(OnToggleAutoSaveTimer(bool)));
 
     ui->listWidget->setSelectionMode(QAbstractItemView::ExtendedSelection);
 //    QPalette aPalette;
@@ -466,6 +478,7 @@ CliphistWindow::~CliphistWindow()
     SaveSettings();
     delete m_pUndoStack;
     delete m_pTimer;
+    delete m_pAutoSaveTimer;
     delete ui;
 }
 
@@ -512,6 +525,18 @@ void CliphistWindow::OnToggleUseTimer(bool bChecked)
     else
     {
         m_pTimer->stop();
+    }
+}
+
+void CliphistWindow::OnToggleAutoSaveTimer(bool bChecked)
+{
+    if( bChecked )
+    {
+        m_pAutoSaveTimer->start(AUTOSAVE_TIMER_DELAY);
+    }
+    else
+    {
+        m_pAutoSaveTimer->stop();
     }
 }
 
@@ -1016,7 +1041,7 @@ void CliphistWindow::OnSavedDatahanged(bool bIsSaved)
 {
     if( !bIsSaved )
     {
-        setWindowTitle(m_sOriginalWindowTitle+" *");
+        setWindowTitle(m_sOriginalWindowTitle+_UNSAVED_MARKER);
     }
     else
     {
@@ -1027,6 +1052,14 @@ void CliphistWindow::OnSavedDatahanged(bool bIsSaved)
 void CliphistWindow::OnCleanChanged(bool isClean)
 {
     emit SavedDataChanged(isClean);
+}
+
+void CliphistWindow::OnAutoSaveTimeout()
+{
+    if(windowTitle().contains(_UNSAVED_MARKER))
+    {
+        Save();
+    }
 }
 
 /*
@@ -1287,6 +1320,7 @@ bool CliphistWindow::SaveSettings()
     aSettings.setValue("App/AutoWindowData",ui->actionAutoload_window_position_and_size->isChecked()); 
     aSettings.setValue("App/AlwaysOnTop",ui->actionAlways_on_top->isChecked()); 
     aSettings.setValue("App/UseTimer",ui->actionUse_timer_to_detect_clipboard_changes->isChecked());
+    aSettings.setValue("App/UseAutosave",ui->actionAutosave->isChecked());
     aSettings.setValue("App/GeometryEditDlg",m_aEditDialogGeometry);
     aSettings.setValue("App/UseGlobalKeys",ui->actionEnable_global_hot_keys->isChecked());
     aSettings.setValue("App/MovePositionDown",ui->actionMove_position_down_Shift_Ctrl_V->isChecked());
@@ -1309,6 +1343,7 @@ bool CliphistWindow::LoadSettings()
     ui->actionAutoload_window_position_and_size->setChecked(aSettings.value("App/AutoWindowData",true).toBool());
     ui->actionAlways_on_top->setChecked(aSettings.value("App/AlwaysOnTop",false).toBool());
     ui->actionUse_timer_to_detect_clipboard_changes->setChecked(aSettings.value("App/UseTimer",DEFAULT_VALUE_USE_TIMER).toBool());
+    ui->actionAutosave->setChecked(aSettings.value("App/UseAutosave",true).toBool());
     if( ui->actionAutoload_window_position_and_size->isChecked() )
     {
         restoreState(aSettings.value("App/WindowState").toByteArray());

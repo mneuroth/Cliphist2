@@ -79,6 +79,7 @@ private slots:
     void OnSetDefaultPosSize();
     void OnToggleAlwaysOnTop(bool bChecked);
     void OnToggleUseTimer(bool bChecked);
+    void OnToggleAutoSaveTimer(bool bChecked);
     void OnItemClicked(QListWidgetItem * current);
     void OnItemDoubleClicked(QListWidgetItem * current);
     void OnItemActivated(QListWidgetItem * current);    
@@ -87,6 +88,7 @@ private slots:
     void OnMoveToCurrentMousePosition();
     void OnSavedDatahanged(bool bIsSaved);
     void OnCleanChanged(bool isClean);
+    void OnAutoSaveTimeout();
     // this signals are not needed if the methods save/restoreState() and save/restoreGeometry() are used
     //void OnScreenAdded(QScreen * pScreen);
     //void OnScreenRemoved(QScreen * pScreen);
@@ -148,6 +150,7 @@ private:   /*data*/
     QUndoStack *                m_pUndoStack;
     QClipboard *                m_pClipboard;           // temp
     QTimer *                    m_pTimer;               // temp
+    QTimer *                    m_pAutoSaveTimer;       // temp
     QList<QPair<QString,QPixmap> > m_aPixmapList;
     QList<int>                  m_aFindList;            // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
