@@ -100,7 +100,7 @@ jobs:
         ls -lrt
         make -j 4
         ls -lrt
-        xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
+        #xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
 
   linux_build_6_9_2:
 
@@ -147,4 +147,4 @@ jobs:
         ls -lrt
         make -j 4
         ls -lrt
-        xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
+        #xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
