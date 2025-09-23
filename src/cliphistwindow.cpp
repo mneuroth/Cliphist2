@@ -349,6 +349,7 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     m_sFileName         = QCoreApplication::applicationDirPath()+QDir::separator()+QString(DEFAULT_FILE_NAME);
     //m_sFileName         = QDir::homePath()+QDir::separator()+QString(DEFAULT_FILE_NAME);
 #endif
+    m_sOriginalWindowTitle = windowTitle();
 
     LoadSettings();
     if( !(sFileName.isNull() || sFileName.isEmpty()) )
@@ -411,6 +412,9 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     connect(ui->actionAlways_move_to_first_position_if_found, SIGNAL(triggered(bool)), this, SLOT(OnAlwaysMoveToTopIfFound(bool)) );
     connect(ui->actionEnable_global_hot_keys, SIGNAL(triggered(bool)), this, SLOT(OnEnableGlobalHotkeys(bool)) );
     connect(ui->actionMove_to_current_mouse_position, SIGNAL(triggered()), this, SLOT(OnMoveToCurrentMousePosition()) );
+
+    connect(this, SIGNAL(SavedDataChanged(bool)), this, SLOT(OnSavedDatahanged(bool)));
+    connect(m_pUndoStack, SIGNAL(cleanChanged(bool)), this, SLOT(OnCleanChanged(bool)));
 
     //connect(dynamic_cast<QApplication *>(qApp), SIGNAL(screenAdded(QScreen *)), this, SLOT(OnScreenAdded(QScreen *)));
     //connect(dynamic_cast<QApplication *>(qApp), SIGNAL(screenRemoved(QScreen *)), this, SLOT(OnScreenRemoved(QScreen *)));
@@ -1008,6 +1012,23 @@ void CliphistWindow::OnMoveToCurrentMousePosition()
     move(aPos+QPoint(0,-size().height()));
 }
 
+void CliphistWindow::OnSavedDatahanged(bool bIsSaved)
+{
+    if( !bIsSaved )
+    {
+        setWindowTitle(m_sOriginalWindowTitle+" *");
+    }
+    else
+    {
+        setWindowTitle(m_sOriginalWindowTitle);
+    }
+}
+
+void CliphistWindow::OnCleanChanged(bool isClean)
+{
+    emit SavedDataChanged(isClean);
+}
+
 /*
 #include <QDebug>
 
@@ -1443,6 +1464,11 @@ void CliphistWindow::SetFont(const QFont & aFont)
 void CliphistWindow::SetDataChanged(bool bValue)
 {
     m_bChangedData = bValue;
+    emit SavedDataChanged(!bValue);
+    if(!bValue)
+    {
+        m_pUndoStack->setClean();
+    }
 }
 
 QString CliphistWindow::GetNewLine() const

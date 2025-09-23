@@ -52,6 +52,7 @@ signals:
     void SelectionChanged(bool bAnySelected);
     void JustOneSelected(bool bJustOneSelected);
     void MoreThanOneSelected(bool bMoreThanOneSelected);
+    void SavedDataChanged(bool bIsSaved);
 
 private slots:
     void OnLoadData();
@@ -84,6 +85,8 @@ private slots:
     void OnSelectionChanged();
     void OnEnableGlobalHotkeys(bool bChecked);
     void OnMoveToCurrentMousePosition();
+    void OnSavedDatahanged(bool bIsSaved);
+    void OnCleanChanged(bool isClean);
     // this signals are not needed if the methods save/restoreState() and save/restoreGeometry() are used
     //void OnScreenAdded(QScreen * pScreen);
     //void OnScreenRemoved(QScreen * pScreen);
@@ -158,6 +161,7 @@ private:   /*data*/
     QString                     m_sFileName;
     QString                     m_sLastSearchText;
     QString                     m_sLastImageSavePath;
+    QString                     m_sOriginalWindowTitle;
     QStringList                 m_aTxtHistory;
 
     UGlobalHotkeys *            m_aHotkeyManager;
