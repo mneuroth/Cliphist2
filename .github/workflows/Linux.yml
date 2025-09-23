@@ -101,7 +101,7 @@ jobs:
         make -j 4
         ls -lrt
 
-  linux_build_6_3_1:
+  linux_build_6_7_3:
 
     runs-on: ubuntu-latest
 
@@ -112,7 +112,54 @@ jobs:
         # Directory to install Qt
         dir: # optional
         # Version of Qt to install
-        version: '6.3.1'
+        version: '6.7.3'
+        # Host platform
+        host: # optional
+        # Target platform for build
+        target: 'desktop'
+        # Architecture for Windows/Android
+        arch: # optional
+        # Whether or not to install Qt dependencies on Linux
+        install-deps: 'true'
+        # Additional Qt modules to install
+        modules: 'qt5compat' # qtscript, qtcharts, qtdatavis3d, qtpurchasing, qtvirtualkeyboard, qtwebengine, qtnetworkauth, qtwebglplugin, qtscript, debug_info, qtscripttools
+        # Force a Qt mirror in case the default is not working
+        #mirror: # optional
+        # Whether or not to actually download Qt
+        cached: # optional, default is false
+        # Version of aqtinstall to use in case of issues
+        aqtversion: # optional, default is ==0.8
+        # Version of py7zr to use in case of issues
+        py7zrversion: # optional, default is ==0.6
+        # Any extra arguments to append to the back
+        extra: # optional
+    - name: Install Qt and compile
+      run: |
+        sudo apt-get install -y libxcb-keysyms1-dev
+        sudo apt-get install -y libxkbcommon-dev
+        uname -a
+        pwd
+        ls -lrt
+        cd src
+        ls -lrt
+        qmake -r cliphist2.pro
+        ls -lrt
+        make -j 4
+        ls -lrt
+        xvfb-run -e /dev/stdout --auto-servernum --server-num=1 ./cliphist2 --selftest
+
+linux_build_6_9_2:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - uses: jurplel/install-qt-action@v3
+      with:
+        # Directory to install Qt
+        dir: # optional
+        # Version of Qt to install
+        version: '6.9.2'
         # Host platform
         host: # optional
         # Target platform for build
