@@ -21,6 +21,7 @@
 #include "simplesketch.h"
 
 #include <QGraphicsItem>
+#include <QPainter>
 
 #include "graphicsitemresizeablerect.h"
 
@@ -243,6 +244,20 @@ void SimpleSketch::RestoreState(const QVariantList & aList)
       }
       m_aScene.addItem(pItem);
   }
+}
+
+bool SimpleSketch::hasSceneItems() const
+{
+    return m_aScene.items().size() > 0;
+}
+
+QImage SimpleSketch::exportSceneAsImage()
+{
+    QImage aImg(m_aPixmap.width(), m_aPixmap.height(), QImage::Format_ARGB32);
+    aImg.fill(Qt::transparent);
+    QPainter aPainter(&aImg);
+    m_aScene.render(&aPainter);
+    return aImg;
 }
 
 void SimpleSketch::sltZoomPlus()

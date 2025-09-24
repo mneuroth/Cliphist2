@@ -26,6 +26,7 @@
 #include <QAction>
 #include <QColor>
 #include <QPixmap>
+#include <QImage>
 #include <QVariant>
 #include <QGraphicsPixmapItem>
 #include <QGraphicsScene>
@@ -59,6 +60,9 @@ public:
     void RestoreState(const QVariantList & aList);
 
     QGraphicsScene * GetScene() { return &m_aScene; }
+
+    bool hasSceneItems() const;
+    QImage exportSceneAsImage();
 
     QMenu * GetFormMenu() { return m_pMenuForm; }
     QMenu * GetWidthMenu() { return m_pMenuWidth; }

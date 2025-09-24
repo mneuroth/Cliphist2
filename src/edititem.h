@@ -40,6 +40,8 @@ public:
 
     void setImage(const QPixmap & aPixmap);
 
+    SimpleSketch & GetSketch();
+
     void showOnlyText(bool bValue);
     bool asNewEntry() const;
     bool exportImage() const;

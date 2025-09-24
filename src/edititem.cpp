@@ -55,6 +55,11 @@ void EditItem::setImage(const QPixmap & aPixmap)
     m_aSimpleSketch.setBackgroundImage(aPixmap);
 }
 
+SimpleSketch & EditItem::GetSketch()
+{
+    return m_aSimpleSketch;
+}
+
 void EditItem::sltAsNewEntry()
 {
     m_bAsNewEntry = true;

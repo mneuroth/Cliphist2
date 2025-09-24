@@ -714,7 +714,14 @@ void CliphistWindow::OnEditItem()
                     {
                         m_sLastImageSavePath = sFileName;
 
-                        m_aPixmapList[iIndex].second.save(sFileName,"PNG");
+                        if( aDlg.GetSketch().hasSceneItems() )
+                        {
+                            aDlg.GetSketch().exportSceneAsImage().save(sFileName,"PNG");
+                        }
+                        else
+                        {
+                            m_aPixmapList[iIndex].second.save(sFileName,"PNG");
+                        }
                     }
                 }
             }
