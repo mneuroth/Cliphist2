@@ -362,13 +362,6 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     {
         m_sFileName = sFileName;
     }
-    if( ui->actionAutoload_data->isChecked() )
-    {
-        LoadAndCheck();
-    }
-    QList<int> aFirstRow;
-    aFirstRow.append(0);
-    SyncListWithUi(aFirstRow);
 
     OnToggleAlwaysOnTop(ui->actionAlways_on_top->isChecked());
 
@@ -420,12 +413,20 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     connect(ui->actionEnable_global_hot_keys, SIGNAL(triggered(bool)), this, SLOT(OnEnableGlobalHotkeys(bool)) );
     connect(ui->actionMove_to_current_mouse_position, SIGNAL(triggered()), this, SLOT(OnMoveToCurrentMousePosition()) );
 
-    connect(this, SIGNAL(SavedDataChanged(bool)), this, SLOT(OnSavedDatahanged(bool)));
+    connect(this, SIGNAL(SavedDataChanged(bool)), this, SLOT(OnSavedDataChanged(bool)));
     connect(m_pUndoStack, SIGNAL(cleanChanged(bool)), this, SLOT(OnCleanChanged(bool)));
 
     //connect(dynamic_cast<QApplication *>(qApp), SIGNAL(screenAdded(QScreen *)), this, SLOT(OnScreenAdded(QScreen *)));
     //connect(dynamic_cast<QApplication *>(qApp), SIGNAL(screenRemoved(QScreen *)), this, SLOT(OnScreenRemoved(QScreen *)));
     //connect(dynamic_cast<QApplication *>(qApp), SIGNAL(primaryScreenChanged(QScreen *)), this, SLOT(OnPrimaryScreenChanged(QScreen *)));
+
+    if( ui->actionAutoload_data->isChecked() )
+    {
+        LoadAndCheck();
+    }
+    QList<int> aFirstRow;
+    aFirstRow.append(0);
+    SyncListWithUi(aFirstRow);
 
 #if defined(Q_OS_MAC)
     // Mac only supports all detection of changes via timer
@@ -1042,15 +1043,17 @@ void CliphistWindow::OnMoveToCurrentMousePosition()
     move(aPos+QPoint(0,-size().height()));
 }
 
-void CliphistWindow::OnSavedDatahanged(bool bIsSaved)
+void CliphistWindow::OnSavedDataChanged(bool bIsSaved)
 {
+    QString sFileSize;
+    sFileSize = QString(tr(" (Size: %1 Bytes)")).arg(m_iCurrentFileSize);
     if( !bIsSaved )
     {
-        setWindowTitle(m_sOriginalWindowTitle+_UNSAVED_MARKER);
+        setWindowTitle(m_sOriginalWindowTitle+sFileSize+_UNSAVED_MARKER);
     }
     else
     {
-        setWindowTitle(m_sOriginalWindowTitle);
+        setWindowTitle(m_sOriginalWindowTitle+sFileSize);
     }
 }
 
@@ -1373,6 +1376,7 @@ bool CliphistWindow::Save()
         out << "VERSION" << FILE_VERSION;
         out << m_aTxtHistory;
         out << m_aPixmapList;
+        m_iCurrentFileSize = aFile.size();
         SetDataChanged(false);
         return out.status()==QDataStream::Ok;
     }
@@ -1394,6 +1398,7 @@ bool CliphistWindow::Load(const QString sFileName)
             {
                 in >> m_aPixmapList;
             }
+            m_iCurrentFileSize = aFile.size();
             SetDataChanged(false);
             return in.status()==QDataStream::Ok;
         }

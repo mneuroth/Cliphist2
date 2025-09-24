@@ -86,7 +86,7 @@ private slots:
     void OnSelectionChanged();
     void OnEnableGlobalHotkeys(bool bChecked);
     void OnMoveToCurrentMousePosition();
-    void OnSavedDatahanged(bool bIsSaved);
+    void OnSavedDataChanged(bool bIsSaved);
     void OnCleanChanged(bool isClean);
     void OnAutoSaveTimeout();
     // this signals are not needed if the methods save/restoreState() and save/restoreGeometry() are used
@@ -160,7 +160,8 @@ private:   /*data*/
     int                         m_iFindIndex;           // temp
     int                         m_iActivatedIndex;      // temp --> TODO: maybe use ui->listWidget->currentItem() ? ==> No, currentItem()!=activatedItem
     int                         m_iMaxEntries;
-    int                         m_iMaxLinesPerEntry;    
+    int                         m_iMaxLinesPerEntry;
+    int                         m_iCurrentFileSize;
     QString                     m_sFileName;
     QString                     m_sLastSearchText;
     QString                     m_sLastImageSavePath;
