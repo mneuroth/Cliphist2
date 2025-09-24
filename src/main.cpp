@@ -85,7 +85,7 @@ bool IsSelfTest(const QStringList & aArgs)
 
 int main(int argc, char *argv[])
 {
-#if QT_VERSION >= 0x050600
+#if QT_VERSION >= 0x050600 && QT_VERSION < 0x060000
     // QT_SCALE_FACTOR=2
     // see: https://blog.qt.io/blog/2016/01/26/high-dpi-support-in-qt-5-6/
     // see: http://stackoverflow.com/questions/24367355/automatic-rescaling-of-an-application-on-high-dpi-windows-platform
@@ -100,7 +100,11 @@ int main(int argc, char *argv[])
     QTranslator qtTranslator;
     QString sLocale = GetLocaleName(a.arguments());
     // load translations for qt modules
+#if QT_VERSION >= 0x060000
+    bool bOk = qtTranslator.load(":/translations/qt_" + sLocale,QLibraryInfo::path(QLibraryInfo::TranslationsPath));
+#else
     bool bOk = qtTranslator.load(":/translations/qt_" + sLocale,QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+#endif
     if( !bOk )
     {
         bOk = qtTranslator.load("qt_" + sLocale);
@@ -135,7 +139,7 @@ int main(int argc, char *argv[])
         bOk = myappTranslator.load(QString(PREFIX)+QString("/share/cliphist2/cliphist2_")+sLocale);
     }
 #else
-    bOk = bOk;      // disable compiler warning for other platforms than Mac
+    //bOk = bOk;      // disable compiler warning for other platforms than Mac
 #endif
     a.installTranslator(&myappTranslator);
     

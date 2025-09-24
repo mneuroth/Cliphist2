@@ -110,6 +110,7 @@
 
 #include <QFile>
 #include <QDir>
+#include <QStandardPaths>
 #include <QDataStream>
 #include <QClipboard>
 #include <QFileDialog>
@@ -133,7 +134,7 @@
 // ************************************************************************
 
 #ifndef VERSION
-#define VERSION                     "1.1.2"
+#define VERSION                     "1.1.3"
 #endif
 #define TITLE                       "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Clipboard History 2</a>"
 #define HOMEPAGE                    "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Homepage</a>"
@@ -169,7 +170,9 @@ static QByteArray GetHashForImage(const QPixmap & aImg)
     QCryptographicHash aHash( QCryptographicHash::Md5 );
     QImage aTempImg = aImg.toImage();
 #if QT_VERSION >= 0x060000
-    aHash.addData((const char *)aTempImg.bits(),aTempImg.sizeInBytes());
+    QByteArrayView view(reinterpret_cast<const char*>(aTempImg.bits()), aTempImg.sizeInBytes());
+    aHash.addData(view);
+    //aHash.addData((const char *)aTempImg.bits(),aTempImg.sizeInBytes());
 #else
     aHash.addData((const char *)aTempImg.bits(),aTempImg.byteCount());
 #endif
@@ -344,7 +347,8 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     m_iActivatedIndex   = -1;
     m_iMaxEntries       = DEFAULT_MAX_ENTRIES;
     m_iMaxLinesPerEntry = DEFAULT_LINES_PER_ENTRY;
-    m_sLastImageSavePath= QCoreApplication::applicationDirPath()+QDir::separator()+DEFAULT_IMAGE_FILE_NAME;
+    //m_sLastImageSavePath= QCoreApplication::applicationDirPath()+QDir::separator()+DEFAULT_IMAGE_FILE_NAME;
+    m_sLastImageSavePath = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation)+QDir::separator()+DEFAULT_IMAGE_FILE_NAME;
 #if defined( Q_WS_MACX )
     m_sFileName         = QCoreApplication::applicationDirPath()+QDir::separator()+".."+QDir::separator()+"Resources"+QDir::separator()+QString(DEFAULT_FILE_NAME);
 #else
@@ -375,6 +379,7 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     
     // synchronize the two vertical scrollbars of the two list widgets:
     connect(ui->listWidget->verticalScrollBar(), SIGNAL(valueChanged(int)), ui->listWidgetLineNumbers->verticalScrollBar(), SLOT(setValue(int)) );
+    connect(ui->listWidgetLineNumbers->verticalScrollBar(), SIGNAL(valueChanged(int)), ui->listWidget->verticalScrollBar(), SLOT(setValue(int)) );
 
     connect(ui->action_Quit, SIGNAL(triggered()), qApp, SLOT(quit()));
     connect(ui->actionOpen, SIGNAL(triggered()), this, SLOT(OnLoadData()));
@@ -686,7 +691,7 @@ void CliphistWindow::OnEditItem()
         QPalette aPalette;
         aPalette.setBrush(QPalette::Text,aBrush);
         EditItem aDlg(this,ui->listWidget->font(),aPalette,m_aTxtHistory[iCurrentRow]);
-        if( m_aEditDialogGeometry.count()>0 )
+        if( m_aEditDialogGeometry.size()>0 )
         {
             aDlg.restoreGeometry(m_aEditDialogGeometry);
         }
