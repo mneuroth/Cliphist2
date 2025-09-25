@@ -45,32 +45,32 @@
        </size>
       </property>
       <property name="focusPolicy">
-       <enum>Qt::NoFocus</enum>
+       <enum>Qt::FocusPolicy::NoFocus</enum>
       </property>
       <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOff</enum>
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOff</enum>
       </property>
       <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOn</enum>
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
       </property>
       <property name="editTriggers">
-       <set>QAbstractItemView::NoEditTriggers</set>
+       <set>QAbstractItemView::EditTrigger::NoEditTriggers</set>
       </property>
       <property name="selectionMode">
-       <enum>QAbstractItemView::NoSelection</enum>
+       <enum>QAbstractItemView::SelectionMode::NoSelection</enum>
       </property>
      </widget>
     </item>
     <item row="0" column="1">
      <widget class="QListWidget" name="listWidget">
       <property name="verticalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOn</enum>
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
       </property>
       <property name="horizontalScrollBarPolicy">
-       <enum>Qt::ScrollBarAlwaysOn</enum>
+       <enum>Qt::ScrollBarPolicy::ScrollBarAlwaysOn</enum>
       </property>
       <property name="editTriggers">
-       <set>QAbstractItemView::EditKeyPressed</set>
+       <set>QAbstractItemView::EditTrigger::EditKeyPressed</set>
       </property>
      </widget>
     </item>
@@ -105,6 +105,7 @@
     <addaction name="actionA_dd_marked_to_new_entry"/>
     <addaction name="actionMove_selected_entry_to_top"/>
     <addaction name="action_Edit_entry"/>
+    <addaction name="actionEdit_memo"/>
     <addaction name="separator"/>
     <addaction name="action_Find_text"/>
     <addaction name="actionFind_next"/>
@@ -410,6 +411,14 @@
    </property>
    <property name="text">
     <string>Autosave</string>
+   </property>
+  </action>
+  <action name="actionEdit_memo">
+   <property name="text">
+    <string>Edit memo...</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+M</string>
    </property>
   </action>
  </widget>

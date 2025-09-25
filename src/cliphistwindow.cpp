@@ -107,6 +107,7 @@
 #include "ui_cliphistwindow.h"
 
 #include "edititem.h"
+#include "editmemo.h"
 
 #include <QFile>
 #include <QDir>
@@ -396,6 +397,7 @@ CliphistWindow::CliphistWindow(bool bIsSelfTest, const QString sFileName, QWidge
     connect(ui->action_Find_text, SIGNAL(triggered()), this, SLOT(OnFindItem()));
     connect(ui->actionFind_next, SIGNAL(triggered()), this, SLOT(OnFindNextItem()));
     connect(ui->action_Edit_entry, SIGNAL(triggered()), this, SLOT(OnEditItem()));
+    connect(ui->actionEdit_memo, SIGNAL(triggered()), this, SLOT(OnEditMemo()));
     connect(ui->actionMove_selected_entry_to_top, SIGNAL(triggered()), this, SLOT(OnMoveSelectedEntryToTop()));
     connect(this, SIGNAL(JustOneSelected(bool)), ui->action_Edit_entry, SLOT(setEnabled(bool)));
     connect(this, SIGNAL(JustOneSelected(bool)), ui->actionMove_selected_entry_to_top, SLOT(setEnabled(bool)));
@@ -744,6 +746,20 @@ void CliphistWindow::OnEditItem()
         // in any case --> save the new size of the window
         m_aEditDialogGeometry = aDlg.saveGeometry();
     }
+}
+
+void CliphistWindow::OnEditMemo()
+{
+    EditMemo aDlg(this, m_sMemo);
+    if( m_aMemoDialogGeometry.size()>0 )
+    {
+        aDlg.restoreGeometry(m_aMemoDialogGeometry);
+    }
+    if( aDlg.exec()==QDialog::Accepted )
+    {
+        m_sMemo = aDlg.getMemo();
+    }
+    m_aMemoDialogGeometry = aDlg.saveGeometry();
 }
 
 void CliphistWindow::UpdateSelection(const QList<int> & aCurrentRows)
@@ -1337,8 +1353,11 @@ bool CliphistWindow::SaveSettings()
     aSettings.setValue("App/UseTimer",ui->actionUse_timer_to_detect_clipboard_changes->isChecked());
     aSettings.setValue("App/UseAutosave",ui->actionAutosave->isChecked());
     aSettings.setValue("App/GeometryEditDlg",m_aEditDialogGeometry);
+    aSettings.setValue("App/GeometryMemoDlg",m_aMemoDialogGeometry);
     aSettings.setValue("App/UseGlobalKeys",ui->actionEnable_global_hot_keys->isChecked());
     aSettings.setValue("App/MovePositionDown",ui->actionMove_position_down_Shift_Ctrl_V->isChecked());
+    aSettings.setValue("App/MemoText",m_sMemo);
+
     return true;
 }
 
@@ -1367,8 +1386,10 @@ bool CliphistWindow::LoadSettings()
     aFont.fromString(aSettings.value("App/Font",QString("Courier")).toString());
     SetFont(aFont);
     m_aEditDialogGeometry = aSettings.value("App/GeometryEditDlg",QVariant(QByteArray())).toByteArray();
+    m_aMemoDialogGeometry = aSettings.value("App/GeometryMemoDlg",QVariant(QByteArray())).toByteArray();
     ui->actionEnable_global_hot_keys->setChecked(aSettings.value("App/UseGlobalKeys").toBool());
     ui->actionMove_position_down_Shift_Ctrl_V->setChecked(aSettings.value("App/MovePositionDown",true).toBool());
+    m_sMemo = aSettings.value("App/MemoText").toString();
     return true;
 }
 

@@ -66,6 +66,7 @@ private slots:
     void OnAlwaysMoveToTopIfFound(bool bChecked);
     void OnAddSelectedToNewEntry();
     void OnEditItem();
+    void OnEditMemo();
     void OnTimerUpdate();
     void OnClipboardChanged(QClipboard::Mode);
     void OnClipboardDataChanged();
@@ -154,6 +155,7 @@ private:   /*data*/
     QList<QPair<QString,QPixmap> > m_aPixmapList;
     QList<int>                  m_aFindList;            // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
+    QByteArray                  m_aMemoDialogGeometry;  // temp
     bool                        m_bIfFoundMoveToFirstPos; // temp
     bool                        m_bChangedData;         // temp
     bool    	                m_bMyClipboardCopy;     // temp, flag to show that the current clipboard operation comes from this application
@@ -166,7 +168,8 @@ private:   /*data*/
     QString                     m_sLastSearchText;
     QString                     m_sLastImageSavePath;
     QString                     m_sOriginalWindowTitle;
-    QStringList                 m_aTxtHistory;
+    QString                     m_sMemo;
+    QStringList                 m_aTxtHistory;    
 
     UGlobalHotkeys *            m_aHotkeyManager;
     bool                        m_bSelfTest;
