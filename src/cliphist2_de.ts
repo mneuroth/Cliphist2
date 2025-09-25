@@ -509,26 +509,22 @@ Alle Änderungen verwerfen oder mit anderem Namen nocmals versuchen?</translatio
     <message>
         <location filename="edititem.ui" line="92"/>
         <source>Form</source>
-        <translatorcomment>Form</translatorcomment>
-        <translation></translation>
+        <translation>Form</translation>
     </message>
     <message>
         <location filename="edititem.ui" line="99"/>
         <source>Width</source>
-        <translatorcomment>Breite</translatorcomment>
-        <translation></translation>
+        <translation>Breite</translation>
     </message>
     <message>
         <location filename="edititem.ui" line="106"/>
         <source>Color</source>
-        <translatorcomment>Farbe</translatorcomment>
-        <translation></translation>
+        <translation>Farbe</translation>
     </message>
     <message>
         <location filename="edititem.ui" line="113"/>
         <source>Operations</source>
-        <translatorcomment>Operationen</translatorcomment>
-        <translation></translation>
+        <translation>Operationen</translation>
     </message>
     <message>
         <location filename="edititem.ui" line="129"/>
