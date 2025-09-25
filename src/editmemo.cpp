@@ -5,14 +5,13 @@
 #include <QFileDialog>
 #include <QTextStream>
 
-#include <QDebug>
-
-EditMemo::EditMemo(QWidget *parent, const QString & sText)
+EditMemo::EditMemo(QWidget *parent, const QFont & aFont, const QString & sText)
     : QDialog(parent)
     , ui(new Ui::EditMemo)
 {
     ui->setupUi(this);
     ui->textEdit->setText(sText);
+    ui->textEdit->setFont(aFont);
 }
 
 EditMemo::~EditMemo()

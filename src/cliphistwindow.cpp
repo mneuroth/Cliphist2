@@ -750,7 +750,7 @@ void CliphistWindow::OnEditItem()
 
 void CliphistWindow::OnEditMemo()
 {
-    EditMemo aDlg(this, m_sMemo);
+    EditMemo aDlg(this, ui->listWidget->font(), m_sMemo);
     if( m_aMemoDialogGeometry.size()>0 )
     {
         aDlg.restoreGeometry(m_aMemoDialogGeometry);
@@ -1207,6 +1207,7 @@ QListWidgetItem * CliphistWindow::CreateNewItem(const QString & s, const QBrush 
     QListWidgetItem * pItem = pPixmap==0 ?
                             new QListWidgetItem(aResult.first,/*parent*/0,aResult.second ? 1 : 0) :
                             new QListWidgetItem(*pPixmap, aResult.first,/*parent*/0,aResult.second ? 1 : 0);
+    pItem->setFont(ui->listWidget->font());
 
 	if (pPixmap != 0)
 	{
@@ -1530,8 +1531,10 @@ void CliphistWindow::SetFont(const QFont & aFont)
     QFontMetrics aMetrics(aFont);
     m_iFontWidth = aMetrics.boundingRect(QString(_DEFAULT_TEXT)).width();
     m_iFontHeight = aMetrics.boundingRect(QString(_DEFAULT_TEXT)).height();
-    ui->listWidgetLineNumbers->setMaximumWidth(m_iFontWidth);
-    ui->listWidgetLineNumbers->setMaximumWidth(m_iFontHeight*m_iMaxLinesPerEntry);
+    ui->listWidgetLineNumbers->setMaximumWidth(m_iFontWidth*1.5);
+    //ui->listWidgetLineNumbers->setMaximumHeight(m_iFontHeight*m_iMaxLinesPerEntry);
+    // update the list of items
+    SyncListWithUi(GetAllIndicesOfActSelected());
 }
 
 void CliphistWindow::SetDataChanged(bool bValue)

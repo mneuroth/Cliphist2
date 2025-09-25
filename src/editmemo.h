@@ -12,7 +12,7 @@ class EditMemo : public QDialog
     Q_OBJECT
 
 public:
-    explicit EditMemo(QWidget *parent = nullptr, const QString & sText = "");
+    explicit EditMemo(QWidget *parent = nullptr, const QFont & aFont = QFont(), const QString & sText = "");
     ~EditMemo();
 
     QString getMemo() const;
