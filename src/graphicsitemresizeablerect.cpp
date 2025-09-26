@@ -365,7 +365,7 @@ static QSize GetSizeFor( ImageRatio ratio, QSize aSize = QSize(1920,1920) )
 
 QSize GetRatioSizeForAvailableSize( QSize aAvailableSize, ImageRatio ratio )
 {
-    QSize aRet = GetSizeFor( ratio );
+    QSize aRet = GetSizeFor( ratio, aAvailableSize );
 
     aRet.scale( aAvailableSize, Qt::KeepAspectRatio );
 

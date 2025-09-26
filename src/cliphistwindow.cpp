@@ -135,7 +135,7 @@
 // ************************************************************************
 
 #ifndef VERSION
-#define VERSION                     "1.1.3"
+#define VERSION                     "1.1.4"
 #endif
 #define TITLE                       "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Clipboard History 2</a>"
 #define HOMEPAGE                    "<a href=http://www.mneuroth.de/projects/Cliphist2.html>Homepage</a>"

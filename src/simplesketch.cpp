@@ -29,8 +29,8 @@ SimpleSketch::SimpleSketch(const QPixmap * pBackgroundImage, QObject *parent)
     : QObject{parent},
       m_pImageItem(0),
       m_dScaleFactor(1.0),
-      m_iCurrentWidth(1),
-      m_aCurrentColor("black")
+      m_iCurrentWidth(5),
+      m_aCurrentColor("red")
 {
     if( pBackgroundImage != 0 )
     {
@@ -312,7 +312,7 @@ void SimpleSketch::sltAddRectangle()
     //QGraphicsRectItem * item = m_aScene.addRect(10, 10, 100, 200);
     GraphicsItemResizeableRect * pNewItem = new GraphicsItemResizeableRect();
     pNewItem->Rescale(m_aPixmap.size());
-    pNewItem->SetClippingData(RATIO_VARIABLE, 0, 0, 0.2, 0.2);
+    pNewItem->SetClippingData(RATIO_VARIABLE, 0.4, 0.4, 0.5, 0.2);
     QPen aPen(m_aCurrentColor);
     aPen.setWidth(m_iCurrentWidth);
     pNewItem->setPen(aPen);
@@ -329,7 +329,7 @@ void SimpleSketch::sltAddEllipse()
     GraphicsItemResizeableEllipse * pNewItem = new GraphicsItemResizeableEllipse();
     pNewItem->setRect(0.0, 0.0, 30, 40);
     pNewItem->Rescale(m_aPixmap.size());
-    pNewItem->SetClippingData(RATIO_VARIABLE, 0, 0, 0.2, 0.2);
+    pNewItem->SetClippingData(RATIO_VARIABLE, 0.4, 0.4, 0.2, 0.2);
     QPen aPen(m_aCurrentColor);
     aPen.setWidth(m_iCurrentWidth);
     pNewItem->setPen(aPen);
