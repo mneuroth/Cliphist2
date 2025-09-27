@@ -693,7 +693,7 @@ void CliphistWindow::OnEditItem()
         }
         QPalette aPalette;
         aPalette.setBrush(QPalette::Text,aBrush);
-        EditItem aDlg(this,ui->listWidget->font(),aPalette,m_aTxtHistory[iCurrentRow]);
+        EditItem aDlg(this,ui->listWidget->font(),aPalette,m_aTxtHistory[iCurrentRow],0,m_sCurrentColorName,m_iCurrentWidth);
         if( m_aEditDialogGeometry.size()>0 )
         {
             aDlg.restoreGeometry(m_aEditDialogGeometry);
@@ -745,6 +745,8 @@ void CliphistWindow::OnEditItem()
         }
         // in any case --> save the new size of the window
         m_aEditDialogGeometry = aDlg.saveGeometry();
+        m_sCurrentColorName = aDlg.GetSketch().GetCurrentColor().name();
+        m_iCurrentWidth = aDlg.GetSketch().GetCurrentWidth();
     }
 }
 
@@ -1355,6 +1357,8 @@ bool CliphistWindow::SaveSettings()
     aSettings.setValue("App/UseAutosave",ui->actionAutosave->isChecked());
     aSettings.setValue("App/GeometryEditDlg",m_aEditDialogGeometry);
     aSettings.setValue("App/GeometryMemoDlg",m_aMemoDialogGeometry);
+    aSettings.setValue("App/CurrentColorName",m_sCurrentColorName);
+    aSettings.setValue("App/CurrentWidth",m_iCurrentWidth);
     aSettings.setValue("App/UseGlobalKeys",ui->actionEnable_global_hot_keys->isChecked());
     aSettings.setValue("App/MovePositionDown",ui->actionMove_position_down_Shift_Ctrl_V->isChecked());
     aSettings.setValue("App/MemoText",m_sMemo);
@@ -1388,6 +1392,8 @@ bool CliphistWindow::LoadSettings()
     SetFont(aFont);
     m_aEditDialogGeometry = aSettings.value("App/GeometryEditDlg",QVariant(QByteArray())).toByteArray();
     m_aMemoDialogGeometry = aSettings.value("App/GeometryMemoDlg",QVariant(QByteArray())).toByteArray();
+    m_sCurrentColorName = aSettings.value("App/CurrentColorName",m_sCurrentColorName).toString();
+    m_iCurrentWidth = aSettings.value("App/CurrentWidth",m_iCurrentWidth).toInt();
     ui->actionEnable_global_hot_keys->setChecked(aSettings.value("App/UseGlobalKeys").toBool());
     ui->actionMove_position_down_Shift_Ctrl_V->setChecked(aSettings.value("App/MovePositionDown",true).toBool());
     m_sMemo = aSettings.value("App/MemoText").toString();

@@ -51,7 +51,7 @@ class SimpleSketch : public QObject
 {
     Q_OBJECT
 public:
-    explicit SimpleSketch(const QPixmap * pBackgroundImage, QObject *parent = nullptr);
+    explicit SimpleSketch(const QPixmap * pBackgroundImage, QObject *parent, const QColor & aCurrentColor, int iCurrentWidth);
     ~SimpleSketch();
 
     void setBackgroundImage(const QPixmap & aPixmap);
@@ -60,6 +60,9 @@ public:
     void RestoreState(const QVariantList & aList);
 
     QGraphicsScene * GetScene() { return &m_aScene; }
+
+    QColor GetCurrentColor() const { return m_aCurrentColor; }
+    int    GetCurrentWidth() const { return m_iCurrentWidth; }
 
     bool hasSceneItems() const;
     QImage exportSceneAsImage();

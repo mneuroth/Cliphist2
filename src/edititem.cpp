@@ -25,11 +25,11 @@
 #include <QAction>
 #include <QGraphicsPixmapItem>
 
-EditItem::EditItem(QWidget *parent, const QFont & aFont, const QPalette & aPalette, const QString & sText, const QPixmap * pImage)
+EditItem::EditItem(QWidget *parent, const QFont & aFont, const QPalette & aPalette, const QString & sText, const QPixmap * pImage, const QColor & aCurrentColor, int iCurrentWidth)
     : QDialog(parent),
       m_bAsNewEntry(false),
       m_bExportImage(false),
-      m_aSimpleSketch(pImage, this)
+      m_aSimpleSketch(pImage, this, aCurrentColor, iCurrentWidth)
 {
     ui.setupUi(this);
     ui.textEdit->setText(sText);

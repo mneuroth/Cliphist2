@@ -156,6 +156,8 @@ private:   /*data*/
     QList<int>                  m_aFindList;            // temp
     QByteArray                  m_aEditDialogGeometry;  // temp
     QByteArray                  m_aMemoDialogGeometry;  // temp
+    QString                     m_sCurrentColorName;    // temp
+    int                         m_iCurrentWidth;        // temp
     bool                        m_bIfFoundMoveToFirstPos; // temp
     bool                        m_bChangedData;         // temp
     bool    	                m_bMyClipboardCopy;     // temp, flag to show that the current clipboard operation comes from this application

@@ -25,12 +25,12 @@
 
 #include "graphicsitemresizeablerect.h"
 
-SimpleSketch::SimpleSketch(const QPixmap * pBackgroundImage, QObject *parent)
+SimpleSketch::SimpleSketch(const QPixmap * pBackgroundImage, QObject *parent, const QColor & aCurrentColor, int iCurrentWidth)
     : QObject{parent},
       m_pImageItem(0),
       m_dScaleFactor(1.0),
-      m_iCurrentWidth(5),
-      m_aCurrentColor("red")
+      m_iCurrentWidth(iCurrentWidth),
+      m_aCurrentColor(aCurrentColor)
 {
     if( pBackgroundImage != 0 )
     {
@@ -64,35 +64,55 @@ SimpleSketch::SimpleSketch(const QPixmap * pBackgroundImage, QObject *parent)
 
     m_pWidth1PxAction = new QAction(tr("1 Pixel"));
     m_pWidth1PxAction->setCheckable(true);
-    m_pWidth1PxAction->setChecked(true);            // default width
+    m_pWidth1PxAction->setChecked(m_iCurrentWidth == 1);
     m_pWidth3PxAction = new QAction(tr("3 Pixel"));
     m_pWidth3PxAction->setCheckable(true);
+    m_pWidth3PxAction->setChecked(m_iCurrentWidth == 3);
     m_pWidth5PxAction = new QAction(tr("5 Pixel"));
     m_pWidth5PxAction->setCheckable(true);
+    m_pWidth5PxAction->setChecked(m_iCurrentWidth == 5);
     m_pWidth10PxAction = new QAction(tr("10 Pixel"));
     m_pWidth10PxAction->setCheckable(true);
+    m_pWidth10PxAction->setChecked(m_iCurrentWidth == 10);
     m_pMenuWidth->addAction(m_pWidth1PxAction);
     m_pMenuWidth->addAction(m_pWidth3PxAction);
     m_pMenuWidth->addAction(m_pWidth5PxAction);
     m_pMenuWidth->addAction(m_pWidth10PxAction);
 
-    m_pColorBlackAction = new QAction(tr("Black"));
+    QPixmap aPixmap(32, 32);
+
+    aPixmap.fill(Qt::black);
+    m_pColorBlackAction = new QAction(QIcon(aPixmap), tr("Black"));
     m_pColorBlackAction->setCheckable(true);
-    m_pColorBlackAction->setChecked(true);        // default color
-    m_pColorRedAction = new QAction(tr("Red"));
+    m_pColorBlackAction->setChecked(m_aCurrentColor.name() == "#000000");
+    aPixmap.fill(Qt::red);
+    m_pColorRedAction = new QAction(QIcon(aPixmap), tr("Red"));
     m_pColorRedAction->setCheckable(true);
-    m_pColorGreenAction = new QAction(tr("Green"));
+    m_pColorRedAction->setChecked(m_aCurrentColor.name() == "#ff0000");
+    aPixmap.fill(Qt::green);
+    m_pColorGreenAction = new QAction(QIcon(aPixmap), tr("Green"));
     m_pColorGreenAction->setCheckable(true);
-    m_pColorBlueAction = new QAction(tr("Blue"));
+    m_pColorGreenAction->setChecked(m_aCurrentColor.name() == "#00ff00");
+    aPixmap.fill(Qt::blue);
+    m_pColorBlueAction = new QAction(QIcon(aPixmap), tr("Blue"));
     m_pColorBlueAction->setCheckable(true);
-    m_pColorYellowAction = new QAction(tr("Yellow"));
+    m_pColorBlueAction->setChecked(m_aCurrentColor.name() == "#0000ff");
+    aPixmap.fill(Qt::yellow);
+    m_pColorYellowAction = new QAction(QIcon(aPixmap), tr("Yellow"));
     m_pColorYellowAction->setCheckable(true);
-    m_pColorOrangeAction = new QAction(tr("Orange"));
+    m_pColorYellowAction->setChecked(m_aCurrentColor.name() == "#ffff00");
+    aPixmap.fill("#ffa500");
+    m_pColorOrangeAction = new QAction(QIcon(aPixmap), tr("Orange"));
     m_pColorOrangeAction->setCheckable(true);
-    m_pColorCyanAction = new QAction(tr("Cyan"));
+    m_pColorOrangeAction->setChecked(m_aCurrentColor.name() == "#ff5a00");
+    aPixmap.fill(Qt::cyan);
+    m_pColorCyanAction = new QAction(QIcon(aPixmap), tr("Cyan"));
     m_pColorCyanAction->setCheckable(true);
-    m_pColorMagentaAction = new QAction(tr("Magenta"));
+    m_pColorCyanAction->setChecked(m_aCurrentColor.name() == "#00ffff");
+    aPixmap.fill(Qt::magenta);
+    m_pColorMagentaAction = new QAction(QIcon(aPixmap), tr("Magenta"));
     m_pColorMagentaAction->setCheckable(true);
+    m_pColorMagentaAction->setChecked(m_aCurrentColor.name() == "#ff00ff");
     m_pMenuColor->addAction(m_pColorBlackAction);
     m_pMenuColor->addAction(m_pColorRedAction);
     m_pMenuColor->addAction(m_pColorGreenAction);
@@ -118,10 +138,10 @@ SimpleSketch::SimpleSketch(const QPixmap * pBackgroundImage, QObject *parent)
     connect(m_pColorRedAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("red"), m_pColorRedAction); });
     connect(m_pColorGreenAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("green"), m_pColorGreenAction); });
     connect(m_pColorBlueAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("blue"), m_pColorBlueAction); });
-    connect(m_pColorYellowAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("yellow"), m_pColorYellowAction); });
-    connect(m_pColorOrangeAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("orange"), m_pColorOrangeAction); });
-    connect(m_pColorCyanAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("cyan"), m_pColorCyanAction); });
-    connect(m_pColorMagentaAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("magenta"), m_pColorMagentaAction); });
+    connect(m_pColorYellowAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("yellow"), m_pColorYellowAction); });   // #ffff00
+    connect(m_pColorOrangeAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("orange"), m_pColorOrangeAction); });   // #ffa500
+    connect(m_pColorCyanAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("cyan"), m_pColorCyanAction); });         // #00ffff
+    connect(m_pColorMagentaAction, &QAction::triggered, this, [this]() { this->sltSetColor(QColor("magenta"), m_pColorMagentaAction); });// #ff00ff
 }
 
 SimpleSketch::~SimpleSketch()
